@@ -1,3 +1,6 @@
+#ifndef _HELLO_ASYNC_H
+#define _HELLO_ASYNC_H
+
 #include <node.h>
 #include "../node_modules/nan/nan.h"
 
@@ -23,7 +26,6 @@ class HelloWorker : public NanAsyncWorker {
   void HandleOKCallback () {
     NanScope();
     Local<Value> argv[] = {
-        NanNewLocal<Value>(Null()),
         String::New("World!")
     };
     callback->Call(1, argv);
@@ -40,3 +42,5 @@ NAN_METHOD(HelloAsync) {
   NanAsyncQueueWorker(new HelloWorker(callback));
   NanReturnUndefined();
 }
+
+#endif /* _HELLO_ASYNC_H */
