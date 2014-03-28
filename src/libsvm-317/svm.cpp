@@ -569,7 +569,7 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 		{
 			counter = min(l,1000);
 			if(shrinking) do_shrinking();
-			info(".");
+			//info(".");
 		}
 
 		int i,j;
@@ -579,7 +579,7 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 			reconstruct_gradient();
 			// reset active set size and check
 			active_size = l;
-			info("*");
+			//info("*");
 			if(select_working_set(i,j)!=0)
 				break;
 			else
@@ -735,7 +735,7 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 			// reconstruct the whole gradient to calculate objective value
 			reconstruct_gradient();
 			active_size = l;
-			info("*");
+			//info("*");
 		}
 		fprintf(stderr,"\nWARNING: reaching max number of iterations\n");
 	}
@@ -944,7 +944,7 @@ void Solver::do_shrinking()
 		unshrink = true;
 		reconstruct_gradient();
 		active_size = l;
-		info("*");
+		//info("*");
 	}
 
 	for(i=0;i<active_size;i++)
@@ -1462,8 +1462,8 @@ static void solve_c_svc(
 	for(i=0;i<l;i++)
 		sum_alpha += alpha[i];
 
-	if (Cp==Cn)
-		info("nu = %f\n", sum_alpha/(Cp*prob->l));
+	// if (Cp==Cn)
+	// 	info("nu = %f\n", sum_alpha/(Cp*prob->l));
 
 	for(i=0;i<l;i++)
 		alpha[i] *= y[i];
@@ -1513,7 +1513,7 @@ static void solve_nu_svc(
 		alpha, 1.0, 1.0, param->eps, si,  param->shrinking);
 	double r = si->r;
 
-	info("C = %f\n",1/r);
+	//info("C = %f\n",1/r);
 
 	for(i=0;i<l;i++)
 		alpha[i] *= y[i]/r;
@@ -1590,7 +1590,7 @@ static void solve_epsilon_svr(
 		alpha[i] = alpha2[i] - alpha2[i+l];
 		sum_alpha += fabs(alpha[i]);
 	}
-	info("nu = %f\n",sum_alpha/(param->C*l));
+	//info("nu = %f\n",sum_alpha/(param->C*l));
 
 	delete[] alpha2;
 	delete[] linear_term;
@@ -1625,7 +1625,7 @@ static void solve_nu_svr(
 	s.Solve(2*l, SVR_Q(*prob,*param), linear_term, y,
 		alpha2, C, C, param->eps, si, param->shrinking);
 
-	info("epsilon = %f\n",-si->r);
+	//info("epsilon = %f\n",-si->r);
 
 	for(i=0;i<l;i++)
 		alpha[i] = alpha2[i] - alpha2[i+l];
@@ -1669,7 +1669,7 @@ static decision_function svm_train_one(
 			break;
 	}
 
-	info("obj = %f, rho = %f\n",si.obj,si.rho);
+	//info("obj = %f, rho = %f\n",si.obj,si.rho);
 
 	// output SVs
 
@@ -1693,7 +1693,7 @@ static decision_function svm_train_one(
 		}
 	}
 
-	info("nSV = %d, nBSV = %d\n",nSV,nBSV);
+	//info("nSV = %d, nBSV = %d\n",nSV,nBSV);
 
 	decision_function f;
 	f.alpha = alpha;
@@ -2270,7 +2270,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 			nz_count[i] = nSV;
 		}
 		
-		info("Total nSV = %d\n",total_sv);
+		//info("Total nSV = %d\n",total_sv);
 
 		model->l = total_sv;
 		model->SV = Malloc(svm_node *,total_sv);
