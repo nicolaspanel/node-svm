@@ -771,7 +771,7 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 	si->upper_bound_p = Cp;
 	si->upper_bound_n = Cn;
 
-	info("\noptimization finished, #iter = %d\n",iter);
+	//info("\noptimization finished, #iter = %d\n",iter);
 
 	delete[] p;
 	delete[] y;
