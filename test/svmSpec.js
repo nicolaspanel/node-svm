@@ -21,8 +21,7 @@ describe('SVM', function(){
     beforeEach(function(){
       svm = new lib.SVM({
           type: lib.SvmTypes.C_SVC,
-          kernel: new lib.LinearKernel(),
-          modelFileName: 'myModel.model'
+          kernel: new lib.LinearKernel()
       });
     });
       
