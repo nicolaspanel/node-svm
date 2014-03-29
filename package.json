@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/nicolaspanel/node-svm",
   "dependencies": {
+    "node-gyp": "~0.13.0",
     "nan": "~0.8.0",
     "underscore": "~1.6.0"
   },
