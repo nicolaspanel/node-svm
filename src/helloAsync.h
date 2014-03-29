@@ -1,9 +1,6 @@
 #ifndef _HELLO_ASYNC_H
 #define _HELLO_ASYNC_H
 
-#include <node.h>
-#include "../node_modules/nan/nan.h"
-
 using namespace v8;
 
 class HelloWorker : public NanAsyncWorker {
