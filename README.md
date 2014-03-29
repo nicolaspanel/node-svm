@@ -11,8 +11,7 @@ node-svm
 `npm install node-svm --save`
 
 # How to use it
-
-libsvm provide both classification and regression predictors.
+First of all, if you are not familiar with SVM, I highly recommend to read [this guide](http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf).
 
 ## Classification example
 Here's an example of using it to approximate the XOR function
@@ -45,6 +44,11 @@ BTW, there's no reason to use SVM to figure out XOR...
 Options with default values are listed below : 
 ```javascript
 var options = {
+  //required
+  type        : libsvm.SvmTypes.C_SVC, // {C_SVC, NU_SVC, ONE_CLASS, EPSILON_SVR, NU_SVR}
+  kernel      : new libsvm.RadialBasisFunctionKernel(gamma), // see './lib/node-svm.js' for other kernels such as {LINEAR , POLY, SIGMOID}
+  C           : Required
+  // options
   cacheSize   : 100,  //MB
   eps         : 1e-3, // epsilon 
   shrinking   : true, // use the shrinking heuristics
@@ -54,11 +58,12 @@ var svm = new libsvm.SVM(options);
 ```
 
 # How it work
-`node-svm` uses the official libsvm Java library, version 3.17. It also provides helpers to facilitate its use in real projects.
+`node-svm` uses the official libsvm C++ library, version 3.17. It also provides helpers to facilitate its use in real projects.
 
 For more informations, see also : 
  * [libsvm](http://www.csie.ntu.edu.tw/~cjlin/libsvm/)
  * [Wikipedia article about SVM](https://en.wikipedia.org/wiki/Support_vector_machine)
+ * [node addons](http://nodejs.org/api/addons.html)
 
 # Contributions
 Feel free to fork and improve/enhance `node-svm` in any way your want.
