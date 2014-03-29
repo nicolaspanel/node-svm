@@ -2,7 +2,7 @@
   "name": "node-svm",
   "version": "0.1.0",
   "description": "Support Vector Machine for nodejs",
-  "main": "./svm.js",
+  "main": "./lib/node-svm.js",
   "scripts": {
     "test": "grunt"
   },
