@@ -11,7 +11,9 @@
     "url": "https://github.com/nicolaspanel/node-svm.git"
   },
   "keywords": [
-    "svm"
+    "svm", 
+    "machine learning",
+    "libsvm"
   ],
   "author": "Nicolas Panel",
   "license": "MIT",
