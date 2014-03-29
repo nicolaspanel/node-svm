@@ -13,10 +13,9 @@ node-svm
 # How to use it
 First of all, if you are not familiar with SVM, I highly recommend to read [this guide](http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf).
 
-## Classification example
 Here's an example of using it to approximate the XOR function
 ```javascript
-var libsvm = require('../lib/node-svm');
+var libsvm = require('node-svm');
 var xorProblem = [
   { x: [0, 0], y: 0 },
   { x: [0, 1], y: 1 },
@@ -36,9 +35,6 @@ xorProblem.forEach(function(ex){
 ```
 BTW, there's no reason to use SVM to figure out XOR...
 
-## Regression example
-```javascript
-```
 
 ## Options
 Options with default values are listed below : 
