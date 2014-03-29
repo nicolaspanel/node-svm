@@ -50,7 +50,6 @@ describe('SVM', function(){
 
     it('should train XOR with no error', function(done){
       svm.train(xorProblem, function (err) {
-        err.should.not.be.ok;
         done();
       });
     });
@@ -61,13 +60,21 @@ describe('SVM', function(){
         });
       });
 
-      it('should be able to predict', function(done){
-        svm.predict([-1, -1], function (prediciton) {
-          prediciton.should.be.within(0, 1);
+      it('should be able to predict', function(){
+        svm.predict([-1, -1]).should.be.within(0, 1);
+      });
+
+
+      it('should be able to predict Async', function(done){
+        svm.predictAsync([-1, -1], function(value){
+          value.should.be.within(0, 1);
           done();
         });
       });
 
+      // it('should be able to predict probabilities', function(){
+      //   svm.predictProbabilities([-1, -1]).should.be.within(0, 1);
+      // });
     });
   });
 });

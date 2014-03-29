@@ -46,12 +46,25 @@ NAN_METHOD(NodeSvm::Predict) {
     x[j].index = j;
     x[j].value = dataset->Get(j)->NumberValue();
   }
-  
   double prediction = svm_predict(obj->model, x);
+  NanReturnValue(Number::New(prediction));
+}
 
-
+NAN_METHOD(NodeSvm::PredictAsync) {
+  NanScope();
+  NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+  
+  assert(args[0]->IsObject());
+  Local<Array> dataset = Array::Cast(*args[0]->ToObject());
+  svm_node *x = Malloc(struct svm_node,dataset->Length());
+  for (unsigned j=0; j < dataset->Length(); j++){
+    x[j].index = j;
+    x[j].value = dataset->Get(j)->NumberValue();
+  }
   assert(args[1]->IsFunction());
   NanCallback *callback = new NanCallback(args[1].As<Function>());
+
+  double prediction = svm_predict(obj->model, x);
   Local<Value> argv[] = {
     Number::New(prediction)
   };
@@ -108,6 +121,8 @@ void NodeSvm::Init(Handle<Object> exports){
       FunctionTemplate::New(NodeSvm::Train)->GetFunction());
   tpl->PrototypeTemplate()->Set(String::NewSymbol("predict"),
       FunctionTemplate::New(NodeSvm::Predict)->GetFunction());
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("predictAsync"),
+      FunctionTemplate::New(NodeSvm::PredictAsync)->GetFunction());
 
   constructor = Persistent<Function>::New(tpl->GetFunction());
   exports->Set(String::NewSymbol("NodeSvm"), constructor);
