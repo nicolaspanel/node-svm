@@ -8,19 +8,19 @@
 class TrainingJob : public NanAsyncWorker {
 public:
   TrainingJob(Local<Array> dataset, NodeSvm *obj, NanCallback *callback) : NanAsyncWorker(callback){
-    problem = new svm_problem();
-    problem->l = dataset->Length();
-    problem->y = Malloc(double,problem->l);
-    problem->x = Malloc(struct svm_node *,problem->l);
+    training_set = new svm_problem();
+    training_set->l = dataset->Length();
+    training_set->y = Malloc(double,training_set->l);
+    training_set->x = Malloc(struct svm_node *,training_set->l);
     
     for (unsigned i=0; i < dataset->Length(); i++) {
       Local<Object> t = dataset->Get(i)->ToObject();
-      problem->y[i] = t->Get(String::New("y"))->NumberValue();
+      training_set->y[i] = t->Get(String::New("y"))->NumberValue();
       Local<Array> x = Array::Cast(*t->Get(String::New("x"))->ToObject());
-      problem->x[i] = Malloc(struct svm_node,x->Length());
+      training_set->x[i] = Malloc(struct svm_node,x->Length());
       for (unsigned j=0; j < x->Length(); j++){
-        problem->x[i][j].index = j+1;
-        problem->x[i][j].value = x->Get(j)->NumberValue();
+        training_set->x[i][j].index = j+1;
+        training_set->x[i][j].value = x->Get(j)->NumberValue();
       }
     }
     _obj = obj;
@@ -32,8 +32,8 @@ public:
   // here, so everything we need for input and output
   // should go on `this`.
   void Execute () {
-  
-    _obj->trainInstance(problem);
+    svm_parameter *params= _obj->params;
+    _obj->model = svm_train(training_set, params);
   }
 
    // Executed when the async work is complete
@@ -47,7 +47,7 @@ public:
      callback->Call(1, argv);
    };
   private:
-   svm_problem * problem;
+   svm_problem * training_set;
    NodeSvm *_obj;
  };
 

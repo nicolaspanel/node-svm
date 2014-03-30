@@ -1,6 +1,7 @@
 
 #include "node-svm.h"
 #include "training-job.h"
+#include "accuracy-job.h"
 
 Persistent<Function> NodeSvm::constructor;
 
@@ -59,11 +60,31 @@ NAN_METHOD(NodeSvm::Train) {
   NanScope();
   NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
   
+  // check obj
+  assert(obj->hasParameters());
+  // chech params
   assert(args[0]->IsObject());
   assert(args[1]->IsFunction());
+
   Local<Array> dataset = Array::Cast(*args[0]->ToObject());
   NanCallback *callback = new NanCallback(args[1].As<Function>());
   NanAsyncQueueWorker(new TrainingJob(dataset, obj, callback));
+  NanReturnUndefined();
+}
+
+NAN_METHOD(NodeSvm::GetAccuracy) {
+  NanScope();
+  NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+  // check obj
+  assert(obj->isTrained());
+  assert(obj->isClassificationSVM());
+  // chech params
+  assert(args[0]->IsObject());
+  assert(args[1]->IsFunction());
+  
+  Local<Array> testset = Array::Cast(*args[0]->ToObject());
+  NanCallback *callback = new NanCallback(args[1].As<Function>());
+  NanAsyncQueueWorker(new AccuracyJob(testset, obj, callback));
   NanReturnUndefined();
 }
 
@@ -71,7 +92,9 @@ NAN_METHOD(NodeSvm::GetLabels) {
   NanScope();
   NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
   
-  assert(obj->model != NULL);
+  // check obj
+  assert(obj->isTrained());
+
   // Create a new empty array.
   Handle<Array> labels = Array::New(obj->model->nr_class);
   for (int j=0; j < obj->model->nr_class; j++){
@@ -84,7 +107,11 @@ NAN_METHOD(NodeSvm::Predict) {
   NanScope();
   NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
   
+  // check obj
+  assert(obj->isTrained());
+  // chech params
   assert(args[0]->IsObject());
+  
   Local<Array> dataset = Array::Cast(*args[0]->ToObject());
   svm_node *x = Malloc(struct svm_node,dataset->Length());
   for (unsigned j=0; j < dataset->Length(); j++){
@@ -99,14 +126,18 @@ NAN_METHOD(NodeSvm::PredictAsync) {
   NanScope();
   NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
   
+  // check obj
+  assert(obj->isTrained());
+  // chech params
   assert(args[0]->IsObject());
+  assert(args[1]->IsFunction());
+
   Local<Array> dataset = Array::Cast(*args[0]->ToObject());
   svm_node *x = Malloc(struct svm_node,dataset->Length());
   for (unsigned j=0; j < dataset->Length(); j++){
     x[j].index = j;
     x[j].value = dataset->Get(j)->NumberValue();
   }
-  assert(args[1]->IsFunction());
   NanCallback *callback = new NanCallback(args[1].As<Function>());
 
   double prediction = svm_predict(obj->model, x);
@@ -122,7 +153,11 @@ NAN_METHOD(NodeSvm::PredictProbabilities) {
   NanScope();
   NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
   
+  // check obj
+  assert(obj->isTrained());
+  // chech params
   assert(args[0]->IsObject());
+  
   Local<Array> dataset = Array::Cast(*args[0]->ToObject());
   svm_node *x = Malloc(struct svm_node,dataset->Length());
   for (unsigned j=0; j < dataset->Length(); j++){
@@ -139,10 +174,6 @@ NAN_METHOD(NodeSvm::PredictProbabilities) {
   NanReturnValue(probs);
 }
 
-void NodeSvm::trainInstance(svm_problem *problem){
-  model = svm_train(problem, params);
-}
-
 void NodeSvm::Init(Handle<Object> exports){
   // Prepare constructor template
   Local<FunctionTemplate> tpl = FunctionTemplate::New(NodeSvm::New);
@@ -156,6 +187,8 @@ void NodeSvm::Init(Handle<Object> exports){
       FunctionTemplate::New(NodeSvm::Train)->GetFunction());
    tpl->PrototypeTemplate()->Set(String::NewSymbol("getLabels"),
        FunctionTemplate::New(NodeSvm::GetLabels)->GetFunction());
+   tpl->PrototypeTemplate()->Set(String::NewSymbol("getAccuracy"),
+       FunctionTemplate::New(NodeSvm::GetAccuracy)->GetFunction());
   tpl->PrototypeTemplate()->Set(String::NewSymbol("predict"),
       FunctionTemplate::New(NodeSvm::Predict)->GetFunction());
   tpl->PrototypeTemplate()->Set(String::NewSymbol("predictAsync"),

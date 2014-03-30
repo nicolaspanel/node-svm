@@ -18,7 +18,7 @@ describe('SVM', function(){
     beforeEach(function(){
       svm = new lib.SVM();
     });
-    it('should report error during training', function(done){
+    it('should report an error during training', function(done){
       svm.train(xorProblem, function (err) {
         console.log(err);
         err.should.be.ok;
@@ -85,6 +85,12 @@ describe('SVM', function(){
         (probs[-1] + probs[1]).should.be.approximately(1, 1e-5);
       });
 
+      it('should be able to predict accuracy on a test problem', function(done){
+        svm.getAccuracy(xorProblem, function(accuracy){
+          accuracy.should.be.within(0, 1);
+          done();
+        });
+      });
     });
   });
 });

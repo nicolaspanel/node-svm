@@ -12,14 +12,23 @@ class NodeSvm : public node::ObjectWrap
     static NAN_METHOD(SetParameters);
     static NAN_METHOD(Train);
     static NAN_METHOD(GetLabels);
+    static NAN_METHOD(GetAccuracy);
     static NAN_METHOD(Predict);
     static NAN_METHOD(PredictAsync);
     static NAN_METHOD(PredictProbabilities);
     static NAN_METHOD(New);
     
-    void trainInstance(svm_problem *problem);
-    double predict();
-    
+    bool isTrained(){return model != NULL;};
+    bool hasParameters(){return params != NULL;};
+    bool isClassificationSVM(){
+        if(!hasParameters())
+            return false;
+        int svm_type = params->svm_type;
+        if (svm_type==NU_SVR || svm_type==EPSILON_SVR)
+            return false;
+        return true;
+    };
+    bool isRegressionSVM(){ return !isClassificationSVM();};
     svm_parameter *params;
     svm_model *model;
   private:
