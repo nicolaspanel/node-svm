@@ -18,9 +18,9 @@ Here's an example of using it to approximate the XOR function
 var libsvm = require('node-svm');
 var xorProblem = [
   { x: [-1, -1], y: -1 },
-  { x: [-1, 1], y: 1 },
-  { x: [1, -1], y: 1 },
-  { x: [1, 1], y: -1 }
+  { x: [-1,  1], y:  1 },
+  { x: [ 1, -1], y:  1 },
+  { x: [ 1,  1], y: -1 }
 ];
 var svm = new libsvm.SVM({
   type: libsvm.SvmTypes.C_SVC,
