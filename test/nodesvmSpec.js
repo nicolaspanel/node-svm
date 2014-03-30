@@ -11,6 +11,12 @@ var xorProblem = [
   { x: [1, 0], y: 1 },
   { x: [1, 1], y: 0 }
 ];
+var xorNormProblem = [
+  { x: [-1, -1], y: 0 },
+  { x: [-1,  1], y: 1 },
+  { x: [ 1, -1], y: 1 },
+  { x: [ 1,  1], y: 0 }
+];
 describe('SVM', function(){
   var svm = null;
   
@@ -112,4 +118,23 @@ describe('#readProblem', function(){
       done();
     });
   });
+});
+
+describe('#meanNormalize', function(){  
+  it('should be able to Mean Normalize the xor problem', function (done) {
+    libsvm.meanNormalize({problem: xorProblem}, function(problem, mu, sigma){
+      mu.should.eql([0.5, 0.5]);
+      sigma.should.eql([0.5,0.5]);
+      problem.should.eql(xorNormProblem);
+      done();
+    });
+  });
+  
+  it('should be able to Mean Normalize the xor problem with custom mu and sigma', function (done) {
+    libsvm.meanNormalize({problem: xorProblem, mu: [0, 0], sigma: [1, 1]}, function(problem){
+      problem.should.eql(xorProblem); // no changes
+      done();
+    });
+  });
+  
 });

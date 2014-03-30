@@ -14,28 +14,27 @@ var c_svc = new libsvm.SVM({
 var trainingset = null, testset = null;
 
 // load datasets 
-async.parallel([
-  function(callback){
-    libsvm.readProblem('./examples/datasets/svmguide1.ds', function(problem){
-      trainingset = problem;
-      callback(null); // no error
-    });
-  },
-  function(callback){
-    libsvm.readProblem('./examples/datasets/svmguide1.t.ds', function(problem){
-      testset = problem;
-      callback(null); // no error
-    });
-  }
-],
-function(err, results){
+libsvm.readProblem('./examples/datasets/svmguide1.ds', function(trainingset){
   
-  console.log("problems loaded. Start training...");
-  
-  c_svc.train(trainingset, function(){
-    c_svc.getAccuracy(testset, function(accuracy){
-      console.log("svm trained. Accuracy = %d%", accuracy);
-    });
+  libsvm.meanNormalize({problem: trainingset}, function(normTrainingset, mu, sigma){
+    
+    // load test set and normalize it with previous mu and sigma
+    libsvm.readProblem('./examples/datasets/svmguide1.t.ds', function(testset){
+      libsvm.meanNormalize({testset: testset, mu: mu, sigma: sigma}, function(normTestset){
+        
+        console.log("problems loaded. Start training...");
+        c_svc.train(trainingset, function(){
+          
+          c_svc.getAccuracy(testset, function(accuracy){
+            
+            console.log("svm trained. Accuracy = %d%", accuracy);
+          
+          });
 
-  });
+        });
+
+      })
+    });
+  })
 });
+  

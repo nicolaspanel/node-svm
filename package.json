@@ -26,7 +26,8 @@
     "nan": "~0.8.0",
     "underscore": "~1.6.0",
     "numeric": "~1.2.6",
-    "async": "~0.6.0"
+    "async": "~0.6.0",
+    "sylvester": "0.0.21"
   },
   "devDependencies": {
     "mocha": "~1.17.1",
