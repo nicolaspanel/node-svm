@@ -97,11 +97,19 @@ describe('SVM', function(){
 
 describe('#readProblem', function(){  
   it('should be able to read the xor problem', function (done) {
-    libsvm.readProblem('./examples/datasets/xor.ds', function(problem){
+    libsvm.readProblem('./examples/datasets/xor.ds', function(problem, nbFeature){
+      nbFeature.should.equal(2);
       problem.length.should.equal(4);
       problem.should.eql(xorProblem);
       done();
     });
   });
-
+  it('should be able to read the svmguide problem in less than 200ms', function (done) {
+    this.timeout(200);
+    libsvm.readProblem('./examples/datasets/svmguide1.ds', function(problem, nbFeature){
+      nbFeature.should.equal(4);
+      problem.length.should.equal(3090);
+      done();
+    });
+  });
 });
