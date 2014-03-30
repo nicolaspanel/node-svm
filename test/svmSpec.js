@@ -3,20 +3,20 @@
 var assert = require('assert'), 
     should = require('should'),
     _ = require('underscore'),
-    lib = require('../lib/node-svm');
-    
+    libsvm = require('../lib/node-svm');
+
+var xorProblem = [
+  { x: [0, 0], y: 0 },
+  { x: [0, 1], y: 1 },
+  { x: [1, 0], y: 1 },
+  { x: [1, 1], y: 0 }
+];
 describe('SVM', function(){
   var svm = null;
-  var xorProblem = [
-    { x: [-1, -1], y: -1 },
-    { x: [-1, 1], y: 1 },
-    { x: [1, -1], y: 1 },
-    { x: [1, 1], y: -1 }
-  ];
   
   describe('when parameters are not properly defined', function(){
     beforeEach(function(){
-      svm = new lib.SVM();
+      svm = new libsvm.SVM();
     });
     it('should report an error during training', function(done){
       svm.train(xorProblem, function (err) {
@@ -30,9 +30,9 @@ describe('SVM', function(){
   describe('using C_SVC with RBF Kernel', function(){
     
     beforeEach(function(){
-      svm = new lib.SVM({
-          type: lib.SvmTypes.C_SVC,
-          kernel: new lib.RadialBasisFunctionKernel(1),
+      svm = new libsvm.SVM({
+          type: libsvm.SvmTypes.C_SVC,
+          kernel: new libsvm.RadialBasisFunctionKernel(1),
           C: 0.8
       });
     });
@@ -63,26 +63,26 @@ describe('SVM', function(){
       });
       
       it('should be able to return class labels', function(){
-        svm.labels.should.eql([1, -1]);
+        svm.labels.should.eql([0, 1]);
       });
 
       it('should be able to predict classes', function(){
         xorProblem.forEach(function(ex){
-          [-1,1].should.containEql(svm.predict(ex.x));  // ie mean y E {-1;1}
+          [0,1].should.containEql(svm.predict(ex.x));  // ie mean y E {-1;1}
         });
       });
 
 
       it('should be able to predict Async', function(done){
-        svm.predictAsync([-1, -1], function(value){
-          [-1,1].should.containEql(value);
+        svm.predictAsync([0, 0], function(value){
+          [0,1].should.containEql(value);
           done();
         });
       });
 
       it('should be able to predict probabilities', function(){
-        var probs = svm.predictProbabilities([-1, -1]);
-        (probs[-1] + probs[1]).should.be.approximately(1, 1e-5);
+        var probs = svm.predictProbabilities([0, 0]);
+        (probs[0] + probs[1]).should.be.approximately(1, 1e-5);
       });
 
       it('should be able to predict accuracy on a test problem', function(done){
@@ -93,4 +93,15 @@ describe('SVM', function(){
       });
     });
   });
+});
+
+describe('#readProblem', function(){  
+  it('should be able to read the xor problem', function (done) {
+    libsvm.readProblem('./examples/datasets/xor.ds', function(problem){
+      problem.length.should.equal(4);
+      problem.should.eql(xorProblem);
+      done();
+    });
+  });
+
 });
