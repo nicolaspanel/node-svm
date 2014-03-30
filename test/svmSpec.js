@@ -2,15 +2,16 @@
 
 var assert = require('assert'), 
     should = require('should'),
+    _ = require('underscore'),
     lib = require('../lib/node-svm');
     
 describe('SVM', function(){
   var svm = null;
   var xorProblem = [
-    { x: [-1, -1], y: 0 },
+    { x: [-1, -1], y: -1 },
     { x: [-1, 1], y: 1 },
     { x: [1, -1], y: 1 },
-    { x: [1, 1], y: 0 }
+    { x: [1, 1], y: -1 }
   ];
   
   describe('when parameters are not properly defined', function(){
@@ -53,28 +54,35 @@ describe('SVM', function(){
         done();
       });
     });
+    
     describe('once trained', function(){
       beforeEach(function(done){
         svm.train(xorProblem, function () {
           done();
         });
       });
+      
+      it('should be able to return class labels', function(){
+        svm.labels.should.eql([1, -1]);
+      });
 
       it('should be able to predict', function(){
-        svm.predict([-1, -1]).should.be.within(0, 1);
+        svm.predict([-1, -1]).should.be.within(-1, 1);
       });
 
 
       it('should be able to predict Async', function(done){
         svm.predictAsync([-1, -1], function(value){
-          value.should.be.within(0, 1);
+          value.should.be.within(-1, 1);
           done();
         });
       });
 
-      // it('should be able to predict probabilities', function(){
-      //   svm.predictProbabilities([-1, -1]).should.be.within(0, 1);
-      // });
+      it('should be able to predict probabilities', function(){
+        var probs = svm.predictProbabilities([-1, -1]);
+        (probs[-1] + probs[1]).should.be.approximately(1, 1e-5);
+      });
+
     });
   });
 });

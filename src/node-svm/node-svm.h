@@ -11,8 +11,10 @@ class NodeSvm : public node::ObjectWrap
     static void Init(Handle<Object> exports);
     static NAN_METHOD(SetParameters);
     static NAN_METHOD(Train);
+    static NAN_METHOD(GetLabels);
     static NAN_METHOD(Predict);
     static NAN_METHOD(PredictAsync);
+    static NAN_METHOD(PredictProbabilities);
     static NAN_METHOD(New);
     
     void trainInstance(svm_problem *problem);

@@ -46,8 +46,8 @@ var options = {
   C           : Required
   // options
   cacheSize   : 100,  //MB
-  eps         : 1e-3, // epsilon 
-  shrinking   : true, // use the shrinking heuristics
+  eps         : 1e-3, // tolerance of termination criterion 
+  shrinking   : true, // whether to use the shrinking heuristics
   probability : true  //  do probability estimates
 };
 var svm = new libsvm.SVM(options);
