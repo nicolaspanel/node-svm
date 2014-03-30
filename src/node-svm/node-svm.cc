@@ -1,6 +1,6 @@
 
 #include "node-svm.h"
-#include "train-worker.h"
+#include "training-job.h"
 
 Persistent<Function> NodeSvm::constructor;
 
@@ -63,7 +63,7 @@ NAN_METHOD(NodeSvm::Train) {
   assert(args[1]->IsFunction());
   Local<Array> dataset = Array::Cast(*args[0]->ToObject());
   NanCallback *callback = new NanCallback(args[1].As<Function>());
-  NanAsyncQueueWorker(new TrainWorker(dataset, obj, callback));
+  NanAsyncQueueWorker(new TrainingJob(dataset, obj, callback));
   NanReturnUndefined();
 }
 

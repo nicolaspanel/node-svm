@@ -1,13 +1,13 @@
-#ifndef _TRAIN_WORKER_H
-#define _TRAIN_WORKER_H
+#ifndef _TRAINING_JOB_H
+#define _TRAINING_JOB_H
 
 #include "../common.h"
 #include "node-svm.h"
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 
-class TrainWorker : public NanAsyncWorker {
+class TrainingJob : public NanAsyncWorker {
 public:
-  TrainWorker(Local<Array> dataset, NodeSvm *obj, NanCallback *callback) : NanAsyncWorker(callback){
+  TrainingJob(Local<Array> dataset, NodeSvm *obj, NanCallback *callback) : NanAsyncWorker(callback){
     problem = new svm_problem();
     problem->l = dataset->Length();
     problem->y = Malloc(double,problem->l);
@@ -19,13 +19,13 @@ public:
       Local<Array> x = Array::Cast(*t->Get(String::New("x"))->ToObject());
       problem->x[i] = Malloc(struct svm_node,x->Length());
       for (unsigned j=0; j < x->Length(); j++){
-        problem->x[i][j].index = j;
+        problem->x[i][j].index = j+1;
         problem->x[i][j].value = x->Get(j)->NumberValue();
       }
     }
     _obj = obj;
   }
-  ~TrainWorker() {}
+  ~TrainingJob() {}
 
   // Executed inside the worker-thread.
   // It is not safe to access V8, or V8 data structures
@@ -51,4 +51,4 @@ public:
    NodeSvm *_obj;
  };
 
-#endif /* _TRAIN_WORKER_H */
+#endif /* _TRAINING_JOB_H */
