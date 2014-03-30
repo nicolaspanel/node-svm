@@ -3,8 +3,7 @@
   (see http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf, p.9).
 */
 
-var async = require('async'), 
-    libsvm = require('../lib/nodesvm');
+var libsvm = require('../lib/nodesvm');
 
 var c_svc = new libsvm.SVM({
   type: libsvm.SvmTypes.C_SVC,
