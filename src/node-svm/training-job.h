@@ -34,6 +34,7 @@ public:
   void Execute () {
     svm_parameter *params= _obj->params;
     _obj->model = svm_train(training_set, params);
+    svm_save_model("test.model", _obj->model);
   }
 
    // Executed when the async work is complete

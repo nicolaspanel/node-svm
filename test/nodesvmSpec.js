@@ -3,7 +3,7 @@
 var assert = require('assert'), 
     should = require('should'),
     _ = require('underscore'),
-    libsvm = require('../lib/node-svm');
+    libsvm = require('../lib/nodesvm');
 
 var xorProblem = [
   { x: [0, 0], y: 0 },
@@ -108,7 +108,7 @@ describe('#readProblem', function(){
     this.timeout(200);
     libsvm.readProblem('./examples/datasets/svmguide1.ds', function(problem, nbFeature){
       nbFeature.should.equal(4);
-      problem.length.should.equal(3090);
+      problem.length.should.equal(3089);
       done();
     });
   });
