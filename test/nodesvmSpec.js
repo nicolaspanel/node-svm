@@ -31,14 +31,14 @@ describe('SVM', function(){
     
     beforeEach(function(){
       svm = new libsvm.SVM({
-          type: libsvm.SvmTypes.C_SVC,
-          kernel: new libsvm.RadialBasisFunctionKernel(1),
-          C: 0.8
+        type: libsvm.SvmTypes.C_SVC,
+        kernel: new libsvm.RadialBasisFunctionKernel(1),
+        C: 0.8
       });
     });
     
     it('should have a reference to the NodeSVM obj ', function(){
-      svm._node_svm.should.be.ok;
+      svm._nodeSvm.should.be.ok;
     });
 
     it('should have type set to C_SVC ', function(){
