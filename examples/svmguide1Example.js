@@ -19,14 +19,15 @@ libsvm.readProblem('./examples/datasets/svmguide1.ds', function(trainingset){
     
     // load test set and normalize it with previous mu and sigma
     libsvm.readProblem('./examples/datasets/svmguide1.t.ds', function(testset){
-      libsvm.meanNormalize({testset: testset, mu: mu, sigma: sigma}, function(normTestset){
+      libsvm.meanNormalize({problem: testset, mu: mu, sigma: sigma}, function(normTestset){
         
         console.log("problems loaded. Start training...");
-        c_svc.train(trainingset, function(){
+        c_svc.train(normTrainingset, function(){
           
-          c_svc.getAccuracy(testset, function(accuracy){
+          console.log("svm trained. Ask for accuracy...");
+          c_svc.getAccuracy(normTestset, function(accuracy){
             
-            console.log("svm trained. Accuracy = %d%", accuracy);
+            console.log("Accuracy = %d%", accuracy);
           
           });
 

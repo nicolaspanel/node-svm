@@ -35,17 +35,15 @@ public:
   void Execute () {
     int correct = 0;
     int total = 0;
-    int j;
     
     for (unsigned i=0; i < nb_examples; i++) {
-      double target_label, predict_label;
-      predict_label = svm_predict(model,test_set->x[i]);
+      double predict_label = svm_predict(model,test_set->x[i]);
 
       if(predict_label == test_set->y[i])
         ++correct;
       ++total;
     }
-    accuracy = (double)correct/total;
+    accuracy = (double)correct/(double)total;
   }
 
    // Executed when the async work is complete

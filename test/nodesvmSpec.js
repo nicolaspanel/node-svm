@@ -121,6 +121,7 @@ describe('#readProblem', function(){
 });
 
 describe('#meanNormalize', function(){  
+  
   it('should be able to Mean Normalize the xor problem', function (done) {
     libsvm.meanNormalize({problem: xorProblem}, function(problem, mu, sigma){
       mu.should.eql([0.5, 0.5]);
