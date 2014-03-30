@@ -3,7 +3,7 @@ node-svm
 
 `node-svm` is a wrapper of [libsvm](http://www.csie.ntu.edu.tw/~cjlin/libsvm/) (Support Vector Machine library) for nodejs.
 
-**Status** : alpha version (0.1.1).
+**Status** : alpha version (0.1.2).
 [![Build Status](https://travis-ci.org/nicolaspanel/node-svm.png)](https://travis-ci.org/nicolaspanel/node-svm)
 
 # Installation
