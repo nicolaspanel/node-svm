@@ -39,7 +39,7 @@ BTW, there's no reason to use SVM to figure out XOR...
 ## Arguments and options
 Options with default values are listed below : 
 ```javascript
-var options = {
+var args = {
   //required
   type        : ... // see below 
   kernel      : ... // see below
@@ -51,7 +51,7 @@ var options = {
   shrinking   : true, // whether to use the shrinking heuristics
   probability : true  //  do probability estimates
 };
-var svm = new libsvm.SVM(options);
+var svm = new libsvm.SVM(args);
 ```
 Available kernels are  : 
  * Linear     : `var kernel = new libsvm.LinearKernel();`
