@@ -36,13 +36,14 @@ xorProblem.forEach(function(ex){
 BTW, there's no reason to use SVM to figure out XOR...
 
 
-## Options
+## Arguments and options
 Options with default values are listed below : 
 ```javascript
 var options = {
   //required
   type        : ... // see below 
   kernel      : ... // see below
+  C           : ... // required for C_SVC, epsilon_VR, and nu-SVR
   
   // options
   cacheSize   : 100,  //MB
@@ -59,24 +60,13 @@ Available kernels are  :
  * Sigmoid    : `var kernel = new libsvm.SigmoidKernel(gamma, r);`
 
 Available SVM are : 
- * **C_SVC** : classification SVM requiring `C` parameter to be within 0 to infinity. Ex : 
-```javascript
-var c_svc = new libsvm.SVM({
-  type: libsvm.SvmTypes.C_SVC,
-  kernel: ...
-  C: 9, // REQUIRED
-  ...
-});
-``` 
- * **NU_SVC** : classification SVM requiring `nu` parameter to be within 0 and 1. See difference between nu-SVC and C-SVC [here](http://www.csie.ntu.edu.tw/~cjlin/libsvm/faq.html#f411).  
- ```javascript
-var nu_svc = new libsvm.SVM({
-  type: libsvm.SvmTypes.C_SVC,
-  kernel: ...
-  nu: 0.5, // REQUIRED
-  ...
-});
- * ONE_CLASS, EPSILON_SVR, NU_SVR...
+ * `C_SVC`      : multi-class classification
+ * `NU_SVC`     : multi-class classification
+ * `ONE_CLASS`  : one-class SVM  
+ * `EPSILON_SVR`: regression
+ * `NU_SVR`     : regression
+
+Note : See difference between nu-SVC and C-SVC [here](http://www.csie.ntu.edu.tw/~cjlin/libsvm/faq.html#f411).  
 
 # How it work
 `node-svm` uses the official libsvm C++ library, version 3.17. It also provides helpers to facilitate its use in real projects.
