@@ -17,10 +17,10 @@ Here's an example of using it to approximate the XOR function
 ```javascript
 var libsvm = require('node-svm');
 var xorProblem = [
-  { x: [0, 0], y: 0 },
-  { x: [0, 1], y: 1 },
-  { x: [1, 0], y: 1 },
-  { x: [1, 1], y: 0 }
+  { x: [-1, -1], y: -1 },
+  { x: [-1, 1], y: 1 },
+  { x: [1, -1], y: 1 },
+  { x: [1, 1], y: -1 }
 ];
 var svm = new libsvm.SVM({
   type: libsvm.SvmTypes.C_SVC,
@@ -28,8 +28,8 @@ var svm = new libsvm.SVM({
   C: C
 });
 xorProblem.forEach(function(ex){
-  svm.predict(ex.x).should.equal(ex.y);        // !not always true
-  [0,1].should.containEql(svm.predict(ex.x));  // always true
+  svm.predict(ex.x).should.equal(ex.y);        // !!! NOT always true
+  [-1,1].should.containEql(svm.predict(ex.x));  // always true
 });
 
 ```
@@ -41,9 +41,9 @@ Options with default values are listed below :
 ```javascript
 var options = {
   //required
-  type        : libsvm.SvmTypes.C_SVC, // {C_SVC, NU_SVC, ONE_CLASS, EPSILON_SVR, NU_SVR}
-  kernel      : new libsvm.RadialBasisFunctionKernel(gamma), // see './lib/node-svm.js' for other kernels such as {LINEAR , POLY, SIGMOID}
-  C           : Required
+  type        : ... // see below 
+  kernel      : ... // see below
+  
   // options
   cacheSize   : 100,  //MB
   eps         : 1e-3, // tolerance of termination criterion 
@@ -52,6 +52,31 @@ var options = {
 };
 var svm = new libsvm.SVM(options);
 ```
+Available kernels are  : 
+ * Linear     : `var kernel = new libsvm.LinearKernel();`
+ * Polynomial : `var kernel = new libsvm.PolynomialKernel(degree, gamma, r);`
+ * RBF        : `var kernel = new libsvm.RadialBasisFunctionKernel(gamma);`
+ * Sigmoid    : `var kernel = new libsvm.SigmoidKernel(gamma, r);`
+
+Available SVM are : 
+ * **C_SVC** : classification SVM requiring `C` parameter to be within 0 to infinity. Ex : 
+```javascript
+var c_svc = new libsvm.SVM({
+  type: libsvm.SvmTypes.C_SVC,
+  kernel: ...
+  C: 9, // REQUIRED
+  ...
+});
+``` 
+ * **NU_SVC** : classification SVM requiring `nu` parameter to be within 0 and 1. See difference between nu-SVC and C-SVC [here](http://www.csie.ntu.edu.tw/~cjlin/libsvm/faq.html#f411).  
+ ```javascript
+var nu_svc = new libsvm.SVM({
+  type: libsvm.SvmTypes.C_SVC,
+  kernel: ...
+  nu: 0.5, // REQUIRED
+  ...
+});
+ * ONE_CLASS, EPSILON_SVR, NU_SVR...
 
 # How it work
 `node-svm` uses the official libsvm C++ library, version 3.17. It also provides helpers to facilitate its use in real projects.

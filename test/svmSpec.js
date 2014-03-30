@@ -66,14 +66,16 @@ describe('SVM', function(){
         svm.labels.should.eql([1, -1]);
       });
 
-      it('should be able to predict', function(){
-        svm.predict([-1, -1]).should.be.within(-1, 1);
+      it('should be able to predict classes', function(){
+        xorProblem.forEach(function(ex){
+          [-1,1].should.containEql(svm.predict(ex.x));  // ie mean y E {-1;1}
+        });
       });
 
 
       it('should be able to predict Async', function(done){
         svm.predictAsync([-1, -1], function(value){
-          value.should.be.within(-1, 1);
+          [-1,1].should.containEql(value);
           done();
         });
       });
