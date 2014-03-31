@@ -1,6 +1,5 @@
 
 #include "node-svm.h"
-#include "training-job.h"
 #include "accuracy-job.h"
 
 Persistent<Function> NodeSvm::constructor;
@@ -29,27 +28,69 @@ NAN_METHOD(NodeSvm::SetParameters) {
   NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
   
   assert(args[0]->IsObject());
-  Local<Object> parameters = *args[0]->ToObject();
+  Local<Object> params = *args[0]->ToObject();
   svm_parameter *svm_params = new svm_parameter();
-  svm_params->svm_type = parameters->Get(String::New("type"))->IntegerValue();
-  svm_params->kernel_type = parameters->Get(String::New("kernel"))->IntegerValue();
-  svm_params->degree = parameters->Get(String::New("degree"))->IntegerValue();
-  svm_params->gamma = parameters->Get(String::New("gamma"))->NumberValue();
-  svm_params->coef0 = parameters->Get(String::New("r"))->NumberValue();
+  svm_params->svm_type = C_SVC;
+  svm_params->kernel_type = RBF;
+  svm_params->degree = 3;
+  svm_params->gamma = 0;  // 1/num_features
+  svm_params->coef0 = 0;
+  svm_params->nu = 0.5;
+  svm_params->cache_size = 100;
+  svm_params->C = 1;
+  svm_params->eps = 1e-3;
+  svm_params->p = 0.1;
+  svm_params->shrinking = 1;
+  svm_params->probability = 0;
+  svm_params->nr_weight = 0;
+  svm_params->weight_label = NULL;
+  svm_params->weight = NULL;
+
+  if (params->Has(String::New("type"))){
+    svm_params->svm_type = params->Get(String::New("type"))->IntegerValue();
+  }
+  if (params->Has(String::New("kernel"))){
+    svm_params->kernel_type = params->Get(String::New("kernel"))->IntegerValue();
+  }
+  if (params->Has(String::New("degree"))){
+    svm_params->degree = params->Get(String::New("degree"))->IntegerValue();
+  }
+  if (params->Has(String::New("gamma"))){
+    svm_params->gamma = params->Get(String::New("gamma"))->NumberValue();
+  }
+  if (params->Has(String::New("r"))){
+    svm_params->coef0 = params->Get(String::New("r"))->NumberValue();
+  }
+  if (params->Has(String::New("C"))){
+    svm_params->C = params->Get(String::New("C"))->NumberValue();
+  }
+  if (params->Has(String::New("nu"))){
+    svm_params->nu = params->Get(String::New("nu"))->NumberValue();
+  }
+  if (params->Has(String::New("p"))){
+    svm_params->p = params->Get(String::New("p"))->NumberValue();
+  }
   
-  svm_params->cache_size = parameters->Get(String::New("cacheSize"))->NumberValue();
-  svm_params->eps = parameters->Get(String::New("eps"))->NumberValue();
-  svm_params->C = parameters->Get(String::New("C"))->NumberValue();
-  svm_params->nu = parameters->Get(String::New("nu"))->NumberValue();
-  svm_params->p = parameters->Get(String::New("p"))->NumberValue();
-  svm_params->shrinking = parameters->Get(String::New("shrinking"))->IntegerValue();
-  svm_params->probability = parameters->Get(String::New("probability"))->IntegerValue();
+  if (params->Has(String::New("cacheSize"))){
+    svm_params->cache_size = params->Get(String::New("cacheSize"))->NumberValue();
+  }
+  if (params->Has(String::New("eps"))){
+    svm_params->eps = params->Get(String::New("eps"))->NumberValue();
+  }
+  if (params->Has(String::New("shrinking"))){
+    svm_params->shrinking = params->Get(String::New("shrinking"))->IntegerValue();
+  }
+  if (params->Has(String::New("probability"))){
+    svm_params->probability = params->Get(String::New("probability"))->IntegerValue();
+  }
+  
 
   obj->params = svm_params;
   svm_problem *svm_prob = new svm_problem();
   svm_prob->l = 0;
   const char *error_msg;
   error_msg =  svm_check_parameter(svm_prob, svm_params);
+  std::cout << error_msg << std::endl;
   Local<String> error = String::New("");
   if (error_msg)
     error = String::New("Invalid parameters");
@@ -64,12 +105,36 @@ NAN_METHOD(NodeSvm::Train) {
   assert(obj->hasParameters());
   // chech params
   assert(args[0]->IsObject());
-  assert(args[1]->IsFunction());
 
   Local<Array> dataset = Array::Cast(*args[0]->ToObject());
-  NanCallback *callback = new NanCallback(args[1].As<Function>());
-  NanAsyncQueueWorker(new TrainingJob(dataset, obj, callback));
-  NanReturnUndefined();
+  assert(dataset->Length() > 0);
+  struct svm_problem *prob = libsvm::convert_data_to_problem(dataset);
+  assert(prob->l > 0);
+
+  svm_model *model = svm_train(prob, obj->params);
+  svm_save_model("test2.model", model);
+  obj->model = model;
+  
+  Local<Value> argv[] = {
+    
+  };
+  NanReturnValue(String::New("ko"));
+}
+
+NAN_METHOD(NodeSvm::GetKernelType) {
+  NanScope();
+  NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+  // check obj
+  assert(obj->hasParameters());
+  NanReturnValue(Number::New(obj->getKernelType()));
+}
+
+NAN_METHOD(NodeSvm::GetSvmType) {
+  NanScope();
+  NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+  // check obj
+  assert(obj->hasParameters());
+  NanReturnValue(Number::New(obj->getSvmType()));
 }
 
 NAN_METHOD(NodeSvm::GetAccuracy) {
@@ -83,8 +148,9 @@ NAN_METHOD(NodeSvm::GetAccuracy) {
   assert(args[1]->IsFunction());
   
   Local<Array> testset = Array::Cast(*args[0]->ToObject());
+  struct svm_problem *prob = libsvm::convert_data_to_problem(testset);
   NanCallback *callback = new NanCallback(args[1].As<Function>());
-  NanAsyncQueueWorker(new AccuracyJob(testset, obj, callback));
+  NanAsyncQueueWorker(new AccuracyJob(prob, obj->model, callback));
   NanReturnUndefined();
 }
 
@@ -183,16 +249,28 @@ void NodeSvm::Init(Handle<Object> exports){
   // prototype
   tpl->PrototypeTemplate()->Set(String::NewSymbol("setParameters"),
       FunctionTemplate::New(NodeSvm::SetParameters)->GetFunction());
+  
   tpl->PrototypeTemplate()->Set(String::NewSymbol("train"),
       FunctionTemplate::New(NodeSvm::Train)->GetFunction());
-   tpl->PrototypeTemplate()->Set(String::NewSymbol("getLabels"),
+  
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("getLabels"),
        FunctionTemplate::New(NodeSvm::GetLabels)->GetFunction());
-   tpl->PrototypeTemplate()->Set(String::NewSymbol("getAccuracy"),
+  
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("getSvmType"),
+       FunctionTemplate::New(NodeSvm::GetSvmType)->GetFunction());
+  
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("getKernelType"),
+       FunctionTemplate::New(NodeSvm::GetKernelType)->GetFunction());
+  
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("getAccuracy"),
        FunctionTemplate::New(NodeSvm::GetAccuracy)->GetFunction());
+  
   tpl->PrototypeTemplate()->Set(String::NewSymbol("predict"),
       FunctionTemplate::New(NodeSvm::Predict)->GetFunction());
+  
   tpl->PrototypeTemplate()->Set(String::NewSymbol("predictAsync"),
       FunctionTemplate::New(NodeSvm::PredictAsync)->GetFunction());
+  
   tpl->PrototypeTemplate()->Set(String::NewSymbol("predictProbabilities"),
       FunctionTemplate::New(NodeSvm::PredictProbabilities)->GetFunction());
 

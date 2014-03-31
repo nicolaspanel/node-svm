@@ -1,30 +1,14 @@
 #ifndef _ACCURACY_JOB_H
 #define _ACCURACY_JOB_H
 
-#include "../common.h"
 #include "node-svm.h"
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 
 class AccuracyJob : public NanAsyncWorker {
 public:
-  AccuracyJob(Local<Array> testset, NodeSvm *obj, NanCallback *callback) : NanAsyncWorker(callback){
-    nb_examples = testset->Length();
-    test_set = new svm_problem();
-    test_set->l = nb_examples;
-    test_set->y = Malloc(double,nb_examples);
-    test_set->x = Malloc(struct svm_node *,nb_examples);
-    
-    for (unsigned i=0; i < nb_examples; i++) {
-      Local<Object> t = testset->Get(i)->ToObject();
-      test_set->y[i] = t->Get(String::New("y"))->NumberValue();
-      Local<Array> x = Array::Cast(*t->Get(String::New("x"))->ToObject());
-      test_set->x[i] = Malloc(struct svm_node,x->Length());
-      for (unsigned j=0; j < x->Length(); j++){
-        test_set->x[i][j].index = j+1;
-        test_set->x[i][j].value = x->Get(j)->NumberValue();
-      }
-    }
-    model = obj->model;
+  AccuracyJob(svm_problem *prob , svm_model *model, NanCallback *callback) : NanAsyncWorker(callback){
+    test_set = prob;
+    _model = model;
   }
   ~AccuracyJob() {}
 
@@ -36,8 +20,8 @@ public:
     int correct = 0;
     int total = 0;
     
-    for (unsigned i=0; i < nb_examples; i++) {
-      double predict_label = svm_predict(model,test_set->x[i]);
+    for (unsigned i=0; i < test_set->l; i++) {
+      double predict_label = svm_predict(_model,test_set->x[i]);
 
       if(predict_label == test_set->y[i])
         ++correct;
@@ -57,8 +41,7 @@ public:
      callback->Call(1, argv);
    };
   private:
-   unsigned nb_examples;
-   svm_model *model;
+   svm_model *_model;
    svm_problem *test_set;
    double accuracy;
  };

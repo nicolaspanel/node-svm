@@ -1,9 +1,10 @@
-#include "common.h"
+#ifndef _LIBSVM_ADDON_H
+#define _LIBSVM_ADDON_H
 #include "node-svm/node-svm.h"
 
 extern "C" {
   void InitAll(Handle<Object> exports) {
-    v8::HandleScope scope;
+    HandleScope scope;
     NodeSvm::Init(exports);
   }
 }
@@ -11,3 +12,5 @@ extern "C" {
 #ifdef NODE_MODULE
 NODE_MODULE(addon, InitAll)
 #endif
+
+#endif /* _LIBSVM_ADDON_H */

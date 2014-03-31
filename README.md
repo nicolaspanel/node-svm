@@ -48,8 +48,6 @@ var args = {
   // options
   cacheSize   : 100,  //MB
   eps         : 1e-3, // tolerance of termination criterion 
-  shrinking   : true, // whether to use the shrinking heuristics
-  probability : true  //  do probability estimates
 };
 var svm = new libsvm.SVM(args);
 ```

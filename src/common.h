@@ -4,11 +4,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 #include <node.h>
 #include <assert.h>
 #include "../node_modules/nan/nan.h"
 #include "./libsvm-317/svm.h"
 
+#define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 
 using namespace v8;
 
@@ -63,6 +65,33 @@ inline char* LIBSVM_STRING_KEY(Handle<Object> o, const char* name) {
   char* v = new char[value->ToString()->Length()+1];
   strcpy(v, *(String::AsciiValue(value)));
   return v;
+}
+
+/**
+ * namespace in which I declare most of the stuff I need
+ */
+namespace libsvm {
+  inline struct svm_problem *convert_data_to_problem(Local<Array> data){
+    unsigned nb_examples = data->Length();
+    std::cout << "Problem contains" << nb_examples << "examples" << std::endl;
+    svm_problem *prob = new svm_problem();
+    prob->l = nb_examples;
+    prob->y = Malloc(double,nb_examples);
+    prob->x = Malloc(struct svm_node *,nb_examples);
+    
+    for (unsigned i=0; i < nb_examples; i++) {
+      Local<Object> t = data->Get(i)->ToObject();
+      prob->y[i] = t->Get(String::New("y"))->NumberValue();
+      
+      Local<Array> x = Array::Cast(*t->Get(String::New("x"))->ToObject());
+      prob->x[i] = Malloc(struct svm_node,x->Length());
+      for (unsigned j=0; j < x->Length(); j++){
+        prob->x[i][j].index = j+1;
+        prob->x[i][j].value = x->Get(j)->NumberValue();
+      }
+    }
+    return prob;
+  }
 }
 
 #endif /* _LIBSVM_COMMON_H */
