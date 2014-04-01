@@ -108,16 +108,12 @@ NAN_METHOD(NodeSvm::Train) {
 
   Local<Array> dataset = Array::Cast(*args[0]->ToObject());
   assert(dataset->Length() > 0);
-  struct svm_problem *prob = libsvm::convert_data_to_problem(dataset);
-  assert(prob->l > 0);
-
-  svm_model *model = svm_train(prob, obj->params);
-  svm_save_model("test2.model", model);
-  obj->model = model;
+  struct svm_problem prob = libsvm::convert_data_to_problem(dataset);
+  assert(prob.l > 0);
   
-  Local<Value> argv[] = {
-    
-  };
+
+  svm_model *model = svm_train(&prob, obj->params);
+  obj->model = model;
   NanReturnValue(String::New("ko"));
 }
 
@@ -148,9 +144,9 @@ NAN_METHOD(NodeSvm::GetAccuracy) {
   assert(args[1]->IsFunction());
   
   Local<Array> testset = Array::Cast(*args[0]->ToObject());
-  struct svm_problem *prob = libsvm::convert_data_to_problem(testset);
+  struct svm_problem prob = libsvm::convert_data_to_problem(testset);
   NanCallback *callback = new NanCallback(args[1].As<Function>());
-  NanAsyncQueueWorker(new AccuracyJob(prob, obj->model, callback));
+  NanAsyncQueueWorker(new AccuracyJob(&prob, obj->model, callback));
   NanReturnUndefined();
 }
 
