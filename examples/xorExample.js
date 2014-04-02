@@ -9,7 +9,7 @@ var xorProblem = [
 
 var svm = new libsvm.SVM({
   type: libsvm.SvmTypes.C_SVC,
-  kernel: new libsvm.RadialBasisFunctionKernel(2),
+  kernel: new libsvm.RadialBasisFunctionKernel(0.5),
   C: 2
 });
 

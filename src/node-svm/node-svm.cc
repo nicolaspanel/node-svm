@@ -80,9 +80,9 @@ NAN_METHOD(NodeSvm::SetParameters) {
   if (params->Has(String::New("shrinking"))){
     svm_params->shrinking = params->Get(String::New("shrinking"))->IntegerValue();
   }
-  if (params->Has(String::New("probability"))){
-    svm_params->probability = params->Get(String::New("probability"))->IntegerValue();
-  }
+  // if (params->Has(String::New("probability"))){
+  //   svm_params->probability = params->Get(String::New("probability"))->IntegerValue();
+  // }
   
 
   obj->params = svm_params;
@@ -111,8 +111,8 @@ NAN_METHOD(NodeSvm::Train) {
   struct svm_problem prob = libsvm::convert_data_to_problem(dataset);
   assert(prob.l > 0);
   
-
   svm_model *model = svm_train(&prob, obj->params);
+  svm_save_model("test.model", model);
   obj->model = model;
   NanReturnValue(String::New("ko"));
 }
@@ -175,10 +175,22 @@ NAN_METHOD(NodeSvm::Predict) {
   assert(args[0]->IsObject());
   
   Local<Array> dataset = Array::Cast(*args[0]->ToObject());
-  svm_node *x = Malloc(struct svm_node,dataset->Length());
+  int counter = 0;
   for (unsigned j=0; j < dataset->Length(); j++){
-    x[j].index = j;
-    x[j].value = dataset->Get(j)->NumberValue();
+    if (dataset->Get(j)->NumberValue() != 0){
+      counter++;
+    }
+  }
+
+  svm_node *x = Malloc(struct svm_node,counter);
+  int k =0;
+  for (unsigned j=0; j < dataset->Length(); j++){
+    if (dataset->Get(j)->NumberValue() != 0){
+      x[k].index = j+1;
+      x[k].value = dataset->Get(j)->NumberValue();
+      k++;
+    }
+    
   }
   double prediction = svm_predict(obj->model, x);
   NanReturnValue(Number::New(prediction));

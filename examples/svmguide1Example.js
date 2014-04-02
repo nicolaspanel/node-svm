@@ -11,6 +11,11 @@ var c_svc = new libsvm.SVM({
   C: 1
 });
 
+
+libsvm.readAndNormalizeProblemAsync('./examples/datasets/svmguide1.ds', function(svmguide1){    
+  c_svc.train(svmguide1.problem);
+});
+
 // // load svmgui1 problem
 // libsvm.readAndNormalizeProblemAsync('./examples/datasets/svmguide1.ds', function(svmguide1){    
 //   // load test set and normalize it with previous mu and sigma

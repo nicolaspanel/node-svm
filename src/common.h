@@ -10,8 +10,6 @@
 #include "../node_modules/nan/nan.h"
 #include "./libsvm-317/svm.h"
 
-#define Malloc(type,n) (type *)malloc((n)*sizeof(type))
-
 using namespace v8;
 
 inline Handle<Value> LIBSVM_Exception(const char *msg){
@@ -84,13 +82,15 @@ namespace libsvm {
       Local<Object> ex = data->Get(i)->ToObject();
       Local<Array> x = Array::Cast(*ex->Get(String::New("x"))->ToObject());
       for (unsigned j=0; j < x->Length(); j++){
-        elements++;
+        if(x->Get(j)->NumberValue() != 0){
+          elements++;
+        }
       }
     }
 
-    prob.y = Malloc(double,nb_examples);
-    prob.x = Malloc(struct svm_node *,nb_examples);
-    struct svm_node *x_space = Malloc(struct svm_node,elements);
+    prob.y = (double *)malloc((nb_examples)*sizeof(double));
+    prob.x = (svm_node **)malloc((nb_examples)*sizeof(svm_node *));
+    struct svm_node *x_space = (svm_node *)malloc((elements)*sizeof(svm_node));
     int k =0;
     for (unsigned i=0; i < nb_examples; i++) {
       Local<Object> ex = data->Get(i)->ToObject();
@@ -99,9 +99,11 @@ namespace libsvm {
       Local<Array> x = Array::Cast(*ex->Get(String::New("x"))->ToObject());
       prob.x[i] = &x_space[k];
       for (unsigned j=0; j < x->Length(); j++){
-        x_space[k].index = j+1;
-        x_space[k].value = x->Get(j)->NumberValue();
-        k++;
+        if(x->Get(j)->NumberValue() != 0){
+          x_space[k].index = j+1;
+          x_space[k].value = x->Get(j)->NumberValue();
+          k++;
+        }
       }
     }
     return prob;
