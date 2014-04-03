@@ -1,10 +1,102 @@
 
 #include "node-svm.h"
-#include "accuracy-job.h"
+
+Handle<Value> VException(const char *msg)
+{
+  NanScope();
+  return ThrowException(Exception::Error(String::New(msg)));
+}
+
+Handle<Value> getSvmProblemFromData(Local<Array> dataset, svm_problem *prob){
+  NanScope();
+  prob->l = 0;
+
+  if (dataset->Length() == 0)
+    return VException("Training data set is empty");
+  else
+    fprintf(stderr,"problem contains %d examples\n",dataset->Length());
+  
+
+  // check data structure and assign Y
+  prob->l= dataset->Length();
+  prob->y = new double[prob->l];
+  int *nb_features = new int[dataset->Length()];
+  for (unsigned i=0; i < dataset->Length(); i++) {
+    Local<Value> t = dataset->Get(i);
+    if (!t->IsArray()) {
+      return VException("First argument should be 2d-array (training data set)");
+    }
+    Local<Array> ex = Array::Cast(*t);
+    if (ex->Length() != 2) {
+      return VException("Incorrect dataset (should be composed of two columns)");
+    }
+
+    Local<Value> tin = ex->Get(0);
+    Local<Value> tout = ex->Get(1);
+    if (!tin->IsArray() || !tout->IsNumber()) {
+      return VException("Incorrect dataset (first column should be an array and second column should be a number)");
+    }
+    Local<Array> x = Array::Cast(*tin);
+    double y = tout->NumberValue();
+    prob->y[i] = y;
+    fprintf(stderr,"%g ",y);
+    int n = 0;
+    for (unsigned j=0; j < x->Length(); j++) {
+      double xi = x->Get(j)->NumberValue();
+      fprintf(stderr,"%d:%g ",j+1, xi);
+      if (xi!=0){
+        n++;
+      }
+    }
+    fprintf(stderr,"(%d xies)\n",n);
+    nb_features[i] = n;
+  }
+
+  // Asign X
+  prob->x = new svm_node*[dataset->Length()];
+  for(unsigned i = 0; i < dataset->Length(); i++) {
+    prob->x[i] = new svm_node[nb_features[i]];
+    Local<Array> ex = Array::Cast(*dataset->Get(i));
+    Local<Array> x = Array::Cast(*ex->Get(0));
+    int k = 0;
+    for(unsigned j = 0; j < x->Length(); ++j) {
+      double xi = x->Get(j)->NumberValue();
+      if (xi != 0){
+        prob->x[i][k].index = j+1;
+        prob->x[i][k].value = xi;
+        k++;
+      }
+    }
+  }
+  delete[] nb_features;
+  NanReturnUndefined();
+}
+
+// Handle<Value> ConvertDataToX(Local<Array> dataset, svm_node *x){
+//   NanScope();
+//   int counter = 0;
+//   for (unsigned j=0; j < dataset->Length(); j++){
+//     if (dataset->Get(j)->NumberValue() != 0){
+//       counter++;
+//     }
+//   }
+
+//   x = new svm_node[counter];
+//   int k =0;
+//   for (unsigned j=0; j < dataset->Length(); j++){
+//     double xi = dataset->Get(j)->NumberValue();
+//     if (xi != 0){
+//       x[k].index = j+1;
+//       x[k].value = xi;
+//       k++;
+//     }
+//   }
+//   NanReturnUndefined();
+// }
 
 Persistent<Function> NodeSvm::constructor;
+NodeSvm::~NodeSvm(){
 
-NodeSvm::~NodeSvm() {
 }
 
 NAN_METHOD(NodeSvm::New) {
@@ -29,7 +121,7 @@ NAN_METHOD(NodeSvm::SetParameters) {
   
   assert(args[0]->IsObject());
   Local<Object> params = *args[0]->ToObject();
-  svm_parameter *svm_params = new svm_parameter();
+  struct svm_parameter *svm_params = new svm_parameter();
   svm_params->svm_type = C_SVC;
   svm_params->kernel_type = RBF;
   svm_params->degree = 3;
@@ -80,16 +172,13 @@ NAN_METHOD(NodeSvm::SetParameters) {
   if (params->Has(String::New("shrinking"))){
     svm_params->shrinking = params->Get(String::New("shrinking"))->IntegerValue();
   }
-  // if (params->Has(String::New("probability"))){
-  //   svm_params->probability = params->Get(String::New("probability"))->IntegerValue();
-  // }
-  
+  if (params->Has(String::New("probability"))){
+    //svm_params->probability = params->Get(String::New("probability"))->IntegerValue();
+  }
 
   obj->params = svm_params;
-  svm_problem *svm_prob = new svm_problem();
-  svm_prob->l = 0;
   const char *error_msg;
-  error_msg =  svm_check_parameter(svm_prob, svm_params);
+  error_msg =  svm_check_parameter(svm_params);
   std::cout << error_msg << std::endl;
   Local<String> error = String::New("");
   if (error_msg)
@@ -107,13 +196,21 @@ NAN_METHOD(NodeSvm::Train) {
   assert(args[0]->IsObject());
 
   Local<Array> dataset = Array::Cast(*args[0]->ToObject());
-  assert(dataset->Length() > 0);
-  struct svm_problem prob = libsvm::convert_data_to_problem(dataset);
-  assert(prob.l > 0);
   
-  svm_model *model = svm_train(&prob, obj->params);
+  struct svm_problem *prob = new svm_problem();
+  getSvmProblemFromData(dataset, prob);
+  
+  svm_model *model = svm_train(prob, obj->params);
   svm_save_model("test.model", model);
+  assert(model->l > 0);
   obj->model = model;
+  // delete problem
+  for (int i = 0; i< prob->l; i++) {
+    delete[] prob->x[i];
+  }
+  delete[] prob->x;
+  delete[] prob->y;
+  delete prob;
   NanReturnValue(String::New("ko"));
 }
 
@@ -141,13 +238,21 @@ NAN_METHOD(NodeSvm::GetAccuracy) {
   assert(obj->isClassificationSVM());
   // chech params
   assert(args[0]->IsObject());
-  assert(args[1]->IsFunction());
   
   Local<Array> testset = Array::Cast(*args[0]->ToObject());
-  struct svm_problem prob = libsvm::convert_data_to_problem(testset);
-  NanCallback *callback = new NanCallback(args[1].As<Function>());
-  NanAsyncQueueWorker(new AccuracyJob(&prob, obj->model, callback));
-  NanReturnUndefined();
+  // struct svm_problem *prob = new svm_problem(); 
+  // //getSvmProblemFromData(testset, prob);
+  
+  // // TODO : Evaluate accuracy
+
+  // // delete problem
+  // for (int i = 0; i< prob->l; i++) {
+  //   delete[] prob->x[i];
+  // }
+  // delete[] prob->x;
+  // delete[] prob->y;
+  // delete prob;
+  NanReturnValue(Number::New(0));
 }
 
 NAN_METHOD(NodeSvm::GetLabels) {
@@ -175,25 +280,13 @@ NAN_METHOD(NodeSvm::Predict) {
   assert(args[0]->IsObject());
   
   Local<Array> dataset = Array::Cast(*args[0]->ToObject());
-  int counter = 0;
-  for (unsigned j=0; j < dataset->Length(); j++){
-    if (dataset->Get(j)->NumberValue() != 0){
-      counter++;
-    }
-  }
+  // svm_node *x;
+  // ConvertDataToX(dataset, x);
 
-  svm_node *x = Malloc(struct svm_node,counter);
-  int k =0;
-  for (unsigned j=0; j < dataset->Length(); j++){
-    if (dataset->Get(j)->NumberValue() != 0){
-      x[k].index = j+1;
-      x[k].value = dataset->Get(j)->NumberValue();
-      k++;
-    }
-    
-  }
-  double prediction = svm_predict(obj->model, x);
-  NanReturnValue(Number::New(prediction));
+  // double prediction = svm_predict(obj->model, x);
+
+  // delete[] x;
+  NanReturnValue(Number::New(0));
 }
 
 NAN_METHOD(NodeSvm::PredictAsync) {
@@ -207,18 +300,18 @@ NAN_METHOD(NodeSvm::PredictAsync) {
   assert(args[1]->IsFunction());
 
   Local<Array> dataset = Array::Cast(*args[0]->ToObject());
-  svm_node *x = Malloc(struct svm_node,dataset->Length());
-  for (unsigned j=0; j < dataset->Length(); j++){
-    x[j].index = j;
-    x[j].value = dataset->Get(j)->NumberValue();
-  }
-  NanCallback *callback = new NanCallback(args[1].As<Function>());
+  // svm_node *x;
+  // ConvertDataToX(dataset, x);
 
-  double prediction = svm_predict(obj->model, x);
-  Local<Value> argv[] = {
-    Number::New(prediction)
-  };
-  callback->Call(1, argv);
+  // NanCallback *callback = new NanCallback(args[1].As<Function>());
+
+  // double prediction = svm_predict(obj->model, x);
+  // Local<Value> argv[] = {
+  //   Number::New(prediction)
+  // };
+  // callback->Call(1, argv);
+
+  // delete[] x;
   NanReturnUndefined();
 }
 
@@ -233,18 +326,18 @@ NAN_METHOD(NodeSvm::PredictProbabilities) {
   assert(args[0]->IsObject());
   
   Local<Array> dataset = Array::Cast(*args[0]->ToObject());
-  svm_node *x = Malloc(struct svm_node,dataset->Length());
-  for (unsigned j=0; j < dataset->Length(); j++){
-    x[j].index = j;
-    x[j].value = dataset->Get(j)->NumberValue();
-  }
-  double *prob_estimates = Malloc(double,obj->model->nr_class);
-  svm_predict_probability(obj->model,x,prob_estimates);
-  // Create a new empty array.
+  // svm_node *x;
+  // ConvertDataToX(dataset, x);
+  
+  // double *prob_estimates = new double[obj->model->nr_class];
+  // svm_predict_probability(obj->model,x,prob_estimates);
+  // // Create a new empty array.
   Handle<Array> probs = Array::New(obj->model->nr_class);
   for (int j=0; j < obj->model->nr_class; j++){
-    probs->Set(j, Number::New(prob_estimates[j]));
+    probs->Set(j, Number::New(j));
   }
+  // delete[] prob_estimates;
+  // delete[] x;
   NanReturnValue(probs);
 }
 

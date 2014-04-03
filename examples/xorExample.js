@@ -1,10 +1,16 @@
 var libsvm = require('../lib/nodesvm');
 
 var xorProblem = [
-  { x: [0, 0], y: 0 },
-  { x: [0, 1], y: 1 },
-  { x: [1, 0], y: 1 },
-  { x: [1, 1], y: 0 }
+  [[0, 0], 0],
+  [[0, 1], 1],
+  [[1, 0], 1],
+  [[1, 1], 0]
+];
+var xorNormProblem = [
+  [[-1, -1], 0],
+  [[-1,  1], 1],
+  [[ 1, -1], 1],
+  [[ 1,  1], 0]
 ];
 
 var svm = new libsvm.SVM({
@@ -16,5 +22,5 @@ var svm = new libsvm.SVM({
 svm.train(xorProblem);
 console.log("xor trainned");
 xorProblem.forEach(function(ex){
-  console.log("%d XOR %d => %d", ex.x[0], ex.x[1], svm.predict(ex.x));
+  console.log("%d XOR %d => %d", ex[0][0], ex[0][1], svm.predict(ex[0]));
 });

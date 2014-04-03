@@ -65,49 +65,4 @@ inline char* LIBSVM_STRING_KEY(Handle<Object> o, const char* name) {
   return v;
 }
 
-/**
- * namespace in which I declare most of the stuff I need
- */
-namespace libsvm {
-  inline struct svm_problem convert_data_to_problem(Local<Array> data){
-    
-    unsigned nb_examples = data->Length();
-    std::cout << "Problem contains" << nb_examples << "examples" << std::endl;
-    struct svm_problem prob;
-    prob.l = nb_examples;
-    if (prob.l == 0)
-      return prob;
-    int elements = 0;
-    for (unsigned i=0; i < nb_examples; i++) {
-      Local<Object> ex = data->Get(i)->ToObject();
-      Local<Array> x = Array::Cast(*ex->Get(String::New("x"))->ToObject());
-      for (unsigned j=0; j < x->Length(); j++){
-        if(x->Get(j)->NumberValue() != 0){
-          elements++;
-        }
-      }
-    }
-
-    prob.y = (double *)malloc((nb_examples)*sizeof(double));
-    prob.x = (svm_node **)malloc((nb_examples)*sizeof(svm_node *));
-    struct svm_node *x_space = (svm_node *)malloc((elements)*sizeof(svm_node));
-    int k =0;
-    for (unsigned i=0; i < nb_examples; i++) {
-      Local<Object> ex = data->Get(i)->ToObject();
-      prob.y[i] = ex->Get(String::New("y"))->NumberValue();
-      
-      Local<Array> x = Array::Cast(*ex->Get(String::New("x"))->ToObject());
-      prob.x[i] = &x_space[k];
-      for (unsigned j=0; j < x->Length(); j++){
-        if(x->Get(j)->NumberValue() != 0){
-          x_space[k].index = j+1;
-          x_space[k].value = x->Get(j)->NumberValue();
-          k++;
-        }
-      }
-    }
-    return prob;
-  }
-}
-
 #endif /* _LIBSVM_COMMON_H */
