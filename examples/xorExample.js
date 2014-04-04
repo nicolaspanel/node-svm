@@ -16,7 +16,7 @@ var xorNormProblem = [
 var svm = new libsvm.SVM({
   type: libsvm.SvmTypes.C_SVC,
   kernel: new libsvm.RadialBasisFunctionKernel(0.5),
-  C: 2
+  C: 1
 });
 
 svm.train(xorProblem);

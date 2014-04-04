@@ -3,7 +3,7 @@ node-svm
 
 `node-svm` is a wrapper of [libsvm](http://www.csie.ntu.edu.tw/~cjlin/libsvm/) (Support Vector Machine library) for nodejs.
 
-**Status** : under development (0.1.5).
+**Status** : alpha (0.2.0).
 [![Build Status](https://travis-ci.org/nicolaspanel/node-svm.png)](https://travis-ci.org/nicolaspanel/node-svm)
 
 # Installation
@@ -17,23 +17,22 @@ Here's an example of using it to approximate the XOR function
 ```javascript
 var libsvm = require('node-svm');
 var xorProblem = [
-  { x: [-1, -1], y: -1 },
-  { x: [-1,  1], y:  1 },
-  { x: [ 1, -1], y:  1 },
-  { x: [ 1,  1], y: -1 }
+  [[0, 0], 0],
+  [[0, 1], 1],
+  [[1, 0], 1],
+  [[1, 1], 0]
 ];
 var svm = new libsvm.SVM({
   type: libsvm.SvmTypes.C_SVC,
-  kernel: new libsvm.RadialBasisFunctionKernel(gamma),
-  C: C
+  kernel: new libsvm.RadialBasisFunctionKernel(0.5),
+  C: 2.0
 });
 xorProblem.forEach(function(ex){
-  svm.predict(ex.x).should.equal(ex.y);        // !!! NOT always true
-  [-1,1].should.containEql(svm.predict(ex.x));  // always true
+  svm.predict(ex[0]).should.equal(ex.y);
 });
 
 ```
-BTW, there's no reason to use SVM to figure out XOR...
+Note : There's no reason to use SVM to figure out XOR BTW...
 
 
 ## Arguments and options

@@ -1,0 +1,13 @@
+svm_type c_svc
+kernel_type rbf
+gamma 0.5
+nr_class 2
+total_sv 4
+rho 0
+label 0 1
+nr_sv 2 2
+SV
+1 
+1 1:1 2:1 
+-1 2:1 
+-1 1:1 

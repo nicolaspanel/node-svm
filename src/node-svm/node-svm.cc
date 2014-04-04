@@ -1,100 +1,8 @@
 
 #include "node-svm.h"
 
-Handle<Value> VException(const char *msg)
-{
-  NanScope();
-  return ThrowException(Exception::Error(String::New(msg)));
-}
-
-Handle<Value> getSvmProblemFromData(Local<Array> dataset, svm_problem *prob){
-  NanScope();
-  prob->l = 0;
-
-  if (dataset->Length() == 0)
-    return VException("Training data set is empty");
-  else
-    fprintf(stderr,"problem contains %d examples\n",dataset->Length());
-  
-
-  // check data structure and assign Y
-  prob->l= dataset->Length();
-  prob->y = new double[prob->l];
-  int *nb_features = new int[dataset->Length()];
-  for (unsigned i=0; i < dataset->Length(); i++) {
-    Local<Value> t = dataset->Get(i);
-    if (!t->IsArray()) {
-      return VException("First argument should be 2d-array (training data set)");
-    }
-    Local<Array> ex = Array::Cast(*t);
-    if (ex->Length() != 2) {
-      return VException("Incorrect dataset (should be composed of two columns)");
-    }
-
-    Local<Value> tin = ex->Get(0);
-    Local<Value> tout = ex->Get(1);
-    if (!tin->IsArray() || !tout->IsNumber()) {
-      return VException("Incorrect dataset (first column should be an array and second column should be a number)");
-    }
-    Local<Array> x = Array::Cast(*tin);
-    double y = tout->NumberValue();
-    prob->y[i] = y;
-    fprintf(stderr,"%g ",y);
-    int n = 0;
-    for (unsigned j=0; j < x->Length(); j++) {
-      double xi = x->Get(j)->NumberValue();
-      fprintf(stderr,"%d:%g ",j+1, xi);
-      if (xi!=0){
-        n++;
-      }
-    }
-    fprintf(stderr,"(%d xies)\n",n);
-    nb_features[i] = n;
-  }
-
-  // Asign X
-  prob->x = new svm_node*[dataset->Length()];
-  for(unsigned i = 0; i < dataset->Length(); i++) {
-    prob->x[i] = new svm_node[nb_features[i]];
-    Local<Array> ex = Array::Cast(*dataset->Get(i));
-    Local<Array> x = Array::Cast(*ex->Get(0));
-    int k = 0;
-    for(unsigned j = 0; j < x->Length(); ++j) {
-      double xi = x->Get(j)->NumberValue();
-      if (xi != 0){
-        prob->x[i][k].index = j+1;
-        prob->x[i][k].value = xi;
-        k++;
-      }
-    }
-  }
-  delete[] nb_features;
-  NanReturnUndefined();
-}
-
-// Handle<Value> ConvertDataToX(Local<Array> dataset, svm_node *x){
-//   NanScope();
-//   int counter = 0;
-//   for (unsigned j=0; j < dataset->Length(); j++){
-//     if (dataset->Get(j)->NumberValue() != 0){
-//       counter++;
-//     }
-//   }
-
-//   x = new svm_node[counter];
-//   int k =0;
-//   for (unsigned j=0; j < dataset->Length(); j++){
-//     double xi = dataset->Get(j)->NumberValue();
-//     if (xi != 0){
-//       x[k].index = j+1;
-//       x[k].value = xi;
-//       k++;
-//     }
-//   }
-//   NanReturnUndefined();
-// }
-
 Persistent<Function> NodeSvm::constructor;
+
 NodeSvm::~NodeSvm(){
 
 }
@@ -173,17 +81,17 @@ NAN_METHOD(NodeSvm::SetParameters) {
     svm_params->shrinking = params->Get(String::New("shrinking"))->IntegerValue();
   }
   if (params->Has(String::New("probability"))){
-    //svm_params->probability = params->Get(String::New("probability"))->IntegerValue();
+    svm_params->probability = params->Get(String::New("probability"))->IntegerValue();
   }
 
   obj->params = svm_params;
   const char *error_msg;
   error_msg =  svm_check_parameter(svm_params);
   std::cout << error_msg << std::endl;
-  Local<String> error = String::New("");
   if (error_msg)
-    error = String::New("Invalid parameters");
-  NanReturnValue(error);
+    NanReturnValue(String::New("Invalid parameters"));
+  else  
+    NanReturnUndefined();
 }
 
 NAN_METHOD(NodeSvm::Train) {
@@ -197,21 +105,30 @@ NAN_METHOD(NodeSvm::Train) {
 
   Local<Array> dataset = Array::Cast(*args[0]->ToObject());
   
-  struct svm_problem *prob = new svm_problem();
-  getSvmProblemFromData(dataset, prob);
+  obj->train(dataset);
+
+  NanReturnUndefined();
+}
+
+NAN_METHOD(NodeSvm::TrainAsync) {
+  NanScope();
+  NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
   
-  svm_model *model = svm_train(prob, obj->params);
-  svm_save_model("test.model", model);
-  assert(model->l > 0);
-  obj->model = model;
-  // delete problem
-  for (int i = 0; i< prob->l; i++) {
-    delete[] prob->x[i];
-  }
-  delete[] prob->x;
-  delete[] prob->y;
-  delete prob;
-  NanReturnValue(String::New("ko"));
+  // check obj
+  assert(obj->hasParameters());
+  // chech params
+  assert(args[0]->IsObject());
+  assert(args[1]->IsFunction());
+
+  Local<Array> dataset = Array::Cast(*args[0]->ToObject());
+  
+  obj->train(dataset);
+
+  NanCallback *callback = new NanCallback(args[1].As<Function>());
+  Local<Value> argv[] = {
+  };
+  callback->Call(0, argv);
+  NanReturnUndefined();
 }
 
 NAN_METHOD(NodeSvm::GetKernelType) {
@@ -230,29 +147,11 @@ NAN_METHOD(NodeSvm::GetSvmType) {
   NanReturnValue(Number::New(obj->getSvmType()));
 }
 
-NAN_METHOD(NodeSvm::GetAccuracy) {
+NAN_METHOD(NodeSvm::IsTrained) {
   NanScope();
   NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
   // check obj
-  assert(obj->isTrained());
-  assert(obj->isClassificationSVM());
-  // chech params
-  assert(args[0]->IsObject());
-  
-  Local<Array> testset = Array::Cast(*args[0]->ToObject());
-  // struct svm_problem *prob = new svm_problem(); 
-  // //getSvmProblemFromData(testset, prob);
-  
-  // // TODO : Evaluate accuracy
-
-  // // delete problem
-  // for (int i = 0; i< prob->l; i++) {
-  //   delete[] prob->x[i];
-  // }
-  // delete[] prob->x;
-  // delete[] prob->y;
-  // delete prob;
-  NanReturnValue(Number::New(0));
+  NanReturnValue(Boolean::New(obj->isTrained()));
 }
 
 NAN_METHOD(NodeSvm::GetLabels) {
@@ -263,11 +162,30 @@ NAN_METHOD(NodeSvm::GetLabels) {
   assert(obj->isTrained());
 
   // Create a new empty array.
-  Handle<Array> labels = Array::New(obj->model->nr_class);
-  for (int j=0; j < obj->model->nr_class; j++){
-    labels->Set(j, Number::New(obj->model->label[j]));
+  int nbClasses = obj->getClassNumber();
+  Handle<Array> labels = Array::New(nbClasses);
+  for (int j=0; j < nbClasses; j++){
+    labels->Set(j, Number::New(obj->getLabel(j)));
   }
   NanReturnValue(labels);
+}
+
+NAN_METHOD(NodeSvm::SaveToFile) {
+  NanScope();
+  NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+  if (args.Length() != 1 || !args[0]->IsString())
+    return ThrowException(Exception::Error(String::New("usage: NodeSvm.saveToFile(\'filename.model\'')")));
+  // check obj
+  assert(obj->isTrained());
+
+  char *name = new char[4096];
+  String::Cast(*args[0])->WriteAscii(name, 0, 4096);
+  name[4095] = 0;
+
+  // Create a new empty array.
+  int result = obj->saveModel(name);
+  delete[] name;
+  NanReturnValue(Number::New(result));
 }
 
 NAN_METHOD(NodeSvm::Predict) {
@@ -280,13 +198,7 @@ NAN_METHOD(NodeSvm::Predict) {
   assert(args[0]->IsObject());
   
   Local<Array> dataset = Array::Cast(*args[0]->ToObject());
-  // svm_node *x;
-  // ConvertDataToX(dataset, x);
-
-  // double prediction = svm_predict(obj->model, x);
-
-  // delete[] x;
-  NanReturnValue(Number::New(0));
+  NanReturnValue(Number::New(obj->predict(dataset)));
 }
 
 NAN_METHOD(NodeSvm::PredictAsync) {
@@ -300,18 +212,13 @@ NAN_METHOD(NodeSvm::PredictAsync) {
   assert(args[1]->IsFunction());
 
   Local<Array> dataset = Array::Cast(*args[0]->ToObject());
-  // svm_node *x;
-  // ConvertDataToX(dataset, x);
-
-  // NanCallback *callback = new NanCallback(args[1].As<Function>());
-
-  // double prediction = svm_predict(obj->model, x);
-  // Local<Value> argv[] = {
-  //   Number::New(prediction)
-  // };
-  // callback->Call(1, argv);
-
-  // delete[] x;
+  double prediction = obj->predict(dataset);
+  
+  NanCallback *callback = new NanCallback(args[1].As<Function>());
+  Local<Value> argv[] = {
+    Number::New(prediction)
+  };
+  callback->Call(1, argv);
   NanReturnUndefined();
 }
 
@@ -326,18 +233,17 @@ NAN_METHOD(NodeSvm::PredictProbabilities) {
   assert(args[0]->IsObject());
   
   Local<Array> dataset = Array::Cast(*args[0]->ToObject());
-  // svm_node *x;
-  // ConvertDataToX(dataset, x);
+  int nbClass = obj->getClassNumber();
+
+  double *prob_estimates = new double[nbClass];
+  obj->predictProbabilities(dataset, prob_estimates);
   
-  // double *prob_estimates = new double[obj->model->nr_class];
-  // svm_predict_probability(obj->model,x,prob_estimates);
   // // Create a new empty array.
-  Handle<Array> probs = Array::New(obj->model->nr_class);
-  for (int j=0; j < obj->model->nr_class; j++){
-    probs->Set(j, Number::New(j));
+  Handle<Array> probs = Array::New(nbClass);
+  for (int j=0; j < nbClass; j++){
+    probs->Set(j, Number::New(prob_estimates[j]));
   }
-  // delete[] prob_estimates;
-  // delete[] x;
+  delete[] prob_estimates;
   NanReturnValue(probs);
 }
 
@@ -353,6 +259,12 @@ void NodeSvm::Init(Handle<Object> exports){
   
   tpl->PrototypeTemplate()->Set(String::NewSymbol("train"),
       FunctionTemplate::New(NodeSvm::Train)->GetFunction());
+
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("trainAsync"),
+      FunctionTemplate::New(NodeSvm::TrainAsync)->GetFunction());
+
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("isTrained"),
+      FunctionTemplate::New(NodeSvm::IsTrained)->GetFunction());
   
   tpl->PrototypeTemplate()->Set(String::NewSymbol("getLabels"),
        FunctionTemplate::New(NodeSvm::GetLabels)->GetFunction());
@@ -363,17 +275,18 @@ void NodeSvm::Init(Handle<Object> exports){
   tpl->PrototypeTemplate()->Set(String::NewSymbol("getKernelType"),
        FunctionTemplate::New(NodeSvm::GetKernelType)->GetFunction());
   
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("getAccuracy"),
-       FunctionTemplate::New(NodeSvm::GetAccuracy)->GetFunction());
-  
   tpl->PrototypeTemplate()->Set(String::NewSymbol("predict"),
       FunctionTemplate::New(NodeSvm::Predict)->GetFunction());
-  
+
   tpl->PrototypeTemplate()->Set(String::NewSymbol("predictAsync"),
       FunctionTemplate::New(NodeSvm::PredictAsync)->GetFunction());
-  
+
   tpl->PrototypeTemplate()->Set(String::NewSymbol("predictProbabilities"),
       FunctionTemplate::New(NodeSvm::PredictProbabilities)->GetFunction());
+
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("saveToFile"),
+      FunctionTemplate::New(NodeSvm::SaveToFile)->GetFunction());
+  
 
   constructor = Persistent<Function>::New(tpl->GetFunction());
   exports->Set(String::NewSymbol("NodeSvm"), constructor);

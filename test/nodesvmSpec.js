@@ -3,6 +3,7 @@
 var assert = require('assert'), 
     should = require('should'),
     _ = require('underscore'),
+    async = require('async'),
     libsvm = require('../lib/nodesvm');
 
 var xorProblem = [
@@ -112,59 +113,87 @@ describe('libsvm', function(){
     it('should use NU_SVC classificator ', function(){
       svm.getSvmType().should.eql('NU_SVC');
     });
+
+    it('should not be trained yet', function(){
+      svm.isTrained().should.be.false;
+    });
   });
 
-  describe('using C_SVC with RBF Kernel', function(){
+  describe('using C_SVC on XOR normalized problem with RBF Kernel', function(){
     var svm = null;
+    var problem = null;
     beforeEach(function(){
       svm = new libsvm.SVM({
         type: libsvm.SvmTypes.C_SVC,
-        kernel: new libsvm.RadialBasisFunctionKernel(2),
-        C: 2
+        kernel: new libsvm.RadialBasisFunctionKernel(0.5),
+        C: 1
       });
+      problem = xorNormProblem;
     });
 
-    it('should train XOR with no error', function(){
+    it('should train with no error', function(){
       var testFunc = function(){
-        svm.train(xorProblem);
+        svm.train(problem);
       };
       testFunc.should.not.throw();      
     });
-  });
+
+    it('should train async with no error', function(done){
+      svm.trainAsync(problem, function (err) {
+        if(!err){
+          done();
+        }
+      });     
+    });
     
-  //   describe('once trained with xor dataset', function(){
-  //     beforeEach(function(){
-  //       svm.train(xorProblem);
-  //     });
+    describe('once trained', function(){
+      beforeEach(function(){
+        svm.train(problem);
+      });
       
-  //     it('should be able to return class labels', function(){
-  //       svm.labels.should.eql([0, 1]);
-  //     });
+      it('should be trained', function(){
+        svm.isTrained().should.be.true;
+      });
 
-  //     it('should be able to predict classes', function(){
-  //       xorProblem.forEach(function(ex){
-  //         [0,1].should.containEql(svm.predict(ex.x));  // ie mean y E {-1;1}
-  //       });
-  //     });
+      it('should be able to return class labels', function(){
+        svm.labels.should.eql([0, 1]);
+      });
 
+      it('should be able to save the model', function(){
+        var testFunc = function(){
+          svm.saveToFile('./examples/models/test.model');
+        };
+        testFunc.should.not.throw();
+      });
 
-  //     it('should be able to predict Async', function(done){
-  //       svm.predictAsync([0, 0], function(value){
-  //         [0,1].should.containEql(value);
-  //         done();
-  //       });
-  //     });
+      it('should perform very well on the training set (100% accuracy)', function(){
+        problem.forEach(function(ex){
+          var prediction = svm.predict(ex[0]);
+          prediction.should.equal(ex[1]);  //  means that y E {0;1}
+        });
+      });
 
-  //     it('should be able to predict probabilities', function(){
-  //       var probs = svm.predictProbabilities([0, 0]);
-  //       (probs[0] + probs[1]).should.be.approximately(1, 1e-5);
-  //     });
+      it('should be able to predict Async', function(done){
+        async.each(problem, function(ex, callback) {
+          svm.predictAsync(ex[0], function(prediction){
+            prediction.should.equal(ex[1]);
+            callback();
+          });
+        }, function(err){ done(); });
+      });
 
-  //     it('should evaluate an accuracy of 100%', function(){
-  //       svm.getAccuracy(xorProblem).should.be.approximately(1, 1e-5);
-  //     });
-  //   });
-  // });
+      it('should be able to predict probabilities', function(){
+        problem.forEach(function(ex){
+          var probs = svm.predictProbabilities(ex[0]);
+          var sum = 0;
+          svm.labels.forEach(function (classLabel) {
+            sum += probs[classLabel];
+          });
+          sum.should.be.approximately(1, 1e-5);
+        });
+      });
+    });
+  });
 
   describe('#readProblemAsync', function(){  
     it('should be able to read the xor problem', function (done) {
