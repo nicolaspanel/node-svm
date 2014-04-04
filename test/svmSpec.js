@@ -91,6 +91,30 @@ describe('SVM', function(){
     });
   });
 
+  describe('when load from file', function(){
+    var svm = null;
+    beforeEach(function(){
+      svm = new libsvm.SVM({
+        file: './examples/models/xor.model'
+      });
+    });
+    it('should have a reference to the NodeSVM obj', function(){
+      svm._nodeSvm.should.be.ok;
+    });
+
+    it('should use Sigmoid kernel ', function(){
+      svm.getKernelType().should.eql('RBF');
+    });
+
+    it('should use NU_SVC classificator ', function(){
+      svm.getSvmType().should.eql('C_SVC');
+    });
+
+    it('should be trained', function(){
+      svm.isTrained().should.be.true;
+    });
+  });
+
   describe('using NU_SVC with Sigmoid Kernel', function(){
     var svm = null;
     beforeEach(function(){

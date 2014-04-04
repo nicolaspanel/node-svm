@@ -27,6 +27,7 @@ class NodeSvm : public node::ObjectWrap
     static NAN_METHOD(PredictAsync);
     static NAN_METHOD(PredictProbabilities);
     static NAN_METHOD(SaveToFile);
+    static NAN_METHOD(LoadFromFile);
     static NAN_METHOD(New);
 
     bool isTrained(){return model != NULL;};
@@ -58,6 +59,12 @@ class NodeSvm : public node::ObjectWrap
     };
     int saveModel(const char *fileName){
       return svm_save_model(fileName, model);
+    };
+    void loadModel(const char *fileName){
+      model = svm_load_model(fileName);
+      assert(model!=NULL);  
+      params = &model->param;
+      assert(params!=NULL);  
     };
     void train(Local<Array> dataset){
       struct svm_problem *prob = new svm_problem();

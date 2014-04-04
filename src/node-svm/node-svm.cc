@@ -188,6 +188,22 @@ NAN_METHOD(NodeSvm::SaveToFile) {
   NanReturnValue(Number::New(result));
 }
 
+NAN_METHOD(NodeSvm::LoadFromFile) {
+  NanScope();
+  NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+  if (args.Length() != 1 || !args[0]->IsString())
+    return ThrowException(Exception::Error(String::New("usage: NodeSvm.loadFromFile(\'filename.model\'')")));
+
+  char *name = new char[4096];
+  String::Cast(*args[0])->WriteAscii(name, 0, 4096);
+  name[4095] = 0;
+
+  // Create a new empty array.
+  obj->loadModel(name);
+  delete[] name;
+  NanReturnUndefined();
+}
+
 NAN_METHOD(NodeSvm::Predict) {
   NanScope();
   NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
@@ -286,6 +302,9 @@ void NodeSvm::Init(Handle<Object> exports){
 
   tpl->PrototypeTemplate()->Set(String::NewSymbol("saveToFile"),
       FunctionTemplate::New(NodeSvm::SaveToFile)->GetFunction());
+  
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("loadFromFile"),
+      FunctionTemplate::New(NodeSvm::LoadFromFile)->GetFunction());
   
 
   constructor = Persistent<Function>::New(tpl->GetFunction());
