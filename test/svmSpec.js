@@ -18,68 +18,67 @@ var xorNormProblem = [
   [[ 1, -1], 1],
   [[ 1,  1], 0]
 ];
+describe('Linear kernel', function(){
+  var kernel = null;
+  beforeEach(function(){
+    kernel = new libsvm.LinearKernel();
+  });
+  it('should have type set to 0', function(){
+    kernel.kernelType.should.equal(0);
+  });
+});
 
-describe('libsvm', function(){
+describe('Polynomial kernel', function(){
+  var kernel = null;
+  beforeEach(function(){
+    kernel = new libsvm.PolynomialKernel(3, 4, 5);
+  });
+  it('should have type set to 1', function(){
+    kernel.kernelType.should.equal(1);
+  });
+  it('should have degree set to 3', function(){
+    kernel.degree.should.equal(3);
+  });
+  it('should have gamma set to 4', function(){
+    kernel.gamma.should.equal(4);
+  });
+  it('should have r set to 5', function(){
+    kernel.r.should.equal(5);
+  });
+});
+
+describe('RBF kernel', function(){
+  var kernel = null;
+  beforeEach(function(){
+    kernel = new libsvm.RadialBasisFunctionKernel(3);
+  });
+  it('should have type set to 2', function(){
+    kernel.kernelType.should.equal(2);
+  });
+  it('should have gamma set to 3', function(){
+    kernel.gamma.should.equal(3);
+  });
+});
+
+describe('Sigmoid kernel', function(){
+  var kernel = null;
+  beforeEach(function(){
+    kernel = new libsvm.SigmoidKernel(3, 4);
+  });
+  it('should have type set to 3', function(){
+    kernel.kernelType.should.equal(3);
+  });
+  it('should have gamma set to 3', function(){
+    kernel.gamma.should.equal(3);
+  });
+  it('should have r set to 4', function(){
+    kernel.r.should.equal(4);
+  });
+});
+
+describe('SVM', function(){
   
-  describe('Linear kernel', function(){
-    var kernel = null;
-    beforeEach(function(){
-      kernel = new libsvm.LinearKernel();
-    });
-    it('should have type set to 0', function(){
-      kernel.kernelType.should.equal(0);
-    });
-  });
-
-  describe('Polynomial kernel', function(){
-    var kernel = null;
-    beforeEach(function(){
-      kernel = new libsvm.PolynomialKernel(3, 4, 5);
-    });
-    it('should have type set to 1', function(){
-      kernel.kernelType.should.equal(1);
-    });
-    it('should have degree set to 3', function(){
-      kernel.degree.should.equal(3);
-    });
-    it('should have gamma set to 4', function(){
-      kernel.gamma.should.equal(4);
-    });
-    it('should have r set to 5', function(){
-      kernel.r.should.equal(5);
-    });
-  });
-
-  describe('RBF kernel', function(){
-    var kernel = null;
-    beforeEach(function(){
-      kernel = new libsvm.RadialBasisFunctionKernel(3);
-    });
-    it('should have type set to 2', function(){
-      kernel.kernelType.should.equal(2);
-    });
-    it('should have gamma set to 3', function(){
-      kernel.gamma.should.equal(3);
-    });
-  });
-
-  describe('Sigmoid kernel', function(){
-    var kernel = null;
-    beforeEach(function(){
-      kernel = new libsvm.SigmoidKernel(3, 4);
-    });
-    it('should have type set to 3', function(){
-      kernel.kernelType.should.equal(3);
-    });
-    it('should have gamma set to 3', function(){
-      kernel.gamma.should.equal(3);
-    });
-    it('should have r set to 4', function(){
-      kernel.r.should.equal(4);
-    });
-  });
-
-  describe('using SVM with bad parameters', function(){
+  describe('using bad parameters', function(){
     it('should throw an error during initialization', function(){
       var testFunc = function(){
         var svm = new libsvm.SVM({
@@ -145,12 +144,32 @@ describe('libsvm', function(){
         }
       });     
     });
+
+    it('can perform n-fold cross validation', function(done){
+      var dataset = [];
+      _.range(50).forEach(function(i){
+        xorProblem.forEach(function (ex) {
+          dataset.push(ex);
+        });
+      });
+      svm.performKFoldCrossValidation(dataset, 4, function (report) {
+        report.accuracy.should.equal(1);
+        done();
+      });     
+    });
     
     describe('once trained', function(){
       beforeEach(function(){
         svm.train(problem);
       });
-      
+
+      it('can evaluate itself', function(done){
+        svm.evaluate(problem, function (report) {
+          report.accuracy.should.equal(1);
+          done();
+        });     
+      });
+
       it('should be trained', function(){
         svm.isTrained().should.be.true;
       });
@@ -192,51 +211,6 @@ describe('libsvm', function(){
           sum.should.be.approximately(1, 1e-5);
         });
       });
-    });
-  });
-
-  describe('#readProblemAsync', function(){  
-    it('should be able to read the xor problem', function (done) {
-      libsvm.readProblemAsync('./examples/datasets/xor.ds', function(problem, nbFeature){
-        nbFeature.should.equal(2);
-        problem.length.should.equal(4);
-        problem.should.eql(xorProblem);
-        done();
-      });
-    });
-    it('should be able to read the svmguide problem in less than 200ms', function (done) {
-      this.timeout(200);
-      libsvm.readProblemAsync('./examples/datasets/svmguide1.ds', function(problem, nbFeature){
-        nbFeature.should.equal(4);
-        problem.length.should.equal(3089);
-        done();
-      });
-    });
-  });
-
-  describe('#meanNormalize', function(){  
-    
-    it('should be able to Mean Normalize the xor problem', function () {
-      var result = libsvm.meanNormalize({problem: xorProblem});
-      result.mu.should.eql([0.5, 0.5]);
-      result.sigma.should.eql([0.5,0.5]);
-      result.problem.should.eql(xorNormProblem);
-    });
-    
-    it('should be able to Mean Normalize the xor problem with custom mu and sigma', function () {
-      var result = libsvm.meanNormalize({problem: xorProblem, mu: [0, 0], sigma: [1, 1]});
-      result.problem.should.eql(xorProblem); // no changes
-    });
-  });
-
-  describe('#readAndNormalizeProblemAsync', function(){  
-    it('should be able to read and mean normalize the xor problem', function (done) {
-      libsvm.readAndNormalizeProblemAsync('./examples/datasets/xor.ds', function(result){
-        result.mu.should.eql([0.5, 0.5]);
-        result.sigma.should.eql([0.5,0.5]);
-        result.problem.should.eql(xorNormProblem);
-        done();
-      });      
     });
   });
 });

@@ -1,5 +1,9 @@
 /** 
   Perform C_SVC classification as describe on the libsvm guide 
+
+  training set : svmguide1.ds
+  test set     : svmguide1.t.ds
+
   See http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf, p.9.
   NOTE : No scaling / normalization used. Expecterd accuracy with default params = 66.925%
 */
@@ -19,13 +23,13 @@ libsvm.readProblemAsync('./examples/datasets/svmguide1.ds', function(trainigSet)
   // problem
   libsvm.readProblemAsync('./examples/datasets/svmguide1.t.ds', function(testset){
     console.log("Test set loaded. Start accuracy evaluation...")
-    var ko = 0, total = 0;
-    testset.forEach(function(ex){
-      if (ex[1] !== c_svc.predict(ex[0])){
-        ko++;
-      }
-      total++;
+    
+    c_svc.evaluate(testset, function(report){
+      console.log("Accuracy = %d%%", report.accuracy * 100);
+      console.log("F-Score = %d", report.fscore);
+      console.log("Precision = %d", report.precision);
+      console.log("Recall = %d", report.recall);
     });
-    console.log("Accuracy = %d%%% ()", (1 - ko / total)*100);
+    
   });
 });
