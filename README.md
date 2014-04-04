@@ -27,6 +27,9 @@ var svm = new libsvm.SVM({
   kernel: new libsvm.RadialBasisFunctionKernel(0.5),
   C: 2.0
 });
+
+svm.train(xorNormProblem);
+
 xorProblem.forEach(function(ex){
   svm.predict(ex[0]).should.equal(ex.y);
 });
