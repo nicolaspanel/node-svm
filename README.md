@@ -25,19 +25,23 @@ var xorProblem = [
 var svm = new libsvm.SVM({
   type: libsvm.SvmTypes.C_SVC,
   kernel: new libsvm.RadialBasisFunctionKernel(0.5),
-  C: 2.0
+  C: 1.0
 });
 
 svm.train(xorProblem);
 
 xorProblem.forEach(function(ex){
-  svm.predict(ex[0]).should.equal(ex.y);
+  svm.predict(ex[0]).should.equal(ex[1]);
 });
 
 ```
 Note : There's no reason to use SVM to figure out XOR BTW...
 
-More examples are available in the [examples folder](https://github.com/nicolaspanel/node-svm/tree/master/examples).
+More examples are available in the [examples folder](https://github.com/nicolaspanel/node-svm/tree/master/examples) : 
+ * [simple xor](https://github.com/nicolaspanel/node-svm/blob/master/examples/xorBasicExample.js)
+ * [Normalizaion and n-fold cross validation](https://github.com/nicolaspanel/node-svm/blob/master/examples/svmguide1CrossValidationExample.js)
+ * [Accuracy against test file](https://github.com/nicolaspanel/node-svm/blob/master/examples/svmguide1EvaluationExample.js)
+ * [Load svm from file](https://github.com/nicolaspanel/node-svm/blob/master/examples/xorFromFileExample.js)
 
 ## Arguments and options
 Options with default values are listed below : 
