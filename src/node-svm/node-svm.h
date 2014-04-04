@@ -91,10 +91,7 @@ class NodeSvm : public node::ObjectWrap
       prob->l = 0;
 
       if (dataset->Length() == 0)
-        return ThrowException(Exception::Error(String::New("Training data set is empty")));
-      else
-        fprintf(stderr,"problem contains %d examples\n",dataset->Length());
-      
+        return ThrowException(Exception::Error(String::New("Training data set is empty")));      
 
       // check data structure and assign Y
       prob->l= dataset->Length();

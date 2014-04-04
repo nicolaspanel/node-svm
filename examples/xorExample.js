@@ -1,3 +1,8 @@
+/**
+  Simple example using C-SVC classificator to predict the xor function 
+  Note : XOR is non-linear. 
+**/
+
 var libsvm = require('../lib/nodesvm');
 
 var xorProblem = [
@@ -19,8 +24,8 @@ var svm = new libsvm.SVM({
   C: 1
 });
 
-svm.train(xorProblem);
+svm.train(xorNormProblem);
 console.log("xor trainned");
-xorProblem.forEach(function(ex){
+xorNormProblem.forEach(function(ex){
   console.log("%d XOR %d => %d", ex[0][0], ex[0][1], svm.predict(ex[0]));
 });
