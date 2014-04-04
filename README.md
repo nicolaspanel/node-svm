@@ -34,6 +34,7 @@ xorProblem.forEach(function(ex){
 ```
 Note : There's no reason to use SVM to figure out XOR BTW...
 
+More examples are available in the [examples folder](https://github.com/nicolaspanel/node-svm/tree/master/examples).
 
 ## Arguments and options
 Options with default values are listed below : 
