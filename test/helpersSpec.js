@@ -64,8 +64,8 @@ describe('#readAndNormalizeProblemAsync', function(){
   });
 });
 
-describe('#performKFoldCrossValidation', function(){  
-  it('should predict an 100% accuracy on XOR', function (done) {
+describe('#performNFoldCrossValidation', function(){  
+  it('should predict an 100% accuracy against XOR', function (done) {
     var dataset = [], svm = null;
     _.range(50).forEach(function(i){
       xorProblem.forEach(function (ex) {
@@ -80,7 +80,7 @@ describe('#performKFoldCrossValidation', function(){
     });
     var kfold = 4;
     
-    libsvm.performKFoldCrossValidation(svm, dataset, kfold, function(report){
+    libsvm.performNFoldCrossValidation(svm, dataset, kfold, function(report){
       report.accuracy.should.eql(1);
       done();
     });      

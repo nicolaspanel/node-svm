@@ -152,7 +152,7 @@ describe('SVM', function(){
           dataset.push(ex);
         });
       });
-      svm.performKFoldCrossValidation(dataset, 4, function (report) {
+      svm.performNFoldCrossValidation(dataset, 4, function (report) {
         report.accuracy.should.equal(1);
         done();
       });     

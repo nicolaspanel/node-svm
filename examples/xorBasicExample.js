@@ -25,6 +25,7 @@ var svm = new libsvm.SVM({
 });
 
 svm.train(xorNormProblem);
+
 console.log("xor trainned");
 xorNormProblem.forEach(function(ex){
   console.log("%d XOR %d => %d", ex[0][0], ex[0][1], svm.predict(ex[0]));

@@ -46,7 +46,7 @@ describe ('Classification Evaluator', function(){
 
     it ('should use only one subset (ie k = 1)', function  (done) {
       evaluator.evaluate(testSet, function(report){
-        report.kfold.should.equal(1);
+        report.nfold.should.equal(1);
         done();
       }); 
     });
@@ -129,7 +129,7 @@ describe ('Classification Evaluator', function(){
     });
 
     it ('should report an accuracy of 1', function(done){
-      evaluator.performKFoldCrossValidation(8, testSet, function(report){
+      evaluator.performNFoldCrossValidation(8, testSet, function(report){
         report.accuracy.should.equal(1);
         report.fscore.should.equal(1);
         report.precision.should.equal(1);
@@ -139,7 +139,7 @@ describe ('Classification Evaluator', function(){
     });
 
     it ('should report a recall of 1 for all classes', function(done){
-      evaluator.performKFoldCrossValidation(1, testSet, function(report){
+      evaluator.performNFoldCrossValidation(1, testSet, function(report){
         report.subsetsReports.forEach(function(subset){
           ['A', 'B', 'C', 'D'].forEach(function(label){
             subset.classReports[label].recall.should.equal(1);
@@ -152,7 +152,7 @@ describe ('Classification Evaluator', function(){
       
     
     it ('should report a precision of 1 for all classes', function(done){
-      evaluator.performKFoldCrossValidation(1, testSet, function(report){
+      evaluator.performNFoldCrossValidation(1, testSet, function(report){
         report.subsetsReports.forEach(function(subset){
           ['A', 'B', 'C', 'D'].forEach(function(label){
             subset.classReports[label].precision.should.equal(1);
@@ -163,7 +163,7 @@ describe ('Classification Evaluator', function(){
     });
       
     it ('should report a fscore of 1 for all classes', function(done){
-      evaluator.performKFoldCrossValidation(1, testSet, function(report){
+      evaluator.performNFoldCrossValidation(1, testSet, function(report){
         report.subsetsReports.forEach(function(subset){
           ['A', 'B', 'C', 'D'].forEach(function(label){
             subset.classReports[label].fscore.should.equal(1);
