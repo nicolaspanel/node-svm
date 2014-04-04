@@ -28,7 +28,7 @@ var svm = new libsvm.SVM({
   C: 2.0
 });
 
-svm.train(xorNormProblem);
+svm.train(xorProblem);
 
 xorProblem.forEach(function(ex){
   svm.predict(ex[0]).should.equal(ex.y);
