@@ -93,3 +93,5 @@ If you feel that the community will benefit from your changes, please send a pul
 
 # License
 MIT
+
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/92d9dd8573d8b458d19a240629fea97a "githalytics.com")](http://githalytics.com/nicolaspanel/node-svm)
