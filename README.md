@@ -3,7 +3,7 @@ node-svm
 
 [libsvm](http://www.csie.ntu.edu.tw/~cjlin/libsvm/) (Support Vector Machine library) addon for nodejs.
 
-**Status** : alpha (0.2.2).
+**Status** : alpha (0.2.3).
 [![Build Status](https://travis-ci.org/nicolaspanel/node-svm.png)](https://travis-ci.org/nicolaspanel/node-svm)
 
 # Installation
