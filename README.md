@@ -37,11 +37,12 @@ xorProblem.forEach(function(ex){
 ```
 Note : There's no reason to use SVM to figure out XOR BTW...
 
-More examples are available in the [examples folder](https://github.com/nicolaspanel/node-svm/tree/master/examples) : 
- * [Simple xor example](https://github.com/nicolaspanel/node-svm/blob/master/examples/xorBasicExample.js)
- * [Normalizaion and n-fold cross validation](https://github.com/nicolaspanel/node-svm/blob/master/examples/svmguide1CrossValidationExample.js)
- * [Accuracy against test file](https://github.com/nicolaspanel/node-svm/blob/master/examples/svmguide1EvaluationExample.js)
- * [Load svm from file](https://github.com/nicolaspanel/node-svm/blob/master/examples/xorFromSavedModelExample.js)
+Examples are available in the [same name folder](https://github.com/nicolaspanel/node-svm/tree/master/examples) : 
+ * [Simple xor example](https://github.com/nicolaspanel/node-svm/blob/master/examples/basicExample.js)
+ * [Normalizaion and n-fold cross validation](https://github.com/nicolaspanel/node-svm/blob/master/examples/crossValidationExample.js)
+ * [Accuracy against test file](https://github.com/nicolaspanel/node-svm/blob/master/examples/evaluationExample.js)
+ * [Load svm from file](https://github.com/nicolaspanel/node-svm/blob/master/examples/savedModelUseExample.js)
+ * [Parameter selection (grid search)](https://github.com/nicolaspanel/node-svm/blob/master/examples/parameterSelectionExample.js)
 
 ## Arguments and options
 Options with default values are listed below : 
