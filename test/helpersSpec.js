@@ -120,3 +120,31 @@ describe('#evaluateSvm', function(){
     });      
   });
 });
+
+describe('#findBestParameters', function(done){  
+  it('should return C=0.03125, gamma=0.5 on xor', function (done) {
+    this.timeout(1000);
+    var dataset = [];
+    _.range(10).forEach(function(i){
+      xorProblem.forEach(function (ex) {
+        dataset.push(ex);
+      });
+    });
+    
+    var cValues = [0.03125, 0.125, 0.5, 2, 8],
+        gValues = [8, 2, 0.5, 0.125, 0.03125];
+    var options = {
+      cValues: cValues,
+      gValues: gValues
+    }; 
+    
+    libsvm.findBestParameters(dataset, options, function(report) {
+      cValues.should.containEql(report.C);
+      gValues.should.containEql(report.gamma);
+      report.accuracy.should.be.approximately(1, 0.01);
+      report.fscore.should.be.approximately(1, 0.01);
+      report.nbIterations.should.equal(cValues.length * gValues.length);
+      done();
+    });       
+  });
+});

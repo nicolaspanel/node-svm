@@ -9,7 +9,7 @@ module.exports = function (grunt) {
       files: [ 'test/*Spec.js']
     },
     jshint: {   
-      all: [ 'gruntfile.js', 'lib/*.js', 'test/*.js'],
+      all: [ 'gruntfile.js', 'lib/*.js', 'test/*.js', 'examples/*.js',],
       options: {
         globals: {
           it: true,

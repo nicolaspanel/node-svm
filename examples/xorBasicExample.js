@@ -4,6 +4,7 @@
   
   Note : because dataset is normalized we also normalize inputs
 **/
+'use strict';
 
 var libsvm = require('../lib/nodesvm');
 var fileName = './examples/datasets/xor.ds';

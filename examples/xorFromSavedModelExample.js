@@ -5,6 +5,7 @@
   
   Note : To save an existing svm, use svm#saveToFile(path) function (svm need to be train first)
 **/
+'use strict';
 
 var libsvm = require('../lib/nodesvm');
 
