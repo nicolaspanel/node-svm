@@ -25,7 +25,7 @@ libsvm.readAndNormalizeDatasetAsync(fileName, function(svmguide){
   console.log("  * sigma = ", svmguide.sigma);
   
   console.log("Cross validation... (may take few seconds)");
-  c_svc.performNFoldCrossValidation(svmguide.problem, nFold, function(report){
+  c_svc.performNFoldCrossValidation(svmguide.dataset, nFold, function(report){
     console.log("Accuracy = %d%%", report.accuracy * 100);
     console.log("F-Score = %d", report.fscore);
     console.log("Precision = %d", report.precision);

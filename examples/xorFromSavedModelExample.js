@@ -1,3 +1,11 @@
+/**
+  Simple example using C-SVC classificator to predict the xor function
+  Dataset : no dataset used because we restore an existing 
+            svm previously saved on a file
+  
+  Note : To save an existing svm, use svm#saveToFile(path) function (svm need to be train first)
+**/
+
 var libsvm = require('../lib/nodesvm');
 
 var svm = new libsvm.SVM({
@@ -5,11 +13,15 @@ var svm = new libsvm.SVM({
 });
 
 console.log("xor trainned");
-[
-  [[0, 0], 0],
-  [[0, 1], 1],
-  [[1, 0], 1],
-  [[1, 1], 0]
-].forEach(function(ex){
-  console.log("%d XOR %d => %d", ex[0][0], ex[0][1], svm.predict(ex[0]));
+[0,1].forEach(function(a){
+  [0,1].forEach(function(b){
+    console.log("%d XOR %d => %d", a, b, svm.predict([a, b]));
+  });
 });
+
+/* result : 
+0 XOR 0 => 0
+0 XOR 1 => 1
+1 XOR 0 => 1
+1 XOR 1 => 0
+*/

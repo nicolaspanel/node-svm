@@ -17,7 +17,7 @@ libsvm.readAndNormalizeDatasetAsync(fileName, function(xor){
   var mu = xor.mu,
       sigma = xor.sigma;
   
-  svm.trainAsync(xor.problem, function() {
+  svm.trainAsync(xor.dataset, function() {
     [0,1].forEach(function(a){
       [0,1].forEach(function(b){
         var normalizedInput = libsvm.meanNormalizeInput([a, b], mu, sigma);

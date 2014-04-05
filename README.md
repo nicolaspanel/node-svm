@@ -38,7 +38,7 @@ xorProblem.forEach(function(ex){
 Note : There's no reason to use SVM to figure out XOR BTW...
 
 More examples are available in the [examples folder](https://github.com/nicolaspanel/node-svm/tree/master/examples) : 
- * [simple xor](https://github.com/nicolaspanel/node-svm/blob/master/examples/xorBasicExample.js)
+ * [Simple xorexample](https://github.com/nicolaspanel/node-svm/blob/master/examples/xorBasicExample.js)
  * [Normalizaion and n-fold cross validation](https://github.com/nicolaspanel/node-svm/blob/master/examples/svmguide1CrossValidationExample.js)
  * [Accuracy against test file](https://github.com/nicolaspanel/node-svm/blob/master/examples/svmguide1EvaluationExample.js)
  * [Load svm from file](https://github.com/nicolaspanel/node-svm/blob/master/examples/xorFromSavedModelExample.js)
