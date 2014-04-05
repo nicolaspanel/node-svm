@@ -18,7 +18,7 @@ var nFold= 4,
     fileName = './examples/datasets/svmguide1.m.ds';
 
 // Load problems
-libsvm.readAndNormalizeProblemAsync(fileName, function(svmguide){ 
+libsvm.readAndNormalizeDatasetAsync(fileName, function(svmguide){ 
   // problem
   console.log("Data set normalized with following parameters :");
   console.log("  * mu = ", svmguide.mu);

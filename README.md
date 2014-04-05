@@ -41,7 +41,7 @@ More examples are available in the [examples folder](https://github.com/nicolasp
  * [simple xor](https://github.com/nicolaspanel/node-svm/blob/master/examples/xorBasicExample.js)
  * [Normalizaion and n-fold cross validation](https://github.com/nicolaspanel/node-svm/blob/master/examples/svmguide1CrossValidationExample.js)
  * [Accuracy against test file](https://github.com/nicolaspanel/node-svm/blob/master/examples/svmguide1EvaluationExample.js)
- * [Load svm from file](https://github.com/nicolaspanel/node-svm/blob/master/examples/xorFromFileExample.js)
+ * [Load svm from file](https://github.com/nicolaspanel/node-svm/blob/master/examples/xorFromSavedModelExample.js)
 
 ## Arguments and options
 Options with default values are listed below : 

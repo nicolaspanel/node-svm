@@ -38,24 +38,37 @@ describe('#readProblemAsync', function(){
   });
 });
 
-describe('#meanNormalize', function(){  
+describe('#meanNormalizeDataSet', function(){  
   
   it('should be able to Mean Normalize the xor problem', function () {
-    var result = libsvm.meanNormalize({problem: xorProblem});
+    var result = libsvm.meanNormalizeDataSet({problem: xorProblem});
     result.mu.should.eql([0.5, 0.5]);
     result.sigma.should.eql([0.5,0.5]);
     result.problem.should.eql(xorNormProblem);
   });
+
+  it('should be able to Mean Normalize an already normalized problem', function() {
+    var result = libsvm.meanNormalizeDataSet({problem: xorNormProblem});
+    result.problem.should.eql(xorNormProblem);
+  });
   
   it('should be able to Mean Normalize the xor problem with custom mu and sigma', function () {
-    var result = libsvm.meanNormalize({problem: xorProblem, mu: [0, 0], sigma: [1, 1]});
+    var result = libsvm.meanNormalizeDataSet({problem: xorProblem, mu: [0, 0], sigma: [1, 1]});
     result.problem.should.eql(xorProblem); // no changes
   });
 });
 
-describe('#readAndNormalizeProblemAsync', function(){  
+describe('#meanNormalizeInput', function(){  
+  
+  it('should be able to Mean Normalize the xor problem', function () {
+    libsvm.meanNormalizeInput([0, 0], [0.5, 0.5], [0.5,0.5]).should.eql([-1, -1]);
+  });
+
+});
+
+describe('#readAndNormalizeDatasetAsync', function(){  
   it('should be able to read and mean normalize the xor problem', function (done) {
-    libsvm.readAndNormalizeProblemAsync('./examples/datasets/xor.ds', function(result){
+    libsvm.readAndNormalizeDatasetAsync('./examples/datasets/xor.ds', function(result){
       result.mu.should.eql([0.5, 0.5]);
       result.sigma.should.eql([0.5,0.5]);
       result.problem.should.eql(xorNormProblem);
