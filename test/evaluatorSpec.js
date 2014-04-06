@@ -20,8 +20,11 @@ describe ('Classification Evaluator', function(){
     predict: function(state){
       return 'A';
     }, 
-    train: function(trainningSet){
+    train: function(trainingSet){
       // do nothing
+    },
+    trainAsync: function(trainingSet, cb){
+      cb();// do nothing
     }
   };
   var perfectClassifier = {
@@ -31,8 +34,11 @@ describe ('Classification Evaluator', function(){
       var x2 = state[2];
       return this.previsionTable[x1][x2]; // note : independant from state[0]
     }, 
-    train: function(trainningSet){
+    train: function(trainingSet){
       // do nothing
+    },
+    trainAsync: function(trainingSet, cb){
+      cb();// do nothing
     }
   };
 
