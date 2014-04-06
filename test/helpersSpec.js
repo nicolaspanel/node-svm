@@ -135,7 +135,8 @@ describe('#findBestParameters', function(done){
         gValues = [8, 2, 0.5, 0.125, 0.03125];
     var options = {
       cValues: cValues,
-      gValues: gValues
+      gValues: gValues,
+      log: false
     }; 
     
     libsvm.findBestParameters(dataset, options, function(report) {

@@ -3,7 +3,7 @@
   Dataset : no dataset used because we restore an existing 
             svm previously saved on a file
   
-  Note : To save an existing svm, use svm#saveToFile(path) function (svm need to be train first)
+  Note : To save an existing svm, make sure it is trained and use svm#saveToFile(path).
 **/
 'use strict';
 

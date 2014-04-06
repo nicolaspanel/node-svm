@@ -1,7 +1,7 @@
 /** 
   Evaluate best parameter for C-SVC classification with RBF kernel
 
-  training set : svmguide4.m.ds (concatenation of svmguide4.ds and svmguide4.t.ds)
+  Training set : svmguide4.ds
 */
 'use strict';
 
@@ -25,11 +25,16 @@ libsvm.readAndNormalizeDatasetAsync(fileName, function(svmguide){
   console.log('Evaluation started (may take a minute)...');
   libsvm.findBestParameters(svmguide.dataset, options, function (report) {
     // body...
-    console.log('Found parameters : ');
-    console.log(" * Gamma = %d", report.gamma);
-    console.log(" * C = %d", report.C);
-    console.log(" * Accuracy = %d%%", report.accuracy * 100);
-    console.log(" * F-Score = %d", report.fscore);
+    console.log('done!'); 
+    /* reports value are display in the console : 
+    { 
+      accuracy: 0.8,
+      fscore: 0.6638888888888889,
+      gamma: 0.001953125,
+      C: 2048,
+      nbIterations: 90 
+    }
+    */
   });
 
 });

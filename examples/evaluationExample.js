@@ -1,11 +1,11 @@
 /** 
-  Perform C_SVC classification as describe on the libsvm guide 
+  Perform C-SVC classification as describe on the libsvm guide 
 
   training set : svmguide1.ds
   test set     : svmguide1.t.ds
 
   See http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf, p.9.
-  NOTE : No scaling / normalization used. Expecterd accuracy with default params to be 66.925%
+  NOTE : No scaling / normalization used. Expect accuracy with default params to be 66.925%
 */
 'use strict';
 

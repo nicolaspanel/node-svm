@@ -1,7 +1,7 @@
 /** 
-  Perform C_SVC classification as describe on the libsvm guide 
+  Perform C-SVC classification as describe on the libsvm guide 
 
-  data set : svmguide1.m.ds, concatenation of svmguide1.ds and svmguide1.t.ds
+  data set : svmguide1.m.ds (concatenation of svmguide1.ds and svmguide1.t.ds)
 
   See http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf, p.9.
   NOTE : Use normalization to improve accuracy. Expecterd accuracy with default params = ~97%
