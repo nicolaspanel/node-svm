@@ -1,14 +1,14 @@
 /** 
   Evaluate best parameter for C-SVC classification with RBF kernel
 
-  Training set : svmguide4.ds
+  Training set : svmguide2.ds
 */
 'use strict';
 
 var libsvm = require('../lib/nodesvm'),
     _ = require('underscore');
 
-var fileName = './examples/datasets/svmguide4.ds';
+var fileName = './examples/datasets/svmguide2.ds';
 
 // Load problems
 libsvm.readAndNormalizeDatasetAsync(fileName, function(svmguide){ 
