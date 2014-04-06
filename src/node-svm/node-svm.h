@@ -8,7 +8,7 @@
 #include <node.h>
 #include <assert.h>
 #include "../../node_modules/nan/nan.h"
-#include "../libsvm-317/svm.h"
+#include "../libsvm-318/svm.h"
 
 using namespace v8;
 
