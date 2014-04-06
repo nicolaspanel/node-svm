@@ -1,5 +1,6 @@
 /** 
   Evaluate best parameter for C-SVC classification with RBF kernel
+  
   See http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf, p.10
   Training set : svmguide2.ds
   NODE : Normalization give a better performence than scaling (acc =97% instead of 85%)
