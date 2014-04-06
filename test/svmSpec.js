@@ -142,9 +142,50 @@ describe('SVM', function(){
     });
   });
 
-  describe('using C_SVC on XOR normalized problem with RBF Kernel', function(){
+  describe('using EPSILON_SVR with Linear Kernel', function(){
     var svm = null;
     var problem = null;
+    beforeEach(function(){
+      svm = new libsvm.SVM({
+        type: libsvm.SvmTypes.EPSILON_SVR,
+        kernel: new libsvm.LinearKernel(),
+        C: 1,
+        epsilon: 0.1 // epsilon in loss function of epsilon-SVR
+      });
+      problem = xorNormProblem;
+    });
+    
+    it('should have a reference to the NodeSVM obj', function(){
+      svm._nodeSvm.should.be.ok;
+    });
+
+    it('should use Sigmoid kernel ', function(){
+      svm.getKernelType().should.eql('LINEAR');
+    });
+
+    it('should use EPSILON_SVR predictor', function(){
+      svm.getSvmType().should.eql('EPSILON_SVR');
+    });
+
+    it('should not be trained yet', function(){
+      svm.isTrained().should.be.false;
+    });
+
+    describe('once trained', function(){
+      beforeEach(function(done){
+        svm.trainAsync(problem, function() {
+          done();
+        });
+      });
+
+      it('should be trained', function(){
+        svm.isTrained().should.be.true;
+      });
+    });
+  });
+
+  describe('using C_SVC on XOR normalized problem with RBF Kernel', function(){
+    var svm = null, problem = null;
     beforeEach(function(){
       svm = new libsvm.SVM({
         type: libsvm.SvmTypes.C_SVC,
