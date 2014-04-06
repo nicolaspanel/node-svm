@@ -10,7 +10,7 @@
 var libsvm = require('../lib/nodesvm'),
     _ = require('underscore');
 
-var nFold= 4,
+var nFold= 3,
     fileName = './examples/datasets/housing.ds';
 
 libsvm.readAndNormalizeDatasetAsync(fileName, function(housing){ 
@@ -25,6 +25,7 @@ libsvm.readAndNormalizeDatasetAsync(fileName, function(housing){
     cValues: [0.03125, 0.125, 0.5, 2, 8],
     gValues: [8, 2, 0.5, 0.125, 0.03125],
     epsilonValues: [8, 2, 0.5, 0.125, 0.03125],
+    fold: nFold,
     log: true
   }; 
   libsvm.findBestParameters(housing.dataset, options, function(report) {
@@ -35,8 +36,8 @@ libsvm.readAndNormalizeDatasetAsync(fileName, function(housing){
       C: report.C,
       epsilon: report.epsilon
     });
-    var training = _.sample(housing.dataset, Math.round(housing.dataset.length * 0.8));
-    var tests = _.sample(housing.dataset, 15);
+    var training = _.sample(housing.dataset, housing.dataset.length);
+    var tests = _.sample(housing.dataset, 20);
     // train the svm
     svm.trainAsync(training, function(){
       // predict some values
