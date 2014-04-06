@@ -48,7 +48,7 @@ var args = {
   // options
   cacheSize   : 100,  // MB
   eps         : 1e-3, // tolerance of termination criterion 
-  probability : false // do probability estimatesdo probability estimates
+  probability : false // do probability estimates
 };
 var svm = new libsvm.SVM(args);
 ```
