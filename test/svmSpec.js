@@ -149,7 +149,8 @@ describe('SVM', function(){
       svm = new libsvm.SVM({
         type: libsvm.SvmTypes.C_SVC,
         kernel: new libsvm.RadialBasisFunctionKernel(0.5),
-        C: 1
+        C: 1,
+        probability: true
       });
       problem = xorNormProblem;
     });
