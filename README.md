@@ -34,12 +34,7 @@ xorProblem.forEach(function(ex){
 ```
 Note : There's no reason to use SVM to figure out XOR BTW...
 
-Examples are available in the [same name folder](https://github.com/nicolaspanel/node-svm/tree/master/examples) : 
- * [Simple xor example](https://github.com/nicolaspanel/node-svm/blob/master/examples/basicExample.js)
- * [Normalizaion and n-fold cross validation](https://github.com/nicolaspanel/node-svm/blob/master/examples/crossValidationExample.js)
- * [Accuracy against test file](https://github.com/nicolaspanel/node-svm/blob/master/examples/evaluationExample.js)
- * [Load svm from file](https://github.com/nicolaspanel/node-svm/blob/master/examples/savedModelUseExample.js)
- * [Parameter selection (grid search)](https://github.com/nicolaspanel/node-svm/blob/master/examples/parameterSelectionExample.js)
+More examples are available in the [same name folder](https://github.com/nicolaspanel/node-svm/tree/master/examples).
 
 ## Arguments and options
 Options with default values are listed below : 
@@ -51,8 +46,9 @@ var args = {
   C           : ... // required for C_SVC, epsilon_VR, and nu-SVR
   
   // options
-  cacheSize   : 100,  //MB
+  cacheSize   : 100,  // MB
   eps         : 1e-3, // tolerance of termination criterion 
+  probability : false // do probability estimatesdo probability estimates
 };
 var svm = new libsvm.SVM(args);
 ```
@@ -72,7 +68,7 @@ Available SVM are :
 Note : See difference between nu-SVC and C-SVC [here](http://www.csie.ntu.edu.tw/~cjlin/libsvm/faq.html#f411).  
 
 # How it work
-`node-svm` uses the official libsvm C++ library, version 3.17. It also provides helpers to facilitate its use in real projects.
+`node-svm` uses the official libsvm C++ library, version 3.18. It also provides helpers to facilitate its use in real projects.
 
 For more informations, see also : 
  * [libsvm](http://www.csie.ntu.edu.tw/~cjlin/libsvm/)
