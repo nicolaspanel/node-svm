@@ -179,3 +179,40 @@ describe ('Classification Evaluator', function(){
   });
 });
 
+describe ('Regression Evaluator', function(){
+  describe ('when evaluates naive classifier', function () {
+
+    beforeEach(function () {
+      evaluator = new libsvm.RegressionEvaluator(badClassifier);
+    });
+
+    it ('should use only one subset (ie k = 1)', function  (done) {
+      evaluator.evaluate(testSet, function(report){
+        report.nfold.should.equal(1);
+        done();
+      }); 
+    });
+        
+    it ('should report a mse of 3.5', function(done){
+      evaluator.evaluate(testSet, function(report){
+        report.mse.should.equal(3.5);
+        done();
+      });
+    });
+
+  });
+
+  describe ('when perform n-fold cross validation on perfect classifier', function(){
+    beforeEach(function () {
+      evaluator = new libsvm.RegressionEvaluator(perfectClassifier);
+    });
+
+    it ('should report a mse of 0', function(done){
+      evaluator.performNFoldCrossValidation(4, testSet, function(report){
+        report.mse.should.equal(0);
+        done();
+      });
+    }); 
+  });
+});
+

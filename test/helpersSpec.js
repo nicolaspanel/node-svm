@@ -4,6 +4,7 @@ var assert = require('assert'),
     should = require('should'),
     _ = require('underscore'),
     async = require('async'),
+    numeric = require('numeric'),
     libsvm = require('../lib/nodesvm');
 
 var xorProblem = [
@@ -122,14 +123,18 @@ describe('#evaluateSvm', function(){
 });
 
 describe('#findBestParameters', function(done){  
-  it('should return C=0.03125, gamma=0.5 on xor', function (done) {
-    this.timeout(1000);
-    var dataset = [];
+  var dataset = null;
+  beforeEach(function() {
+    dataset = [];
     _.range(10).forEach(function(i){
       xorProblem.forEach(function (ex) {
         dataset.push(ex);
       });
     });
+  });
+  
+  it('should work on xor dataset with C-SVC and RBF kernel', function (done) {
+    this.timeout(1000);
     
     var cValues = [0.03125, 0.125, 0.5, 2, 8],
         gValues = [8, 2, 0.5, 0.125, 0.03125];
@@ -147,5 +152,66 @@ describe('#findBestParameters', function(done){
       report.nbIterations.should.equal(cValues.length * gValues.length);
       done();
     });       
+  });
+  
+  it('should work on xor dataset with EPSILON_SVR and linear kernel', function (done) {
+    this.timeout(1000);
+    
+    var cValues = [0.03125, 0.125, 0.5, 2, 8],
+        epsilonValues = [8, 2, 0.5, 0.125, 0.03125];
+    var options = {
+      svmType : libsvm.SvmTypes.EPSILON_SVR,
+      kernelType : libsvm.KernelTypes.LINEAR,
+      cValues: cValues,
+      epsilonValues: epsilonValues,
+      log: false
+    }; 
+    
+    libsvm.findBestParameters(dataset, options, function(report) {
+      cValues.should.containEql(report.C);
+      epsilonValues.should.containEql(report.epsilon);
+      report.mse.should.be.within(0, 1);
+      report.nbIterations.should.equal(cValues.length * epsilonValues.length);
+      done();
+    });       
+  });
+});
+
+describe('#findAllPossibleCombinaisons', function() {
+  var A = [0, 1, 2],
+      B = [0, 1],
+      C = [];
+
+  it('should have a size of 6x2 for A u B', function () {
+    numeric.dim(libsvm.findAllPossibleCombinaisons([A, B])).should.eql([6,2]);
+  });
+
+  it('should return all possible combinaisons for A u B', function () {
+    var expected = [
+      [0, 0],
+      [1, 0],
+      [2, 0],
+      [0, 1],
+      [1, 1],
+      [2, 1]
+    ];
+    libsvm.findAllPossibleCombinaisons([A, B]).should.eql(expected);
+  });
+
+  it('should have a size of 6x3 for A u B u C', function () {
+    numeric.dim(libsvm.findAllPossibleCombinaisons([A, B, C])).should.eql([6,3]);
+  });
+
+  it('should return all possible combinaisons for A u C u B u C', function () {
+    var expected = [
+      [0, 0, 0, 0],
+      [1, 0, 0, 0],
+      [2, 0, 0, 0],
+      [0, 0, 1, 0],
+      [1, 0, 1, 0],
+      [2, 0, 1, 0]
+    ];
+    var result = libsvm.findAllPossibleCombinaisons([A, C, B, C]);
+    result.should.eql(expected);
   });
 });

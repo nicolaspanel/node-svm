@@ -7,7 +7,9 @@
 'use strict';
 
 var libsvm = require('../lib/nodesvm');
-var fileName = './examples/datasets/housing.ds';
+var nFold= 4,
+    fileName = './examples/datasets/housing.ds';
+
 var svm = new libsvm.SVM({
   type: libsvm.SvmTypes.EPSILON_SVR,
   kernel: new libsvm.RadialBasisFunctionKernel(0.5),
@@ -19,7 +21,9 @@ libsvm.readAndNormalizeDatasetAsync(fileName, function(housing){
   console.log('Data set normalized with following parameters :');
   console.log('  * mu = \n', housing.mu);
   console.log('  * sigma = \n', housing.sigma); 
-  svm.trainAsync(housing.dataset, function() {
-    console.log("trained");
+  svm.performNFoldCrossValidation(housing.dataset, nFold, function(report){
+    console.log('mse = %d%%', report.mse);
+    console.log('(mse)^0,5 = %d%%', Math.pow(report.mse, 0.5));
+
   });
 });

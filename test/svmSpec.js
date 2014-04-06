@@ -181,6 +181,25 @@ describe('SVM', function(){
       it('should be trained', function(){
         svm.isTrained().should.be.true;
       });
+
+      it('can evaluate itself', function(done){
+        svm.evaluate(problem, function (report) {
+          report.mse.should.equal(0.25);
+          done();
+        });     
+      });
+      it('can perform n-fold cross validation', function(done){
+        var dataset = [];
+        _.range(50).forEach(function(i){
+          xorProblem.forEach(function (ex) {
+            dataset.push(ex);
+          });
+        });
+        svm.performNFoldCrossValidation(dataset, 4, function (report) {
+          report.mse.should.be.within(0, 1);
+          done();
+        });     
+      });
     });
   });
 

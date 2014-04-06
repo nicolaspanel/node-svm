@@ -21,7 +21,8 @@ libsvm.readAndNormalizeDatasetAsync(fileName, function(svmguide){
     kernelType: libsvm.KernelTypes.RBF,
     fold: 4,
     cValues:  cValues,
-    gValues: gValues
+    gValues: gValues,
+    log: true
   };
   console.log('Evaluation started (may take a minute)...');
   libsvm.findBestParameters(svmguide.dataset, options, function (report) {
