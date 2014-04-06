@@ -13,28 +13,21 @@ var libsvm = require('../lib/nodesvm'),
 var nFold= 4,
     fileName = './examples/datasets/housing.ds';
 
-
 libsvm.readAndNormalizeDatasetAsync(fileName, function(housing){ 
   console.log('Data set normalized with following parameters :');
   console.log('  * mu = \n', housing.mu);
-  console.log('  * sigma = \n', housing.sigma); 
-  
-  var cValues = [0.03125, 0.125, 0.5, 2, 8],
-      gValues = [8, 2, 0.5, 0.125, 0.03125],
-      epsilonValues = [8, 2, 0.5, 0.125, 0.03125];
-  
+  console.log('  * sigma = \n', housing.sigma);   
 
   console.log('Look for parameters that provide the lower Mean Square Error : ');
   var options = {
     svmType : libsvm.SvmTypes.EPSILON_SVR,
     kernelType : libsvm.KernelTypes.RBF,
-    cValues: cValues,
-    gValues: gValues,
-    epsilonValues: epsilonValues,
+    cValues: [0.03125, 0.125, 0.5, 2, 8],
+    gValues: [8, 2, 0.5, 0.125, 0.03125],
+    epsilonValues: [8, 2, 0.5, 0.125, 0.03125],
     log: true
   }; 
   libsvm.findBestParameters(housing.dataset, options, function(report) {
-    
     // build SVM with found parameters
     var svm = new libsvm.SVM({
       type: libsvm.SvmTypes.EPSILON_SVR,
@@ -42,12 +35,12 @@ libsvm.readAndNormalizeDatasetAsync(fileName, function(housing){
       C: report.C,
       epsilon: report.epsilon
     });
-    var training = _.sample(housing.dataset, Math.round(housing.dataset.length * 0.5));
-    var tests = _.sample(housing.dataset, 10);
+    var training = _.sample(housing.dataset, Math.round(housing.dataset.length * 0.8));
+    var tests = _.sample(housing.dataset, 15);
     // train the svm
     svm.trainAsync(training, function(){
       // predict some values
-      for (var i = 0; i < 10;  i++){
+      for (var i = 0; i < 20;  i++){
         var test = tests[i];
         console.log('{expected: %d, predicted: %d}', test[1], svm.predict(test[0]));
       }
