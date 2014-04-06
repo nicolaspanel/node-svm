@@ -66,35 +66,9 @@ class NodeSvm : public node::ObjectWrap
       params = &model->param;
       assert(params!=NULL);  
     };
-    void train(Local<Array> dataset){
-      struct svm_problem *prob = new svm_problem();
-      getSvmProblemFromData(dataset, prob);
-
-      model = svm_train(prob, params);
-      trainingProblem = prob;
-    };
-    double predict(Local<Array> data){
-      svm_node *x = new svm_node[data->Length() + 1];
-      getSvmNodes(data, x);
-      double prediction = svm_predict(model, x);
-      delete[] x;
-      return prediction;
-    }
-    void predictProbabilities(Local<Array> data, double* prob_estimates){
-      svm_node *x = new svm_node[data->Length() + 1];
-      getSvmNodes(data, x);
-      svm_predict_probability(model,x,prob_estimates);
-      delete[] x;
-    };
-  private:
-    ~NodeSvm();
-    struct svm_parameter *params;
-    struct svm_model *model;
-    struct svm_problem *trainingProblem;
-    static Persistent<Function> constructor;
-
-    Handle<Value> getSvmProblemFromData(Local<Array> dataset, svm_problem *prob){
+    Handle<Value> setSvmProblem(Local<Array> dataset){
       NanScope();
+      struct svm_problem *prob = new svm_problem();
       prob->l = 0;
 
       if (dataset->Length() == 0)
@@ -146,8 +120,34 @@ class NodeSvm : public node::ObjectWrap
         double y = ex->Get(1)->NumberValue();
         prob->y[i] = y;
       }
+      trainingProblem = prob;
       NanReturnUndefined();
     };
+
+    void train(){
+      model = svm_train(trainingProblem, params);
+    };
+    
+    double predict(Local<Array> data){
+      svm_node *x = new svm_node[data->Length() + 1];
+      getSvmNodes(data, x);
+      double prediction = svm_predict(model, x);
+      delete[] x;
+      return prediction;
+    }
+    void predictProbabilities(Local<Array> data, double* prob_estimates){
+      svm_node *x = new svm_node[data->Length() + 1];
+      getSvmNodes(data, x);
+      svm_predict_probability(model,x,prob_estimates);
+      delete[] x;
+    };
+  private:
+    ~NodeSvm();
+    struct svm_parameter *params;
+    struct svm_model *model;
+    struct svm_problem *trainingProblem;
+    static Persistent<Function> constructor;
+
     Handle<Value> getSvmNodes(Local<Array> ex, svm_node *x){
       if (!ex->IsArray()){
         return ThrowException(Exception::Error(String::New("Incorrect dataset. X should be 1d-array")));
