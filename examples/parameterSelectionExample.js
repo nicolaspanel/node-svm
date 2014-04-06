@@ -1,14 +1,15 @@
 /** 
   Evaluate best parameter for C-SVC classification with RBF kernel
-
-  Training set : svmguide4.ds
+  See http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf, p.10
+  Training set : svmguide2.ds
+  NODE : Normalization give a better performence than scaling (acc =97% instead of 85%)
 */
 'use strict';
 
 var libsvm = require('../lib/nodesvm'),
     _ = require('underscore');
 
-var fileName = './examples/datasets/svmguide4.ds';
+var fileName = './examples/datasets/svmguide2.ds';
 
 // Load problems
 libsvm.readAndNormalizeDatasetAsync(fileName, function(svmguide){ 
