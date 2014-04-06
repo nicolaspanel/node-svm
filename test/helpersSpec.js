@@ -154,15 +154,17 @@ describe('#findBestParameters', function(done){
     });       
   });
   
-  it('should work on xor dataset with EPSILON_SVR and linear kernel', function (done) {
+  it('should work on xor dataset with EPSILON_SVR and RBF kernel', function (done) {
     this.timeout(1000);
     
     var cValues = [0.03125, 0.125, 0.5, 2, 8],
+        gValues = [8, 2, 0.5, 0.125, 0.03125],
         epsilonValues = [8, 2, 0.5, 0.125, 0.03125];
     var options = {
       svmType : libsvm.SvmTypes.EPSILON_SVR,
-      kernelType : libsvm.KernelTypes.LINEAR,
+      kernelType : libsvm.KernelTypes.RBF,
       cValues: cValues,
+      gValues: gValues,
       epsilonValues: epsilonValues,
       log: false
     }; 
@@ -170,8 +172,8 @@ describe('#findBestParameters', function(done){
     libsvm.findBestParameters(dataset, options, function(report) {
       cValues.should.containEql(report.C);
       epsilonValues.should.containEql(report.epsilon);
-      report.mse.should.be.within(0, 1);
-      report.nbIterations.should.equal(cValues.length * epsilonValues.length);
+      report.mse.should.be.approximately(0, 1e-3);
+      report.nbIterations.should.equal(cValues.length * epsilonValues.length * epsilonValues.length);
       done();
     });       
   });
