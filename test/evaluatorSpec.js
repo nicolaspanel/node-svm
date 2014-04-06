@@ -4,48 +4,46 @@ var should = require ('should'),
     _ = require ('underscore'),
     libsvm = require('../lib/nodesvm');
 
-describe ('Classification Evaluator', function(){
-  var evaluator = null;
-  var testSet = [
-    [[0, 0, 0], 'A'], 
-    [[0, 0, 1], 'B'], 
-    [[0, 1, 0], 'C'], 
-    [[0, 1, 1], 'D'],
-    [[1, 0, 0], 'A'], 
-    [[1, 0, 1], 'B'], 
-    [[1, 1, 0], 'C'], 
-    [[1, 1, 1], 'D']
-  ];
-  var badClassifier = {
-    predict: function(state){
-      return 'A';
-    }, 
-    train: function(trainingSet){
-      // do nothing
-    },
-    trainAsync: function(trainingSet, cb){
-      cb();// do nothing
-    }
-  };
-  var perfectClassifier = {
-    previsionTable: [['A', 'B'], ['C', 'D']],
-    predict: function(state){
-      var x1 = state[1];
-      var x2 = state[2];
-      return this.previsionTable[x1][x2]; // note : independant from state[0]
-    }, 
-    train: function(trainingSet){
-      // do nothing
-    },
-    trainAsync: function(trainingSet, cb){
-      cb();// do nothing
-    }
-  };
+var evaluator = null;
+var testSet = [
+  [[0, 0, 0], '0'], 
+  [[0, 0, 1], '1'], 
+  [[0, 1, 0], '2'], 
+  [[0, 1, 1], '3'],
+  [[1, 0, 0], '0'], 
+  [[1, 0, 1], '1'], 
+  [[1, 1, 0], '2'], 
+  [[1, 1, 1], '3']
+];
+var badClassifier = {
+  predict: function(state){
+    return '0';
+  }, 
+  train: function(trainingSet){
+    // do nothing
+  },
+  trainAsync: function(trainingSet, cb){
+    cb();// do nothing
+  }
+};
+var perfectClassifier = {
+  previsionTable: [['0', '1'], ['2', '3']],
+  predict: function(state){
+    var x1 = state[1];
+    var x2 = state[2];
+    return this.previsionTable[x1][x2]; // note : independant from state[0]
+  }, 
+  train: function(trainingSet){
+    // do nothing
+  },
+  trainAsync: function(trainingSet, cb){
+    cb();// do nothing
+  }
+};
 
-  
-      
+describe ('Classification Evaluator', function(){
   describe ('when evaluates naive classifier', function () {
-    
+
     beforeEach(function () {
       evaluator = new libsvm.ClassificationEvaluator(badClassifier);
     });
@@ -85,44 +83,44 @@ describe ('Classification Evaluator', function(){
       });
     });
     
-    it ('should report a recall of 1 for class \'A\'', function(done){
+    it ('should report a recall of 1 for class \'0\'', function(done){
       evaluator.evaluate(testSet, function(report){
-        report.subsetsReports[0].classReports['A'].recall.should.equal(1);
+        report.subsetsReports[0].classReports['0'].recall.should.equal(1);
         done();
       });
     });
     
-    it ('should report a precision of 0.25 for class \'A\'', function(done){
+    it ('should report a precision of 0.25 for class \'0\'', function(done){
       evaluator.evaluate(testSet, function(report){
-        report.subsetsReports[0].classReports['A'].precision.should.equal(0.25);
+        report.subsetsReports[0].classReports['0'].precision.should.equal(0.25);
         done();
       });
     });
     
-    it ('should report a fscore of 0.4 for class \'A\'', function(done){
+    it ('should report a fscore of 0.4 for class \'0\'', function(done){
       evaluator.evaluate(testSet, function(report){
-        report.subsetsReports[0].classReports['A'].fscore.should.equal(0.4);
+        report.subsetsReports[0].classReports['0'].fscore.should.equal(0.4);
         done();
       });
     });
 
-    it ('should report a recall of 0 for class \'B\'', function(done){
+    it ('should report a recall of 0 for class \'1\'', function(done){
       evaluator.evaluate(testSet, function(report){
-        report.subsetsReports[0].classReports['B'].recall.should.equal(0);
+        report.subsetsReports[0].classReports['1'].recall.should.equal(0);
         done();
       });
     });
     
-    it ('should report a precision of 0 for class \'B\'', function(done){
+    it ('should report a precision of 0 for class \'1\'', function(done){
       evaluator.evaluate(testSet, function(report){
-        report.subsetsReports[0].classReports['B'].precision.should.equal(0);
+        report.subsetsReports[0].classReports['1'].precision.should.equal(0);
         done();
       });
     });
     
-    it ('should report a fscore of 0 for class \'B\'', function(done){
+    it ('should report a fscore of 0 for class \'1\'', function(done){
       evaluator.evaluate(testSet, function(report){
-        report.subsetsReports[0].classReports['B'].fscore.should.equal(0);
+        report.subsetsReports[0].classReports['1'].fscore.should.equal(0);
         done();
       });
     });
@@ -147,7 +145,7 @@ describe ('Classification Evaluator', function(){
     it ('should report a recall of 1 for all classes', function(done){
       evaluator.performNFoldCrossValidation(1, testSet, function(report){
         report.subsetsReports.forEach(function(subset){
-          ['A', 'B', 'C', 'D'].forEach(function(label){
+          ['0', '1', '2', '3'].forEach(function(label){
             subset.classReports[label].recall.should.equal(1);
           }); 
         });
@@ -160,7 +158,7 @@ describe ('Classification Evaluator', function(){
     it ('should report a precision of 1 for all classes', function(done){
       evaluator.performNFoldCrossValidation(1, testSet, function(report){
         report.subsetsReports.forEach(function(subset){
-          ['A', 'B', 'C', 'D'].forEach(function(label){
+          ['0', '1', '2', '3'].forEach(function(label){
             subset.classReports[label].precision.should.equal(1);
           }); 
         });
@@ -171,7 +169,7 @@ describe ('Classification Evaluator', function(){
     it ('should report a fscore of 1 for all classes', function(done){
       evaluator.performNFoldCrossValidation(1, testSet, function(report){
         report.subsetsReports.forEach(function(subset){
-          ['A', 'B', 'C', 'D'].forEach(function(label){
+          ['0', '1', '2', '3'].forEach(function(label){
             subset.classReports[label].fscore.should.equal(1);
           }); 
         });
@@ -180,3 +178,4 @@ describe ('Classification Evaluator', function(){
     });  
   });
 });
+
