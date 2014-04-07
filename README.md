@@ -128,9 +128,9 @@ If you feel that the community will benefit from your changes, please send a pul
 
 #FAQ
 ###Segmentation fault
-Q : Node return 'segmentation fault'error during . What's going on?
+Q : Node returns 'segmentation fault' error during training. What's going on?
 
-A : Your dataset is empty or its format is incorrect
+A : Your dataset is empty or its format is incorrect.
 
 ###Difference between nu-SVC and C-SVC
 Q : What is the difference between nu-SVC and C-SVC?
@@ -138,8 +138,8 @@ Q : What is the difference between nu-SVC and C-SVC?
 A : [Answer here](http://www.csie.ntu.edu.tw/~cjlin/libsvm/faq.html#f411)
 
 ###Other questions
- - Take a look at [libsvm's FAQ](http://www.csie.ntu.edu.tw/~cjlin/libsvm/faq.html).
- - Create [an issue](https://github.com/nicolaspanel/node-svm/issues)
+ * Take a look at [libsvm's FAQ](http://www.csie.ntu.edu.tw/~cjlin/libsvm/faq.html).
+ * Create [an issue](https://github.com/nicolaspanel/node-svm/issues)
 
 # License
 MIT
