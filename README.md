@@ -47,7 +47,7 @@ var svm = new nodesvm.SVM({
   kernel: new nodesvm.RadialBasisFunctionKernel(gamma), // see other kernels below
   C: 0.1,  // Cost parameter. Required for C_SVC, EPSILON_SVR and NU_SVR. Must be greater than zero
   nu: 0.5, // nu parameter. Required for NU_SVC, ONE_CLASS and NU_SVR. Must be within 0 and 1
-  epsilon : 0.1, // required for epsilon-SVR? Must me greater than zero
+  epsilon : 0.1, // Epsilon parameter, required for epsilon-SVR. Must me greater than zero
   
   // training options
   eps: 1e-3, // stopping criteria 

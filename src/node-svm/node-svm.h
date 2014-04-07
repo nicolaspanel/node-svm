@@ -128,18 +128,22 @@ class NodeSvm : public node::ObjectWrap
       model = svm_train(trainingProblem, params);
     };
     
-    double predict(Local<Array> data){
-      svm_node *x = new svm_node[data->Length() + 1];
-      getSvmNodes(data, x);
-      double prediction = svm_predict(model, x);
-      delete[] x;
-      return prediction;
+    double predict(svm_node *x){
+      return svm_predict(model, x);
     }
-    void predictProbabilities(Local<Array> data, double* prob_estimates){
-      svm_node *x = new svm_node[data->Length() + 1];
-      getSvmNodes(data, x);
+    void predictProbabilities(Local<Array> inputs, double* prob_estimates){
+      svm_node *x = new svm_node[inputs->Length() + 1];
+      getSvmNodes(inputs, x);
       svm_predict_probability(model,x,prob_estimates);
       delete[] x;
+    };
+    void getSvmNodes(Local<Array> inputs, svm_node *nodes){      
+      for (unsigned j=0; j < inputs->Length(); j++){
+        double xi = inputs->Get(j)->NumberValue();
+        nodes[j].index = j+1;
+        nodes[j].value = xi;
+      }
+      nodes[inputs->Length()].index = -1;
     };
   private:
     ~NodeSvm();
@@ -148,21 +152,6 @@ class NodeSvm : public node::ObjectWrap
     struct svm_problem *trainingProblem;
     static Persistent<Function> constructor;
 
-    Handle<Value> getSvmNodes(Local<Array> ex, svm_node *x){
-      if (!ex->IsArray()){
-        return ThrowException(Exception::Error(String::New("Incorrect dataset. X should be 1d-array")));
-      }
-      if (ex->Length() == 0){
-        return ThrowException(Exception::Error(String::New("Example data set is empty")));
-      }
-      for (unsigned j=0; j < ex->Length(); j++){
-        double xi = ex->Get(j)->NumberValue();
-        x[j].index = j+1;
-        x[j].value = xi;
-      }
-      x[ex->Length()].index = -1;
-      NanReturnUndefined();
-    };
 };
 
 #endif /* _NODE_SVM_H */

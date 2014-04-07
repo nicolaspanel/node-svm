@@ -1,6 +1,7 @@
 
 #include "node-svm.h"
 #include "training-worker.h"
+#include "prediction-worker.h"
 
 Persistent<Function> NodeSvm::constructor;
 
@@ -209,8 +210,18 @@ NAN_METHOD(NodeSvm::Predict) {
   // chech params
   assert(args[0]->IsObject());
   
-  Local<Array> dataset = Array::Cast(*args[0]->ToObject());
-  NanReturnValue(Number::New(obj->predict(dataset)));
+  Local<Array> inputs = Array::Cast(*args[0]->ToObject());
+  if (!inputs->IsArray()){
+    return ThrowException(Exception::Error(String::New("Incorrect dataset. X should be 1d-array")));
+  }
+  if (inputs->Length() == 0){
+    return ThrowException(Exception::Error(String::New("Example data set is empty")));
+  }
+  svm_node *x = new svm_node[inputs->Length() + 1];
+  obj->getSvmNodes(inputs, x);
+  double prediction = obj->predict(x);
+  delete[] x;
+  NanReturnValue(Number::New(prediction));
 }
 
 NAN_METHOD(NodeSvm::PredictAsync) {
@@ -221,16 +232,12 @@ NAN_METHOD(NodeSvm::PredictAsync) {
   assert(obj->isTrained());
   // chech params
   assert(args[0]->IsObject());
-  assert(args[1]->IsFunction());
+  Local<Array> inputs = Array::Cast(*args[0]->ToObject());
 
-  Local<Array> dataset = Array::Cast(*args[0]->ToObject());
-  double prediction = obj->predict(dataset);
-  
+  assert(args[1]->IsFunction());
   NanCallback *callback = new NanCallback(args[1].As<Function>());
-  Local<Value> argv[] = {
-    Number::New(prediction)
-  };
-  callback->Call(1, argv);
+  
+  NanAsyncQueueWorker(new PredictionWorker(obj, inputs, callback));
   NanReturnUndefined();
 }
 
