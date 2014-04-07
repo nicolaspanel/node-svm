@@ -68,10 +68,9 @@ NAN_METHOD(NodeSvm::SetParameters) {
   if (params->Has(String::New("nu"))){
     svm_params->nu = params->Get(String::New("nu"))->NumberValue();
   }
-  if (params->Has(String::New("p"))){
-    svm_params->p = params->Get(String::New("p"))->NumberValue();
+  if (params->Has(String::New("epsilon"))){
+    svm_params->p = params->Get(String::New("epsilon"))->NumberValue();
   }
-  
   if (params->Has(String::New("cacheSize"))){
     svm_params->cache_size = params->Get(String::New("cacheSize"))->NumberValue();
   }
