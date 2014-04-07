@@ -135,43 +135,61 @@ describe('#findBestParameters', function(done){
   
   it('should work on xor dataset with C-SVC and RBF kernel', function (done) {
     this.timeout(1000);
-    
-    var cValues = [0.03125, 0.125, 0.5, 2, 8],
-        gValues = [8, 2, 0.5, 0.125, 0.03125];
+
     var options = {
-      cValues: cValues,
-      gValues: gValues
+      // svmType : libsvm.SvmTypes.C_SVC,     // (default value)
+      // kernelType : libsvm.KernelTypes.RBF, // (default value)
+      cValues: [0.03125, 0.125, 0.5, 2, 8],
+      gValues: [8, 2, 0.5, 0.125, 0.03125]
     }; 
     
     libsvm.findBestParameters(dataset, options, function(report) {
-      cValues.should.containEql(report.C);
-      gValues.should.containEql(report.gamma);
+      options.cValues.should.containEql(report.C);
+      options.gValues.should.containEql(report.gamma);
       report.accuracy.should.be.approximately(1, 0.01);
       report.fscore.should.be.approximately(1, 0.01);
-      report.nbIterations.should.equal(cValues.length * gValues.length);
+      report.nbIterations.should.equal(25);
       done();
     });       
   });
   
   it('should work on xor dataset with EPSILON_SVR and RBF kernel', function (done) {
     this.timeout(1000);
-    
-    var cValues = [0.03125, 0.125, 0.5, 2, 8],
-        gValues = [8, 2, 0.5, 0.125, 0.03125],
-        epsilonValues = [8, 2, 0.5, 0.125, 0.03125];
     var options = {
       svmType : libsvm.SvmTypes.EPSILON_SVR,
-      kernelType : libsvm.KernelTypes.RBF,
-      cValues: cValues,
-      gValues: gValues,
-      epsilonValues: epsilonValues
+      //kernelType : libsvm.KernelTypes.RBF, // (default value)
+      cValues: [0.03125, 0.125, 0.5, 2, 8],
+      gValues: [8, 2, 0.5, 0.125, 0.03125],
+      epsilonValues: [8, 2, 0.5, 0.125, 0.03125]
     }; 
     
     libsvm.findBestParameters(dataset, options, function(report) {
-      cValues.should.containEql(report.C);
-      epsilonValues.should.containEql(report.epsilon);
+      options.cValues.should.containEql(report.C);
+      options.epsilonValues.should.containEql(report.epsilon);
       report.mse.should.be.approximately(0, 1e-3);
-      report.nbIterations.should.equal(cValues.length * epsilonValues.length * epsilonValues.length);
+      report.nbIterations.should.equal(125);
+      done();
+    });       
+  });
+
+  it('should work on xor dataset with NU_SVR and SIGMOID kernel', function (done) {
+    this.timeout(1000);
+
+    var options = {
+      svmType : libsvm.SvmTypes.NU_SVR,
+      kernelType : libsvm.KernelTypes.SIGMOID,
+      gValues: [8, 2, 0.5, 0.125, 0.03125], // for sigmoid kernel
+      rValues: [0], // for sigmoid kernel
+      nuValues: [0, 0.25, 0.5, 0.75, 1], // for NU_SVR
+      cValues: [8] // for NU_SVR
+    }; 
+    
+    libsvm.findBestParameters(dataset, options, function(report) {
+      options.gValues.should.containEql(report.gamma);
+      options.rValues.should.containEql(report.r);
+      options.nuValues.should.containEql(report.nu);
+      report.mse.should.be.approximately(0.25, 1e-3);
+      report.nbIterations.should.equal(25);
       done();
     });       
   });
