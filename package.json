@@ -26,8 +26,7 @@
     "nan": "~0.8.0",
     "underscore": "~1.6.0",
     "numeric": "~1.2.6",
-    "async": "~0.6.2",
-    "humanize-duration": "~0.8.0"
+    "async": "~0.6.2"
   },
   "devDependencies": {
     "mocha": "~1.17.1",
@@ -36,6 +35,7 @@
     "grunt-cli": "latest",
     "grunt-contrib-jshint": "~0.4.3",
     "grunt-mocha-test": "~0.2.2",
-    "grunt-node-gyp": "~0.3.0"
+    "grunt-node-gyp": "~0.3.0",
+    "humanize-duration": "~0.8.0"
   }
 }
