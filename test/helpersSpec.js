@@ -134,8 +134,6 @@ describe('#findBestParameters', function(done){
   });
   
   it('should work on xor dataset with C-SVC and RBF kernel', function (done) {
-    this.timeout(1000);
-
     var options = {
       // svmType : libsvm.SvmTypes.C_SVC,     // (default value)
       // kernelType : libsvm.KernelTypes.RBF, // (default value)
@@ -154,7 +152,6 @@ describe('#findBestParameters', function(done){
   });
   
   it('should work on xor dataset with EPSILON_SVR and RBF kernel', function (done) {
-    this.timeout(1000);
     var options = {
       svmType : libsvm.SvmTypes.EPSILON_SVR,
       //kernelType : libsvm.KernelTypes.RBF, // (default value)
@@ -173,8 +170,7 @@ describe('#findBestParameters', function(done){
   });
 
   it('should work on xor dataset with NU_SVR and SIGMOID kernel', function (done) {
-    this.timeout(1000);
-
+    var completion = 0;
     var options = {
       svmType : libsvm.SvmTypes.NU_SVR,
       kernelType : libsvm.KernelTypes.SIGMOID,
@@ -190,7 +186,10 @@ describe('#findBestParameters', function(done){
       options.nuValues.should.containEql(report.nu);
       report.mse.should.be.approximately(0.25, 1e-3);
       report.nbIterations.should.equal(25);
+      completion.should.equal(1);
       done();
+    }, function(progress){
+      completion = progress;
     });       
   });
 });

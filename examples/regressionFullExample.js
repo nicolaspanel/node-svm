@@ -20,7 +20,7 @@ libsvm.readAndNormalizeDatasetAsync(fileName, function(housing){
   console.log('  * sigma = \n', housing.sigma);   
 
   console.log('Look for parameters that provide the lower Mean Square Error : ');
-  var options = {
+  var args = {
     svmType : libsvm.SvmTypes.EPSILON_SVR,
     kernelType : libsvm.KernelTypes.RBF,
     cValues: [0.03125, 0.125, 0.5, 2, 8],
@@ -28,7 +28,7 @@ libsvm.readAndNormalizeDatasetAsync(fileName, function(housing){
     epsilonValues: [8, 2, 0.5, 0.125, 0.03125],
     fold: nFold
   }; 
-  libsvm.findBestParameters(housing.dataset, options, function(report) {
+  libsvm.findBestParameters(housing.dataset, args, function(report) {
     // build SVM with found parameters
     console.log('Best params : \n', report);
 
@@ -48,11 +48,11 @@ libsvm.readAndNormalizeDatasetAsync(fileName, function(housing){
         console.log('{expected: %d, predicted: %d}', test[1], svm.predict(test[0]));
       }
     });
-  }, function(progress, remainingTime){
+  }, function(progressRate, remainingTime){
     // called during evaluation to report progress
     // remainingTime in ms
-    if (progress%5 === 0){
-      console.log('%d% achived. %s remaining...', progress, humanizeDuration(remainingTime));
+    if ((progressRate*100)%5 === 0){
+      console.log('%d% achived. %s remaining...', progressRate * 100, humanizeDuration(remainingTime));
     }
   }); 
 });
