@@ -9,12 +9,12 @@
 */
 'use strict';
 
-var libsvm = require('../lib/nodesvm'), 
+var nodesvm = require('../lib/nodesvm'), 
     async = require('async');
 
-var cSVM = new libsvm.SVM({
-  type: libsvm.SvmTypes.C_SVC,
-  kernel: new libsvm.RadialBasisFunctionKernel(0.25),
+var svc = new nodesvm.SVM({
+  type: nodesvm.SvmTypes.C_SVC,
+  kernel: new nodesvm.RadialBasisFunctionKernel(0.25),
   C: 1
 });
 var trainigSet = null,
@@ -24,11 +24,11 @@ var trainigSet = null,
 async.parallel([
   function (callback) {
     // load training set
-    libsvm.readProblemAsync('./examples/datasets/svmguide1.ds', function(dataset){
+    nodesvm.readProblemAsync('./examples/datasets/svmguide1.ds', function(dataset){
       trainigSet = dataset;
       // train svm
       console.log("Start training...");
-      cSVM.trainAsync(trainigSet, function() {
+      svc.trainAsync(trainigSet, function() {
         callback();
       });
       
@@ -36,18 +36,28 @@ async.parallel([
   }, 
   function (callback) {
     // load training set
-    libsvm.readProblemAsync('./examples/datasets/svmguide1.t.ds', function(dataset){
+    nodesvm.readProblemAsync('./examples/datasets/svmguide1.t.ds', function(dataset){
       testset = dataset;
       callback();
     });
   }
 ] , function(){
   // can start evaluation once svm trained and test set loaded
-  console.log("Evaluation Report:");
-  cSVM.evaluate(testset, function(report){
-    console.log(" * Accuracy = %d%%", report.accuracy * 100);
-    console.log(" * F-Score = %d", report.fscore);
-    console.log(" * Precision = %d", report.precision);
-    console.log(" * Recall = %d", report.recall);
+  svc.evaluate(testset, function(report){
+    console.log('Evaluation result : \n', JSON.stringify(report, null, '\t')); 
   });
 });
+
+/* OUTPUT 
+Start training...
+Evaluation result : 
+ {
+  "nfold": 1,
+  "accuracy": 0.66925,
+  "fscore": 0.5079955373744887,
+  "precision": 0.6022349743279976,
+  "recall": 0.3415,
+  "subsetsReports": [object]
+}
+
+*/

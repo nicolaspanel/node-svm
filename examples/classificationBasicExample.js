@@ -6,22 +6,22 @@
 **/
 'use strict';
 
-var libsvm = require('../lib/nodesvm');
+var nodesvm = require('../lib/nodesvm');
 var fileName = './examples/datasets/xor.ds';
-var svm = new libsvm.SVM({
-  type: libsvm.SvmTypes.C_SVC,
-  kernel: new libsvm.RadialBasisFunctionKernel(0.5),
+var svm = new nodesvm.SVM({
+  type: nodesvm.SvmTypes.C_SVC,
+  kernel: new nodesvm.RadialBasisFunctionKernel(0.5),
   C: 1
 });
 
-libsvm.readAndNormalizeDatasetAsync(fileName, function(xor){ 
+nodesvm.readAndNormalizeDatasetAsync(fileName, function(xor){ 
   var mu = xor.mu,
       sigma = xor.sigma;
   
   svm.trainAsync(xor.dataset, function() {
     [0,1].forEach(function(a){
       [0,1].forEach(function(b){
-        var normalizedInput = libsvm.meanNormalizeInput([a, b], mu, sigma);
+        var normalizedInput = nodesvm.meanNormalizeInput([a, b], mu, sigma);
         var prediction = svm.predict(normalizedInput); 
         console.log("%d XOR %d => %d", a, b, prediction);
       });
@@ -29,7 +29,7 @@ libsvm.readAndNormalizeDatasetAsync(fileName, function(xor){
   });
 });
 
-/* result : 
+/* OUTPUT 
 0 XOR 0 => 0
 0 XOR 1 => 1
 1 XOR 0 => 1

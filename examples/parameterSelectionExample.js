@@ -7,37 +7,54 @@
 */
 'use strict';
 
-var libsvm = require('../lib/nodesvm'),
-    _ = require('underscore');
+var nodesvm = require('../lib/nodesvm'),
+    _ = require('underscore'),
+    humanizeDuration = require("humanize-duration");
 
 var fileName = './examples/datasets/svmguide2.ds';
 
 // Load problems
-libsvm.readAndNormalizeDatasetAsync(fileName, function(svmguide){ 
-  var cValues = _.map(_.range(-5, 15, 2), function(value){return Math.pow(2, value);}),
-      gValues = _.map(_.range(3, -15, -2), function(value){return Math.pow(2, value);});
-
+nodesvm.readAndNormalizeDatasetAsync(fileName, function(svmguide){ 
   var options = {
-    svmType: libsvm.SvmTypes.C_SVC,
-    kernelType: libsvm.KernelTypes.RBF,
+    svmType: nodesvm.SvmTypes.C_SVC,    // (defaul option)
+    kernelType: nodesvm.KernelTypes.RBF,// (defaul option)
     fold: 4,
-    cValues:  cValues,
-    gValues: gValues,
-    log: true
+    cValues:  _.map(_.range(-5, 15, 2), function(v){return Math.pow(2, v);}),
+    gValues: _.map(_.range(3, -15, -2), function(v){return Math.pow(2, v);}),
   };
   console.log('Evaluation started (may take a minute)...');
-  libsvm.findBestParameters(svmguide.dataset, options, function (report) {
-    // body...
-    console.log('done!'); 
-    /* reports value are display in the console : 
-    { 
-      accuracy: 0.8,
-      fscore: 0.6638888888888889,
-      gamma: 0.001953125,
-      C: 2048,
-      nbIterations: 90 
+  nodesvm.findBestParameters(svmguide.dataset, options, function (report) {
+
+    console.log('Evaluation restult : \n', JSON.stringify(report, null, '\t')); 
+    
+  }, function(progressRate, remainingTime){
+    // called during evaluation to report progress
+    // remainingTime in ms
+    if ((progressRate*100)%10 === 0){
+      console.log('%d% - %s remaining...', progressRate * 100, humanizeDuration(remainingTime));
     }
-    */
   });
 
 });
+
+/* OUTPUT
+Evaluation started (may take a minute)...
+10% - 34 seconds, 398 milliseconds remaining...
+20% - 24 seconds, 56 milliseconds remaining...
+30% - 18 seconds, 347 milliseconds remaining...
+40% - 13 seconds, 680 milliseconds remaining...
+50% - 10 seconds, 301 milliseconds remaining...
+60% - 7 seconds, 513 milliseconds remaining...
+70% - 5 seconds, 238 milliseconds remaining...
+80% - 3 seconds, 365 milliseconds remaining...
+90% - 1 second, 630 milliseconds remaining...
+100% - 0 remaining...
+Evaluation restult : 
+ {
+  "accuracy": 0.9484536082474226,
+  "fscore": 0.9265644955300127,
+  "C": 8,
+  "gamma": 0.03125,
+  "nbIterations": 90
+}
+*/

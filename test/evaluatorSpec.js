@@ -2,7 +2,7 @@
 
 var should = require ('should'),
     _ = require ('underscore'),
-    libsvm = require('../lib/nodesvm');
+    svm = require('../lib/nodesvm');
 
 var evaluator = null;
 var testSet = [
@@ -45,7 +45,7 @@ describe ('Classification Evaluator', function(){
   describe ('when evaluates naive classifier', function () {
 
     beforeEach(function () {
-      evaluator = new libsvm.ClassificationEvaluator(badClassifier);
+      evaluator = new svm.ClassificationEvaluator(badClassifier);
     });
 
     it ('should use only one subset (ie k = 1)', function  (done) {
@@ -129,7 +129,7 @@ describe ('Classification Evaluator', function(){
 
   describe ('when perform n-fold cross validation on perfect classifier', function(){
     beforeEach(function () {
-      evaluator = new libsvm.ClassificationEvaluator(perfectClassifier);
+      evaluator = new svm.ClassificationEvaluator(perfectClassifier);
     });
 
     it ('should report an accuracy of 1', function(done){
@@ -183,7 +183,7 @@ describe ('Regression Evaluator', function(){
   describe ('when evaluates naive classifier', function () {
 
     beforeEach(function () {
-      evaluator = new libsvm.RegressionEvaluator(badClassifier);
+      evaluator = new svm.RegressionEvaluator(badClassifier);
     });
 
     it ('should use only one subset (ie k = 1)', function  (done) {
@@ -204,7 +204,7 @@ describe ('Regression Evaluator', function(){
 
   describe ('when perform n-fold cross validation on perfect classifier', function(){
     beforeEach(function () {
-      evaluator = new libsvm.RegressionEvaluator(perfectClassifier);
+      evaluator = new svm.RegressionEvaluator(perfectClassifier);
     });
 
     it ('should report a mse of 0', function(done){

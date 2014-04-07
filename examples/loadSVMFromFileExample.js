@@ -7,20 +7,20 @@
 **/
 'use strict';
 
-var libsvm = require('../lib/nodesvm');
+var nodesvm = require('../lib/nodesvm');
 
-var svm = new libsvm.SVM({
+var svm = new nodesvm.SVM({
   file: './examples/models/xor.model'
 });
 
-console.log("xor trainned");
+//NODE : no need to retrain the svm
 [0,1].forEach(function(a){
   [0,1].forEach(function(b){
     console.log("%d XOR %d => %d", a, b, svm.predict([a, b]));
   });
 });
 
-/* result : 
+/* OUTPUT 
 0 XOR 0 => 0
 0 XOR 1 => 1
 1 XOR 0 => 1

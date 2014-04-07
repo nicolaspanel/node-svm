@@ -4,7 +4,7 @@ var assert = require('assert'),
     should = require('should'),
     _ = require('underscore'),
     async = require('async'),
-    libsvm = require('../lib/nodesvm');
+    nodesvm = require('../lib/nodesvm');
 
 var xorProblem = [
   [[0, 0], 0],
@@ -21,7 +21,7 @@ var xorNormProblem = [
 describe('Linear kernel', function(){
   var kernel = null;
   beforeEach(function(){
-    kernel = new libsvm.LinearKernel();
+    kernel = new nodesvm.LinearKernel();
   });
   it('should have type set to 0', function(){
     kernel.kernelType.should.equal(0);
@@ -31,7 +31,7 @@ describe('Linear kernel', function(){
 describe('Polynomial kernel', function(){
   var kernel = null;
   beforeEach(function(){
-    kernel = new libsvm.PolynomialKernel(3, 4, 5);
+    kernel = new nodesvm.PolynomialKernel(3, 4, 5);
   });
   it('should have type set to 1', function(){
     kernel.kernelType.should.equal(1);
@@ -50,7 +50,7 @@ describe('Polynomial kernel', function(){
 describe('RBF kernel', function(){
   var kernel = null;
   beforeEach(function(){
-    kernel = new libsvm.RadialBasisFunctionKernel(3);
+    kernel = new nodesvm.RadialBasisFunctionKernel(3);
   });
   it('should have type set to 2', function(){
     kernel.kernelType.should.equal(2);
@@ -63,7 +63,7 @@ describe('RBF kernel', function(){
 describe('Sigmoid kernel', function(){
   var kernel = null;
   beforeEach(function(){
-    kernel = new libsvm.SigmoidKernel(3, 4);
+    kernel = new nodesvm.SigmoidKernel(3, 4);
   });
   it('should have type set to 3', function(){
     kernel.kernelType.should.equal(3);
@@ -81,9 +81,9 @@ describe('SVM', function(){
   describe('using bad parameters', function(){
     it('should throw an error during initialization', function(){
       var testFunc = function(){
-        var svm = new libsvm.SVM({
-          type: libsvm.SvmTypes.C_SVC,
-          kernel: new libsvm.RadialBasisFunctionKernel(2),
+        var svm = new nodesvm.SVM({
+          type: nodesvm.SvmTypes.C_SVC,
+          kernel: new nodesvm.RadialBasisFunctionKernel(2),
           C: 0 // c must be > 0
         });
       };
@@ -94,7 +94,7 @@ describe('SVM', function(){
   describe('when load from file', function(){
     var svm = null;
     beforeEach(function(){
-      svm = new libsvm.SVM({
+      svm = new nodesvm.SVM({
         file: './examples/models/xor.model'
       });
     });
@@ -118,9 +118,9 @@ describe('SVM', function(){
   describe('using NU_SVC with Sigmoid Kernel', function(){
     var svm = null;
     beforeEach(function(){
-      svm = new libsvm.SVM({
-        type: libsvm.SvmTypes.NU_SVC,
-        kernel: new libsvm.SigmoidKernel(2),
+      svm = new nodesvm.SVM({
+        type: nodesvm.SvmTypes.NU_SVC,
+        kernel: new nodesvm.SigmoidKernel(2),
         nu: 0.4
       });
     });
@@ -146,9 +146,9 @@ describe('SVM', function(){
     var svm = null;
     var problem = null;
     beforeEach(function(){
-      svm = new libsvm.SVM({
-        type: libsvm.SvmTypes.EPSILON_SVR,
-        kernel: new libsvm.LinearKernel(),
+      svm = new nodesvm.SVM({
+        type: nodesvm.SvmTypes.EPSILON_SVR,
+        kernel: new nodesvm.LinearKernel(),
         C: 1,
         epsilon: 0.1 // epsilon in loss function of epsilon-SVR
       });
@@ -206,9 +206,9 @@ describe('SVM', function(){
   describe('using C_SVC on XOR normalized problem with RBF Kernel', function(){
     var svm = null, problem = null;
     beforeEach(function(){
-      svm = new libsvm.SVM({
-        type: libsvm.SvmTypes.C_SVC,
-        kernel: new libsvm.RadialBasisFunctionKernel(0.5),
+      svm = new nodesvm.SVM({
+        type: nodesvm.SvmTypes.C_SVC,
+        kernel: new nodesvm.RadialBasisFunctionKernel(0.5),
         C: 1,
         probability: true
       });
