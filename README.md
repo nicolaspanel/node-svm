@@ -127,17 +127,17 @@ If you feel that the community will benefit from your changes, please send a pul
  * Send a pull request to the `develop` branch. 
 
 #FAQ
-##Segmentation fault
+###Segmentation fault
 Q : Node return 'segmentation fault'error during . What's going on?
 
 A : Your dataset is empty or its format is incorrect
 
-##Difference between nu-SVC and C-SVC
+###Difference between nu-SVC and C-SVC
 Q : What is the difference between nu-SVC and C-SVC?
 
 A : [Answer here](http://www.csie.ntu.edu.tw/~cjlin/libsvm/faq.html#f411)
 
-##Other questions
+###Other questions
  - Take a look at [libsvm's FAQ](http://www.csie.ntu.edu.tw/~cjlin/libsvm/faq.html).
  - Create [an issue](https://github.com/nicolaspanel/node-svm/issues)
 
