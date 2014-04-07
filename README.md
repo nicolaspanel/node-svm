@@ -79,8 +79,8 @@ Default parameters values :
 
 ##Training
 SVMs can be trained : 
- * Synchronously using `svm#train()` method
- * Asynchronously using `svm#trainAsync(callback)` method
+ * Synchronously using `svm#train()`
+ * Asynchronously using `svm#trainAsync(callback)`
 
 Notice :  Once trained, you can use `svm#saveToFile(path)` method to backup your svm model. Then you will be able to create new `svm` instances without having to train them again and again.
 
@@ -97,10 +97,10 @@ svm2.predict(values);
 
 ##Predictions
 Once trained, you can use your `svm` to predict values for given inputs. As before, you can do that : 
- * Synchronously using `svm#predict(inputs)`. 
- * Asynchronously using `svm#predictAsync(inputs, callback)`.
+ * Synchronously using `svm#predict(inputs)`
+ * Asynchronously using `svm#predictAsync(inputs, callback)`
 
-If you are working on a classification and **if enabled probabilities during initialization**, you ca also predict probability for each class  : 
+If you are working on a classification problem and **if you enabled probabilities during initialization** (see [initialization §](https://github.com/nicolaspanel/node-svm#initialisation)), you can also predict probabilities for each class  : 
  * Synchronously using `svm#predictProbabilities(inputs)`. 
  * Asynchronously using `svm#predictProbabilitiesAsync(inputs, callback)`.
 
