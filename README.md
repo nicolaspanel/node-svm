@@ -110,9 +110,7 @@ node-svm provide additional features that allow you to :
  * Evaluate various combinaisons and find the best parameters. See [evaluation example](https://github.com/nicolaspanel/node-svm/blob/master/examples/parameterSelectionExample.js)
 
 # How it work
-`node-svm` uses the official libsvm C++ library, version 3.18. It also provides helpers to facilitate its use in real projects.
-
-For more informations, see also : 
+`node-svm` uses the official libsvm C++ library, version 3.18. For more informations, see also : 
  * [libsvm](http://www.csie.ntu.edu.tw/~cjlin/libsvm/)
  * Chih-Chung Chang and Chih-Jen Lin, LIBSVM : a library for support vector machines. ACM Transactions on Intelligent Systems and Technology, 2:27:1--27:27, 2011.
  * [Wikipedia article about SVM](https://en.wikipedia.org/wiki/Support_vector_machine)
