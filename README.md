@@ -97,8 +97,12 @@ svm2.predict(values);
 
 ##Predictions
 Once trained, you can use your `svm` to predict values for given inputs. As before, you can do that : 
- * Synchronously using `svm#predict(inputs)` method. 
- * Asynchronously using `svm#predictAsync(inputs, callback)` method.
+ * Synchronously using `svm#predict(inputs)`. 
+ * Asynchronously using `svm#predictAsync(inputs, callback)`.
+
+If you are working on a classification and **if enabled probabilities during initialization**, you ca also predict probability for each class  : 
+ * Synchronously using `svm#predictProbabilities(inputs)`. 
+ * Asynchronously using `svm#predictProbabilitiesAsync(inputs, callback)`.
 
 Notice : `inputs` must be an array of numbers
 
