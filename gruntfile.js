@@ -5,8 +5,25 @@ module.exports = function (grunt) {
     gyp: {
       addon: {}
     },
-    mochaTest: {
-      files: [ 'test/*Spec.js']
+    mochacov: {
+      coverage: {
+        options: {
+          instrument: true,
+          reporter: 'mocha-lcov-reporter',
+          coveralls: {
+            serviceName: 'travis-ci',
+            repoToken: 'XRzdgZmcxy0P8tWmIKtv4LssCLYZ2LrKy'
+          }
+        }
+      },
+      test: {
+        options: {
+          reporter: 'spec'
+        }
+      },
+      options: {
+        files: 'test/*Spec.js'
+      }
     },
     jshint: {   
       all: [ 'gruntfile.js', 'lib/*.js', 'test/*.js', 'examples/*.js',],
@@ -40,8 +57,8 @@ module.exports = function (grunt) {
       }
     }
   });
-  grunt.registerTask('default', ['jshint:all', 'gyp:addon', 'mochaTest']);
+  grunt.registerTask('default', ['jshint:all', 'gyp:addon', 'mochacov:test', 'mochacov:coverage']);
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-mocha-test'); 
   grunt.loadNpmTasks('grunt-node-gyp');   
+  grunt.loadNpmTasks('grunt-mocha-cov');   
 };

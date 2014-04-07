@@ -6,6 +6,13 @@
   "scripts": {
     "test": "grunt"
   },
+  "config": {
+    "blanket": {
+      "pattern": [
+        "node-svm/lib"
+      ]
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/nicolaspanel/node-svm.git"
@@ -34,8 +41,11 @@
     "grunt": "~0.4.1",
     "grunt-cli": "latest",
     "grunt-contrib-jshint": "~0.4.3",
-    "grunt-mocha-test": "~0.2.2",
     "grunt-node-gyp": "~0.3.0",
-    "humanize-duration": "~0.8.0"
+    "humanize-duration": "~0.8.0",
+    "blanket": "~1.1.6",
+    "coveralls": "~2.10.0",
+    "mocha-lcov-reporter": "0.0.1",
+    "grunt-mocha-cov": "~0.2.1"
   }
 }
