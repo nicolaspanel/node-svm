@@ -2,6 +2,7 @@
 #include "node-svm.h"
 #include "training-worker.h"
 #include "prediction-worker.h"
+#include "probability-prediction-worker.h"
 
 Persistent<Function> NodeSvm::constructor;
 
@@ -233,7 +234,12 @@ NAN_METHOD(NodeSvm::PredictAsync) {
   // chech params
   assert(args[0]->IsObject());
   Local<Array> inputs = Array::Cast(*args[0]->ToObject());
-
+  if (!inputs->IsArray()){
+    return ThrowException(Exception::Error(String::New("Incorrect dataset. X should be 1d-array")));
+  }
+  if (inputs->Length() == 0){
+    return ThrowException(Exception::Error(String::New("Example data set is empty")));
+  }
   assert(args[1]->IsFunction());
   NanCallback *callback = new NanCallback(args[1].As<Function>());
   
@@ -251,19 +257,51 @@ NAN_METHOD(NodeSvm::PredictProbabilities) {
   // chech params
   assert(args[0]->IsObject());
   
-  Local<Array> dataset = Array::Cast(*args[0]->ToObject());
-  int nbClass = obj->getClassNumber();
-
-  double *prob_estimates = new double[nbClass];
-  obj->predictProbabilities(dataset, prob_estimates);
+  Local<Array> inputs = Array::Cast(*args[0]->ToObject());
+  if (!inputs->IsArray()){
+    return ThrowException(Exception::Error(String::New("Incorrect dataset. X should be 1d-array")));
+  }
+  if (inputs->Length() == 0){
+    return ThrowException(Exception::Error(String::New("Example data set is empty")));
+  }
+  svm_node *x = new svm_node[inputs->Length() + 1];
+  obj->getSvmNodes(inputs, x);
   
-  // // Create a new empty array.
+  int nbClass = obj->getClassNumber();
+  double *prob_estimates = new double[nbClass];
+  
+  obj->predictProbabilities(x, prob_estimates);
+  
+  // Create the result array
   Handle<Array> probs = Array::New(nbClass);
   for (int j=0; j < nbClass; j++){
     probs->Set(j, Number::New(prob_estimates[j]));
   }
   delete[] prob_estimates;
+  delete[] x;
   NanReturnValue(probs);
+}
+
+NAN_METHOD(NodeSvm::PredictProbabilitiesAsync) {
+  NanScope();
+  NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+  
+  // check obj
+  assert(obj->isTrained());
+  // chech params
+  assert(args[0]->IsObject());
+  Local<Array> inputs = Array::Cast(*args[0]->ToObject());
+  if (!inputs->IsArray()){
+    return ThrowException(Exception::Error(String::New("Incorrect dataset. X should be 1d-array")));
+  }
+  if (inputs->Length() == 0){
+    return ThrowException(Exception::Error(String::New("Example data set is empty")));
+  }
+  assert(args[1]->IsFunction());
+  NanCallback *callback = new NanCallback(args[1].As<Function>());
+  
+  NanAsyncQueueWorker(new ProbabilityPredictionWorker(obj, inputs, callback));
+  NanReturnUndefined();
 }
 
 void NodeSvm::Init(Handle<Object> exports){
@@ -302,6 +340,9 @@ void NodeSvm::Init(Handle<Object> exports){
 
   tpl->PrototypeTemplate()->Set(String::NewSymbol("predictProbabilities"),
       FunctionTemplate::New(NodeSvm::PredictProbabilities)->GetFunction());
+
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("predictProbabilitiesAsync"),
+      FunctionTemplate::New(NodeSvm::PredictProbabilitiesAsync)->GetFunction());
 
   tpl->PrototypeTemplate()->Set(String::NewSymbol("saveToFile"),
       FunctionTemplate::New(NodeSvm::SaveToFile)->GetFunction());

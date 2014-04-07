@@ -26,6 +26,7 @@ class NodeSvm : public node::ObjectWrap
     static NAN_METHOD(Predict);
     static NAN_METHOD(PredictAsync);
     static NAN_METHOD(PredictProbabilities);
+    static NAN_METHOD(PredictProbabilitiesAsync);
     static NAN_METHOD(SaveToFile);
     static NAN_METHOD(LoadFromFile);
     static NAN_METHOD(New);
@@ -131,11 +132,8 @@ class NodeSvm : public node::ObjectWrap
     double predict(svm_node *x){
       return svm_predict(model, x);
     }
-    void predictProbabilities(Local<Array> inputs, double* prob_estimates){
-      svm_node *x = new svm_node[inputs->Length() + 1];
-      getSvmNodes(inputs, x);
+    void predictProbabilities(svm_node *x, double* prob_estimates){
       svm_predict_probability(model,x,prob_estimates);
-      delete[] x;
     };
     void getSvmNodes(Local<Array> inputs, svm_node *nodes){      
       for (unsigned j=0; j < inputs->Length(); j++){

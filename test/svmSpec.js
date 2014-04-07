@@ -296,6 +296,19 @@ describe('SVM', function(){
           sum.should.be.approximately(1, 1e-5);
         });
       });
+
+      it('should be able to predict probabilities async', function(done){
+        async.each(problem, function(ex, cb){
+          svm.predictProbabilitiesAsync(ex[0], function(probabilities){
+            var sum = 0;
+            svm.labels.forEach(function (classLabel) {
+              sum += probabilities[classLabel];
+            });
+            sum.should.be.approximately(1, 1e-5);
+            cb();
+          });
+        }, function(err){ done(); });
+      });
     });
   });
 });
