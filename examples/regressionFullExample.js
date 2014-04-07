@@ -8,7 +8,8 @@
 'use strict';
 
 var libsvm = require('../lib/nodesvm'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    humanizeDuration = require("humanize-duration");
 
 var nFold= 3,
     fileName = './examples/datasets/housing.ds';
@@ -25,11 +26,12 @@ libsvm.readAndNormalizeDatasetAsync(fileName, function(housing){
     cValues: [0.03125, 0.125, 0.5, 2, 8],
     gValues: [8, 2, 0.5, 0.125, 0.03125],
     epsilonValues: [8, 2, 0.5, 0.125, 0.03125],
-    fold: nFold,
-    log: true
+    fold: nFold
   }; 
   libsvm.findBestParameters(housing.dataset, options, function(report) {
     // build SVM with found parameters
+    console.log('Best params : \n', report);
+
     var svm = new libsvm.SVM({
       type: libsvm.SvmTypes.EPSILON_SVR,
       kernel: new libsvm.RadialBasisFunctionKernel(report.gamma),
@@ -46,5 +48,11 @@ libsvm.readAndNormalizeDatasetAsync(fileName, function(housing){
         console.log('{expected: %d, predicted: %d}', test[1], svm.predict(test[0]));
       }
     });
+  }, function(progress, remainingTime){
+    // called during evaluation to report progress
+    // remainingTime in ms
+    if (progress%5 === 0){
+      console.log('%d% achived. %s remaining...', progress, humanizeDuration(remainingTime));
+    }
   }); 
 });

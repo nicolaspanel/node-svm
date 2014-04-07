@@ -140,8 +140,7 @@ describe('#findBestParameters', function(done){
         gValues = [8, 2, 0.5, 0.125, 0.03125];
     var options = {
       cValues: cValues,
-      gValues: gValues,
-      log: false
+      gValues: gValues
     }; 
     
     libsvm.findBestParameters(dataset, options, function(report) {
@@ -165,8 +164,7 @@ describe('#findBestParameters', function(done){
       kernelType : libsvm.KernelTypes.RBF,
       cValues: cValues,
       gValues: gValues,
-      epsilonValues: epsilonValues,
-      log: false
+      epsilonValues: epsilonValues
     }; 
     
     libsvm.findBestParameters(dataset, options, function(report) {
