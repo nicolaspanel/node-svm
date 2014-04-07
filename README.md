@@ -12,16 +12,16 @@ First of all, if you are not familiar with SVM, I highly recommend to read [this
 
 Here's an example of using it to approximate the XOR function
 ```javascript
-var libsvm = require('node-svm');
+var nodesvm = require('node-svm');
 var xorProblem = [
   [[0, 0], 0],
   [[0, 1], 1],
   [[1, 0], 1],
   [[1, 1], 0]
 ];
-var svm = new libsvm.SVM({
-  type: libsvm.SvmTypes.C_SVC,
-  kernel: new libsvm.RadialBasisFunctionKernel(0.5),
+var svm = new nodesvm.SVM({
+  type: nodesvm.SvmTypes.C_SVC,
+  kernel: new nodesvm.RadialBasisFunctionKernel(0.5),
   C: 1.0
 });
 
@@ -50,13 +50,13 @@ var args = {
   eps         : 1e-3, // tolerance of termination criterion 
   probability : false // do probability estimates(has a significant impact on the duration of the training)
 };
-var svm = new libsvm.SVM(args);
+var svm = new nodesvm.SVM(args);
 ```
 Available kernels are  : 
- * Linear     : `var kernel = new libsvm.LinearKernel();`
- * Polynomial : `var kernel = new libsvm.PolynomialKernel(degree, gamma, r);`
- * RBF        : `var kernel = new libsvm.RadialBasisFunctionKernel(gamma);`
- * Sigmoid    : `var kernel = new libsvm.SigmoidKernel(gamma, r);`
+ * Linear     : `var kernel = new nodesvm.LinearKernel();`
+ * Polynomial : `var kernel = new nodesvm.PolynomialKernel(degree, gamma, r);`
+ * RBF        : `var kernel = new nodesvm.RadialBasisFunctionKernel(gamma);`
+ * Sigmoid    : `var kernel = new nodesvm.SigmoidKernel(gamma, r);`
 
 Available SVM are : 
  * `C_SVC`      : multi-class classification
