@@ -12,7 +12,7 @@ node-svm
 # How to use it
 First of all, if you are not familiar with SVM, I highly recommend to read [this guide](http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf).
 
-Here's an example of using it to approximate the XOR function
+Here's an example of using it to approximate the XOR function :
 ```javascript
 var nodesvm = require('node-svm');
 var xorProblem = [
@@ -47,7 +47,7 @@ var svm = new nodesvm.SVM({
   type: nodesvm.SvmTypes.C_SVC,  // see supported types below
   kernel: new nodesvm.RadialBasisFunctionKernel(gamma), // see other kernels below
   C: 0.1,  // Cost parameter. Required for C_SVC, EPSILON_SVR and NU_SVR. Must be greater than zero
-  nu: 0.5, // nu parameter. Required for NU_SVC, ONE_CLASS SVM, and NU_SVR. Must be within 0 and 1
+  nu: 0.5, // nu parameter. Required for NU_SVC, ONE_CLASS and NU_SVR. Must be within 0 and 1
   epsilon : 0.1, // required for epsilon-SVR? Must me greater than zero
   
   // training options
@@ -80,10 +80,10 @@ Default parameters values :
 
 ##Training
 SVMs can be trained : 
- * Synchronously using `svm#train` method
+ * Synchronously using `svm#train()` method
  * Asynchronously using `svm#trainAsync(callback)` method
 
-Notice :  Once trained, you can use `svm#saveToFile(path)` method to backup your svm model. Then you will be able to create new `svm` instances without having to train them again.
+Notice :  Once trained, you can use `svm#saveToFile(path)` method to backup your svm model. Then you will be able to create new `svm` instances without having to train them again and again.
 
 Pseudo code : 
 ```javascript
@@ -98,15 +98,17 @@ svm2.predict(values);
 
 ##Predictions
 Once trained, you can use your `svm` to predict values for given inputs. As before, you can do that : 
- * Synchronously using `svm#predict(inputs)` method. `inputs` must be an array of numbers
+ * Synchronously using `svm#predict(inputs)` method. 
  * Asynchronously using `svm#predictAsync(inputs, callback)` method.
+
+Notice : `inputs` must be an array of numbers
 
 ## Features
 node-svm provide additional features that allow you to :
- * [Mean normalize](http://en.wikipedia.org/wiki/Normalization_(statistics)) your dataset. See [classification example](https://github.com/nicolaspanel/node-svm/blob/master/examples/classificationBasicExample.js) for more informations
- * Evaluate your `svm` against a test file. See [evaluation example](https://github.com/nicolaspanel/node-svm/blob/master/examples/evaluationExample.js) for more informations
- * Perform cross validation on your dataset. See [cross validation example](https://github.com/nicolaspanel/node-svm/blob/master/examples/crossValidationExample.js) for more informations
- * Evaluate various combinaisons and find the best parameters. See [evaluation example](https://github.com/nicolaspanel/node-svm/blob/master/examples/parameterSelectionExample.js) for more informations
+ * [Mean normalize](http://en.wikipedia.org/wiki/Normalization_(statistics)) your dataset. See [classification example](https://github.com/nicolaspanel/node-svm/blob/master/examples/classificationBasicExample.js)
+ * Evaluate your `svm` against a test file. See [evaluation example](https://github.com/nicolaspanel/node-svm/blob/master/examples/evaluationExample.js)
+ * Perform cross validation on your dataset. See [cross validation example](https://github.com/nicolaspanel/node-svm/blob/master/examples/crossValidationExample.js)
+ * Evaluate various combinaisons and find the best parameters. See [evaluation example](https://github.com/nicolaspanel/node-svm/blob/master/examples/parameterSelectionExample.js)
 
 # How it work
 `node-svm` uses the official libsvm C++ library, version 3.18. It also provides helpers to facilitate its use in real projects.
@@ -130,14 +132,16 @@ If you feel that the community will benefit from your changes, please send a pul
 #FAQ
 ##Segmentation fault
 Q : Node return 'segmentation fault'error during . What's going on?
+
 A : Your dataset is empty or its format is incorrect
 
 ##Difference between nu-SVC and C-SVC
 Q : What is the difference between nu-SVC and C-SVC?
+
 A : [Answer here](http://www.csie.ntu.edu.tw/~cjlin/libsvm/faq.html#f411)
 
 ##Other questions
- - Take a look to [libsvm's FAQ](http://www.csie.ntu.edu.tw/~cjlin/libsvm/faq.html).
+ - Take a look at [libsvm's FAQ](http://www.csie.ntu.edu.tw/~cjlin/libsvm/faq.html).
  - Create [an issue](https://github.com/nicolaspanel/node-svm/issues)
 
 # License
