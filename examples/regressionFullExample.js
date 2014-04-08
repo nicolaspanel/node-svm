@@ -2,39 +2,39 @@
   Simple example using EPSILON-SVR classificator to predict values
   Dataset : Housing, more info here http://archive.ics.uci.edu/ml/datasets/Housing
   
-  Note : libsvm#findBestParameters function help to find gamma, C and epsilon parameters
+  Note : nodesvm#findBestParameters function help to find gamma, C and epsilon parameters
   that provie the lowest Mean Square Error () 
 **/
 'use strict';
 
-var libsvm = require('../lib/nodesvm'),
+var nodesvm = require('../lib/nodesvm'),
     _ = require('underscore'),
     humanizeDuration = require("humanize-duration");
 
 var nFold= 3,
     fileName = './examples/datasets/housing.ds';
 
-libsvm.readAndNormalizeDatasetAsync(fileName, function(housing){ 
+nodesvm.readAndNormalizeDatasetAsync(fileName, function(housing){ 
   console.log('Data set normalized with following parameters :');
   console.log('  * mu = \n', JSON.stringify(housing.mu));
   console.log('  * sigma = \n', JSON.stringify(housing.sigma));   
 
   console.log('Looking for parameters that provide the lower Mean Square Error : ');
   var args = {
-    svmType : libsvm.SvmTypes.EPSILON_SVR,
-    kernelType : libsvm.KernelTypes.RBF,
+    svmType : nodesvm.SvmTypes.EPSILON_SVR,
+    kernelType : nodesvm.KernelTypes.RBF,
     cValues: [0.03125, 0.125, 0.5, 2, 8],
     gValues: [8, 2, 0.5, 0.125, 0.03125],
     epsilonValues: [8, 2, 0.5, 0.125, 0.03125],
     fold: nFold
   }; 
-  libsvm.findBestParameters(housing.dataset, args, function(report) {
+  nodesvm.findBestParameters(housing.dataset, args, function(report) {
     // build SVM with found parameters
     console.log('Best params : \n', JSON.stringify(report, null, '\t'));
 
-    var svm = new libsvm.SVM({
-      type: libsvm.SvmTypes.EPSILON_SVR,
-      kernel: new libsvm.RadialBasisFunctionKernel(report.gamma),
+    var svm = new nodesvm.SVM({
+      type: nodesvm.SvmTypes.EPSILON_SVR,
+      kernel: new nodesvm.RadialBasisFunctionKernel(report.gamma),
       C: report.C,
       epsilon: report.epsilon
     });

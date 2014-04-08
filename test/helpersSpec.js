@@ -232,3 +232,77 @@ describe('#findAllPossibleCombinaisons', function() {
     result.should.eql(expected);
   });
 });
+
+describe('#reduceDatasetDimension', function() {
+  describe('on highly redondant problem', function(){
+    var problem = [
+      [[ 0,  0,  0], 0],
+      [[ 0,  0,  1], 1],
+      [[ 0,  0,  0], 1],
+      [[ 0,  0,  1], 0],
+      [[ 1,  1,  0], 0],
+      [[ 1,  1,  1], 1],
+      [[ 1,  1,  0], 1],
+      [[ 1,  1,  1], 0]
+    ];
+    
+    it('should retain 100 percent of the variance', function () {
+      var result = nodesvm.reduceDatasetDimension(problem);
+      result.retainedVariance.should.be.approximately(1, 1e-5);
+      console.log(result.dataset);
+    });
+
+    it('should reduce inputs to have a dimension of 2', function () {
+      var result = nodesvm.reduceDatasetDimension(problem);
+      var reducedInputs = _.map(result.dataset, function(ex) { return ex[0];});
+      numeric.dim(reducedInputs).should.eql([8,2]);
+      result.newDimension.should.equal(2);
+    });
+
+  });
+
+  describe('on a non redondant problem', function(){
+    var problem = [
+      [[ 0,  0,  0], 0],
+      [[ 0,  0,  1], 1],
+      [[ 0,  1,  0], 1],
+      [[ 0,  1,  1], 0],
+      [[ 1,  0,  0], 0],
+      [[ 1,  0,  1], 1],
+      [[ 1,  1,  0], 1],
+      [[ 1,  1,  1], 0]
+    ];
+
+    it('should NOT have been reduced if expect 99% of the variance to be retained', function () {
+      var result = nodesvm.reduceDatasetDimension(problem, 0.99);
+      var reducedInputs = _.map(result.dataset, function(ex) { return ex[0];});
+      numeric.dim(reducedInputs).should.eql([8,3]);
+      result.newDimension.should.equal(3);
+    });
+
+    it('should  have been reduced if expect only 80% of the variance to be retained', function () {
+      var result = nodesvm.reduceDatasetDimension(problem, 0.8);
+      var reducedInputs = _.map(result.dataset, function(ex) { return ex[0];});
+      numeric.dim(reducedInputs).should.eql([8,2]);
+      result.newDimension.should.equal(2);
+      result.retainedVariance.should.be.approximately(0.83, 1e-2);
+    });
+  });
+});
+
+describe('#reduceInputDimension', function() {
+    
+  it('should be able to reduce inputs dimensions', function () {
+    var input = [1, 0, 0];
+    var transformationMatrix = [ 
+      [ 1, 1 ],
+      [ 1, 1 ],
+      [ 1, 1 ] 
+    ];
+    var expectedOutput = [1, 1];
+    
+    var output = nodesvm.reduceInputDimension(input, transformationMatrix);
+    output.should.eql(expectedOutput);
+  });
+
+});
