@@ -37,7 +37,7 @@ Notice : There's no reason to use SVM to figure out XOR BTW...
 
 More examples are available in the [same name folder](https://github.com/nicolaspanel/node-svm/tree/master/examples).
 
-## Initialisation
+## Initialization
 Initialization arguments with default values are listed below : 
 ```javascript
 var nodesvm = require('node-svm');
@@ -112,7 +112,7 @@ node-svm provide additional features that allow you to :
  * Evaluate your `svm` against a test file. See [evaluation example](https://github.com/nicolaspanel/node-svm/blob/master/examples/evaluationExample.js)
  * Perform cross validation on your dataset. See [cross validation example](https://github.com/nicolaspanel/node-svm/blob/master/examples/crossValidationExample.js)
  * Evaluate various combinaisons and find the best parameters. See [evaluation example](https://github.com/nicolaspanel/node-svm/blob/master/examples/parameterSelectionExample.js)
- * Reduce your dataset dimension using Principal Component Analysis (PCA). See [pca example](https://github.com/nicolaspanel/node-svm/blob/master/examples/pcaExample.js)
+ * Reduce your dataset dimension using [Principal Component Analysis (PCA)](http://en.wikipedia.org/wiki/Principal_component_analysis). See [pca example](https://github.com/nicolaspanel/node-svm/blob/master/examples/pcaExample.js)
 
 # How it work
 `node-svm` uses the official libsvm C++ library, version 3.18. For more informations, see also : 
