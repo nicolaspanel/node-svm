@@ -111,8 +111,8 @@ node-svm provide additional features that allow you to :
  * [Mean normalize](http://en.wikipedia.org/wiki/Normalization_(statistics)) your dataset. See [classification example](https://github.com/nicolaspanel/node-svm/blob/master/examples/classificationBasicExample.js)
  * Evaluate your `svm` against a test file. See [evaluation example](https://github.com/nicolaspanel/node-svm/blob/master/examples/evaluationExample.js)
  * Perform cross validation on your dataset. See [cross validation example](https://github.com/nicolaspanel/node-svm/blob/master/examples/crossValidationExample.js)
- * Evaluate various combinaisons and find the best parameters. See [evaluation example](https://github.com/nicolaspanel/node-svm/blob/master/examples/parameterSelectionExample.js)
- * Reduce your dataset dimension using [Principal Component Analysis (PCA)](http://en.wikipedia.org/wiki/Principal_component_analysis). See [pca example](https://github.com/nicolaspanel/node-svm/blob/master/examples/pcaExample.js)
+ * Evaluate various combinaisons and find the best parameters. See [parameter selection example](https://github.com/nicolaspanel/node-svm/blob/master/examples/parameterSelectionExample.js)
+ * Reduce your dataset dimension using [Principal Component Analysis (PCA)](http://en.wikipedia.org/wiki/Principal_component_analysis). See [PCA example](https://github.com/nicolaspanel/node-svm/blob/master/examples/pcaExample.js)
 
 # How it work
 `node-svm` uses the official libsvm C++ library, version 3.18. For more informations, see also : 
