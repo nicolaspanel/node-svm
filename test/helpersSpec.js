@@ -20,9 +20,9 @@ var xorNormProblem = [
   [[ 1,  1], 0]
 ];
 
-describe('#readProblemAsync', function(){  
+describe('#readDatasetAsync', function(){  
   it('should be able to read the xor problem', function (done) {
-    nodesvm.readProblemAsync('./examples/datasets/xor.ds', function(problem, nbFeature){
+    nodesvm.readDatasetAsync('./examples/datasets/xor.ds', function(problem, nbFeature){
       nbFeature.should.equal(2);
       problem.length.should.equal(4);
       problem.should.eql(xorProblem);
@@ -31,7 +31,7 @@ describe('#readProblemAsync', function(){
   });
   it('should be able to read the svmguide problem in less than 200ms', function (done) {
     this.timeout(200);
-    nodesvm.readProblemAsync('./examples/datasets/svmguide1.ds', function(problem, nbFeature){
+    nodesvm.readDatasetAsync('./examples/datasets/svmguide1.ds', function(problem, nbFeature){
       nbFeature.should.equal(4);
       problem.length.should.equal(3089);
       done();

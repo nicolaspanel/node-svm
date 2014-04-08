@@ -11,7 +11,7 @@ var nodesvm = require('../lib/nodesvm'),
 
     fileName = './examples/datasets/housing.ds';
 
-nodesvm.readProblemAsync(fileName, function(housing){ 
+nodesvm.readDatasetAsync(fileName, function(housing){ 
   var norm = nodesvm.meanNormalizeDataSet(housing);
 
   var svm = new nodesvm.SVM({

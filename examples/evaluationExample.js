@@ -24,7 +24,7 @@ var trainigSet = null,
 async.parallel([
   function (callback) {
     // load training set
-    nodesvm.readProblemAsync('./examples/datasets/svmguide1.ds', function(dataset){
+    nodesvm.readDatasetAsync('./examples/datasets/svmguide1.ds', function(dataset){
       trainigSet = dataset;
       // train svm
       console.log("Start training...");
@@ -36,7 +36,7 @@ async.parallel([
   }, 
   function (callback) {
     // load training set
-    nodesvm.readProblemAsync('./examples/datasets/svmguide1.t.ds', function(dataset){
+    nodesvm.readDatasetAsync('./examples/datasets/svmguide1.t.ds', function(dataset){
       testset = dataset;
       callback();
     });
