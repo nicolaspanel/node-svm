@@ -29,7 +29,7 @@ nodesvm.readDatasetAsync(fileName, function(webbSpam){
   console.log('Dataset dimensions reduced from %d to %d features. Start cross validation...', pca.oldDimension, pca.newDimension);
 
   cSvm.performNFoldCrossValidation(pca.dataset, nFold, function(report){
-    console.log('%d-fold CV achived in %s.\nResult : %s\n', nFold, humanizeDuration(new Date() - start), JSON.stringify(report, null, '\t')); 
+    console.log('%d-fold Cross Validation achived in %s.\nResult : %s\n', nFold, humanizeDuration(new Date() - start), JSON.stringify(report, null, '\t')); 
   });
 
 }); 
@@ -37,7 +37,7 @@ nodesvm.readDatasetAsync(fileName, function(webbSpam){
 /* OUTPUT
 dateset loaded. Start dataset reduction..
 Dataset dimensions reduced from 128 to 27 features. Start cross validation...
-CV achived in 29 seconds, 798 milliseconds.
+4-fold CV achived in 30 seconds, 488 milliseconds.
 Result : 
 {
   "nfold": 4,
@@ -47,5 +47,4 @@ Result :
   "recall": 0.9067028073041905,
   "subsetsReports": [...]
 }
-
 */
