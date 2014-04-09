@@ -20,49 +20,71 @@ var xorProblem = [
   [[1, 0], 1],
   [[1, 1], 0]
 ];
-var svm = new nodesvm.SVM({
-  type: nodesvm.SvmTypes.C_SVC,
-  kernel: new nodesvm.RadialBasisFunctionKernel(0.5),
-  C: 1.0
+var svm = new nodesvm.CSVC({ // classification 
+  kernel: nodesvm.KernelTypes.RBF,
+  C: 1.0,
+  gamma: 0,5
+});
+
+svm.once('trained', function(report) {
+  [0,1].forEach(function(a){
+    [0,1].forEach(function(b){
+      var prediction = svm.predict([a, b]); 
+      console.log("%d XOR %d => %d", a, b, prediction);
+    });
+  });
 });
 
 svm.train(xorProblem);
 
-xorProblem.forEach(function(ex){
-  svm.predict(ex[0]).should.equal(ex[1]);
-});
-
 ```
-Notice : There's no reason to use SVM to figure out XOR BTW...
+Notice : 
+ * There's no reason to use SVM to figure out XOR BTW...
+ * The example show how to use `C-SVC` classifier but you can also use :
+  * `NU-SVC` with `var svm = new nodesvm.NuSVC(options)` (classification)
+  * `EPSILON-SVR` with `var svm = new nodesvm.EpsilonSVR(options)` (regression)
+  * `NU-SVR` with `var svm = new nodesvm.NuSVR(options)` (regression)
+ * `ONE-CLASS` SVM is not supported for now
 
 More examples are available in the [same name folder](https://github.com/nicolaspanel/node-svm/tree/master/examples).
 
 ## Initialization
-Initialization arguments with default values are listed below : 
+Options with default values are listed below : 
 ```javascript
 var nodesvm = require('node-svm');
 
-var svm = new nodesvm.SVM({
-  type: nodesvm.SvmTypes.C_SVC,  // see supported types below
-  kernel: new nodesvm.RadialBasisFunctionKernel(gamma), // see other kernels below
-  C: 0.1,  // Cost parameter. Required for C_SVC, EPSILON_SVR and NU_SVR. Must be greater than zero
-  nu: 0.5, // nu parameter. Required for NU_SVC, ONE_CLASS and NU_SVR. Must be within 0 and 1
-  epsilon : 0.1, // Epsilon parameter, required for epsilon-SVR. Must me greater than zero
+var svm = new nodesvm.XXXX({
+  // kernels parameters
+  kernelType: nodesvm.KernelTypes.RBF,  
+  degree: [2,3,4],                      // for POLY kernel
+  gamma: [0.03125, 0.125, 0.5, 2, 8],   // for POLY, RBF and SIGMOID kernels
+  r: [0.125, 0.5, 2, 8],                // for POLY and SIGMOID kernels
   
+  // SVM specific parameters
+  C: [0.03125, 0.125, 0.5, 2, 8],       // cost for C_SVC, EPSILON_SVR and NU_SVR
+  nu: [0.03125, 0.125, 0.5, 0.75, 1],   // for NU_SVC, ONE_CLASS SVM, and NU_SVR
+  epsilon: [0.03125, 0.125, 0.5, 2, 8], // for EPSILON-SVR
+
   // training options
-  eps: 1e-3, // stopping criteria 
-  cacheSize: 100, // memory size in MB  
-  probability : false // whether to train a SVC or SVR model for probability estimates (has a significant impact on the duration of the training)
+  nFold: 4,               // for cross validation 
+  normalize: true,        // whether to use mean normalization during data pre-processing
+  reduce: true,           // whether to use PCA to reduce dataset dimension during data pre-processing
+  retainedVariance: 0.99, // Define the acceptable impact on data integrity (if PCA activated)
+  eps: 1e-3,              // stopping criteria 
+  cacheSize: 100,         // cache siez in MB        
+  probability : false     // whether to train a SVC or SVR model for probability estimates
+  }; 
 });
 ```
-Notice : `nodesvm#SVM` function will throw an exception if you provide incorrect parameters.
+Notice : 
+ * `degree`, `gamma`, `r`, `C`, `nu` and `epsilon` can take one or more values. Example :  `degree: [2,3,4]` and `degree: 3`are both corrects
+ * If at least one parameter as multiple options `node-svm` will go through all the combinations to see which one gives the best predictions (i.e. maximize f-score for classification and minimize Mean Square Error for regression).
 
 ###Available kernels
-
- * Linear     : `var kernel = new nodesvm.LinearKernel();`
- * Polynomial : `var kernel = new nodesvm.PolynomialKernel(degree, gamma, r);`
- * RBF        : `var kernel = new nodesvm.RadialBasisFunctionKernel(gamma);`
- * Sigmoid    : `var kernel = new nodesvm.SigmoidKernel(gamma, r);`
+ * Linear     : `nodesvm.KernelTypes.LINEAR`
+ * Polynomial : `nodesvm.KernelTypes.POLY`
+ * RBF        : `nodesvm.KernelTypes.RBF`
+ * Sigmoid    : `nodesvm.KernelTypes.SIGMOID`
 
 Default parameters values : 
  * gamma: 2.0
@@ -72,31 +94,34 @@ Default parameters values :
 ###Available SVM types
 
  * `C_SVC`      : multi-class classification
- * `NU_SVC`     : multi-class classification
- * `ONE_CLASS`  : one-class SVM  
+ * `NU_SVC`     : multi-class classification 
  * `EPSILON_SVR`: regression
  * `NU_SVR`     : regression
 
+Notice : `ONE_CLASS` SVM is not supported (yet) 
+
 ##Training
-SVMs can be trained : 
- * Synchronously using `svm#train()`
- * Asynchronously using `svm#trainAsync(callback)`
+SVMs can be trained using `svm#train(dataset, [callback])`
 
 Notice :  Once trained, you can use `svm#saveToFile(path)` method to backup your svm model. Then you will be able to create new `svm` instances without having to train them again and again.
 
 Pseudo code : 
 ```javascript
 var svm = new nodesvm.SVM(options);
-svm.train(); // svm need to be trained before you can save it
-svm.saveToFile('./path/to/myFile.model');
-//...
-var svm2 = new nodesvm.SVM({file: './path/to/myFile.model'});
-svm2.predict(values);
-// ...
+
+svm.once('trained', function{
+  svm.saveToFile('./path/to/myFile.model'); // svm need to be trained before you can save it
+  //...
+  var svm2 = new nodesvm.SVM({file: './path/to/myFile.model'});
+  svm2.predict(inputs);
+  // ...
+})
+
+svm.train(dataset); 
 ```
 
 ##Predictions
-Once trained, you can use your `svm` to predict values for given inputs. As before, you can do that : 
+Once trained, you can use your `svm` to predict values for given inputs. You can do that : 
  * Synchronously using `svm#predict(inputs)`
  * Asynchronously using `svm#predictAsync(inputs, callback)`
 
@@ -104,15 +129,17 @@ If you are working on a classification problem and **if you enabled probabilitie
  * Synchronously using `svm#predictProbabilities(inputs)`. 
  * Asynchronously using `svm#predictProbabilitiesAsync(inputs, callback)`.
 
-Notice : `inputs` must be an array of numbers
+Notice : `inputs` must be a 1d array of numbers
 
 ## Features
 node-svm provide additional features that allow you to :
- * [Mean normalize](http://en.wikipedia.org/wiki/Normalization_(statistics)) your dataset. See [classification example](https://github.com/nicolaspanel/node-svm/blob/master/examples/classificationBasicExample.js)
- * Evaluate your `svm` against a test file. See [evaluation example](https://github.com/nicolaspanel/node-svm/blob/master/examples/evaluationExample.js)
- * Perform cross validation on your dataset. See [cross validation example](https://github.com/nicolaspanel/node-svm/blob/master/examples/crossValidationExample.js)
- * Evaluate various combinaisons and find the best parameters. See [parameter selection example](https://github.com/nicolaspanel/node-svm/blob/master/examples/parameterSelectionExample.js)
- * Reduce your dataset dimension using [Principal Component Analysis (PCA)](http://en.wikipedia.org/wiki/Principal_component_analysis). See [PCA example](https://github.com/nicolaspanel/node-svm/blob/master/examples/pcaExample.js)
+ * [Mean normalize](http://en.wikipedia.org/wiki/Normalization_(statistics)) your dataset
+ * Evaluate your `svm` against a test file
+ * Perform cross validation on your dataset
+ * Evaluate various combinaisons and find the best parameters
+ * Reduce your dataset dimension using [Principal Component Analysis (PCA)](http://en.wikipedia.org/wiki/Principal_component_analysis)
+
+ See [examples folder](https://github.com/nicolaspanel/node-svm/blob/master/examples) for more informations.
 
 # How it work
 `node-svm` uses the official libsvm C++ library, version 3.18. For more informations, see also : 
