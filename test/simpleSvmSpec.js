@@ -12,7 +12,7 @@ var xorProblem = [
   [[1, 0], 1],
   [[1, 1], 0]
 ];
-
+var xorFileName = './examples/datasets/xor.ds';
 describe('C-SVC', function(){
   var svm = null;
   beforeEach(function(){
@@ -129,6 +129,14 @@ describe('C-SVC', function(){
 
   it('should have a trained callback', function(done){
     svm.train(xorProblem, function () {
+      done();
+    });
+  });
+
+  it('can be train from file', function(done){
+    svm.trainFromFile(xorFileName, function (report) {
+      console.log(report);
+      report.accuracy.should.equal(1);
       done();
     });
   });
