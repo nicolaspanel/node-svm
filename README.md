@@ -108,7 +108,7 @@ var svm = new nodesvm.SVM(options);
 svm.once('trained', function{
   svm.saveToFile('./path/to/myFile.model'); // svm need to be trained before you can save it
   //...
-  var svm2 = new nodesvm.SVM({file: './path/to/myFile.model'});
+  var svm2 = nodesvm.loadSvmFromFile('./path/to/myFile.model');
   svm2.predict(inputs);
   // ...
 })

@@ -39,6 +39,7 @@ svm.once('dataset-reduced', function(oldDim, newDim, retainedVar){
 });
 
 svm.once('trained', function(report){
+  svm.saveToFile('./examples/models/webbspam.model');
   console.log('SVM trained. report :\n%s', JSON.stringify(report, null, '\t'));
   console.log('Total trainineg time : %s', hd(new Date() - start));
 });

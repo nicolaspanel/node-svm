@@ -22,6 +22,7 @@ var svm = new nodesvm.CSVC({
 });
 
 svm.once('trained', function(report) {
+  svm.saveToFile('./examples/models/svmguide1.model');
   console.log('SVM trained. Training report :\n%s', JSON.stringify(report, null, '\t'));
   
   nodesvm.readDatasetAsync(testingFile, function(testset){

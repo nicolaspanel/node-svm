@@ -16,10 +16,13 @@ var svm = new nodesvm.CSVC({
   kernelType: nodesvm.KernelTypes.RBF,
   gamma: 0.5,
   C: 1,
-  nFold: 1 //  
+  nFold: 1,
+  normalize: false,
+  reduce: false
 });
 
 svm.once('trained', function(report) {
+  svm.saveToFile('./examples/models/xor.model');
   console.log('SVM trained. report :\n%s', JSON.stringify(report, null, '\t'));
   console.log('Lets predict XOR values');
   

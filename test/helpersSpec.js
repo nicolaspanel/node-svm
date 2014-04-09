@@ -5,6 +5,7 @@ var assert = require('assert'),
     _ = require('underscore'),
     async = require('async'),
     numeric = require('numeric'),
+    fs = require('fs'),
     nodesvm = require('../lib/nodesvm');
 
 var xorProblem = [
@@ -302,5 +303,85 @@ describe('#reduceInputDimension', function() {
     var output = nodesvm.reduceInputDimension(input, transformationMatrix);
     output.should.eql(expectedOutput);
   });
+});
+describe('#createLibsvmModelFileContent', function() {
+  it('should be able to produce the XOR model', function () {
+    var fileName = './examples/models/test.model';
+    var actual = nodesvm.createLibsvmModelFileContent({
+      svmType: 0,
+      kernelType: 2,
+      gamma: 0.5,
+      degree: 2,
+      r: 1,
+      rho: 0,
+      C: 8,
+      nu: 0.1,
+      classes: [0, 1],
+      probA:  1.47822,
+      probB: '7.18294e-18',
+      nbSV : [2, 2],
+      normalize: false,
+      mu: [],
+      sigma: [],
+      reduce: false,
+      retainedVariance: 0.99,
+      u: [],
+      eps : 0.00001,
+      cacheSize: 200,
+      probability : false,
+      nFold : 3,
+      supportVectors : [
+        [[-1, -1],  1], 
+        [[ 1,  1],  1], 
+        [[-1,  1], -1], 
+        [[ 1, -1], -1]
+      ]
+    });
+    var expected = fs.readFileSync(fileName, 'utf8').toString();
+    actual.should.eql(expected);
+  });
+});
 
+describe('#readLibsvmModelFileContent', function() {
+  var args = null,
+      fileName = './examples/models/test.model';
+  beforeEach(function () {
+    var content = fs.readFileSync(fileName, 'utf8').toString();
+    args = nodesvm.readLibsvmModelFileContent(content);
+  });
+  it('should handle the svm type', function () {
+    args.svmType.should.equal(nodesvm.SvmTypes.C_SVC);
+  });
+  it('should handle the kernel type', function () {
+    args.kernelType.should.equal(nodesvm.KernelTypes.RBF);
+  });
+  it('should handle gamma parameter', function () {
+    args.gamma.should.equal(0.5);
+  });
+  it('should handle the number of classes', function () {
+    args.nbClasses.should.equal(2);
+  });
+  it('should handle rho', function () {
+    args.rho.should.equal(0);
+  });
+  it('should handle labels', function () {
+    args.classes.should.eql([0, 1]);
+  });
+  it('should handle number of support vectors per class', function () {
+    args.nbSV.should.eql([2, 2]);
+  });
+  it('should handle probA', function () {
+    args.probA.should.be.approximately(1.47, 1e-2);
+  });
+  it('should handle probB', function () {
+    args.probB.should.be.approximately(0, 1e-2);
+  });
+  it('should handle support vectors', function () {
+    args.supportVectors.should.eql([
+      [[-1, -1],  1], 
+      [[ 1,  1],  1], 
+      [[-1,  1], -1], 
+      [[ 1, -1], -1]
+    ]);
+  });
 });

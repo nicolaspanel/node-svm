@@ -9,9 +9,7 @@
 
 var nodesvm = require('../lib/nodesvm');
 
-var svm = new nodesvm.SVM({
-  file: './examples/models/xor.model'
-});
+var svm = new nodesvm.loadSvmFromFile('./examples/models/xor.model');
 
 //NODE : no need to retrain the svm
 [0,1].forEach(function(a){
