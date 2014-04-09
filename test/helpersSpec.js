@@ -249,7 +249,6 @@ describe('#reduceDatasetDimension', function() {
     it('should retain 100 percent of the variance', function () {
       var result = nodesvm.reduceDatasetDimension(problem);
       result.retainedVariance.should.be.approximately(1, 1e-5);
-      console.log(result.dataset);
     });
 
     it('should reduce inputs to have a dimension of 2', function () {
@@ -258,7 +257,6 @@ describe('#reduceDatasetDimension', function() {
       numeric.dim(reducedInputs).should.eql([8,2]);
       result.newDimension.should.equal(2);
     });
-
   });
 
   describe('on a non redondant problem', function(){
