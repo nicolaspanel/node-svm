@@ -57,7 +57,8 @@ module.exports = function (grunt) {
       }
     }
   });
-  grunt.registerTask('default', ['jshint:all', 'gyp:addon', 'mochacov:test', 'mochacov:coverage']);
+  grunt.registerTask('default', ['jshint:all', 'gyp:addon', 'mochacov:test']);
+  grunt.registerTask('cov', ['mochacov:coverage']);
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-node-gyp');   
   grunt.loadNpmTasks('grunt-mocha-cov');   
