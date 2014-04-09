@@ -135,7 +135,7 @@ node-svm provide additional features that allow you to :
  * Evaluate various combinaisons and find the best parameters
  * Reduce your dataset dimension using [Principal Component Analysis (PCA)](http://en.wikipedia.org/wiki/Principal_component_analysis)
 
- See [examples folder](https://github.com/nicolaspanel/node-svm/blob/master/examples) for more informations.
+See [examples folder](https://github.com/nicolaspanel/node-svm/blob/master/examples) for more informations.
 
 # How it work
 `node-svm` uses the official libsvm C++ library, version 3.18. For more informations, see also : 
