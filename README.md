@@ -27,6 +27,7 @@ var svm = new nodesvm.CSVC({ // classification
 });
 
 svm.once('trained', function(report) {
+  // 'report' provides information about svm's accuracy
   [0,1].forEach(function(a){
     [0,1].forEach(function(b){
       var prediction = svm.predict([a, b]); 
@@ -86,11 +87,6 @@ Notice :
  * RBF        : `nodesvm.KernelTypes.RBF`
  * Sigmoid    : `nodesvm.KernelTypes.SIGMOID`
 
-Default parameters values : 
- * gamma: 2.0
- * degree: 3.0
- * r: 0.0
-
 ###Available SVM types
 
  * `C_SVC`      : multi-class classification
@@ -125,7 +121,7 @@ Once trained, you can use your `svm` to predict values for given inputs. You can
  * Synchronously using `svm#predict(inputs)`
  * Asynchronously using `svm#predictAsync(inputs, callback)`
 
-If you are working on a classification problem and **if you enabled probabilities during initialization** (see [initialization §](https://github.com/nicolaspanel/node-svm#initialisation)), you can also predict probabilities for each class  : 
+If you are working on a classification problem and **if you enabled probabilities during initialization** (see [initialization §](https://github.com/nicolaspanel/node-svm#initialization)), you can also predict probabilities for each class  : 
  * Synchronously using `svm#predictProbabilities(inputs)`. 
  * Asynchronously using `svm#predictProbabilitiesAsync(inputs, callback)`.
 
