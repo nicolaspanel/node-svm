@@ -6,9 +6,9 @@
    * # of data: 20,000 (choosen randomly from the official dataset)
   
   Note : 
-   * nodesvm#findBestParameters function help to find gamma and C parameters
-  that provide the highest f-score on the reduced dataset
    * Webb Spam dataset is already normalized so we don't normalize it again
+   * node-svm use PCA reduction by default to speed-up training . This is why dataset is reduced from 126 to 28 features. To disable PCA set 'reduce'
+   parameter to false
 **/
 'use strict';
 
@@ -19,60 +19,53 @@ var nodesvm = require('../lib/nodesvm'),
     nFold= 4,
     start = new Date();
 
-nodesvm.readDatasetAsync(fileName, function(webbSpam){
-  console.log('dataset loaded. Start dataset reduction (using PCA)..');
+var svm = new nodesvm.CSVC({
+  kernelType: nodesvm.KernelTypes.RBF,
+  gamma: [8, 2, 0.5],
+  C: [0.5, 2, 8],
+  nFold: 3,
+  normalize: false,
+  reduce: true, // default value
+  retainedVariance: 0.99 // default value 
+});
 
-  var pca = nodesvm.reduceDatasetDimension(webbSpam, 0.99);
-  console.log('Dataset dimensions reduced from %d to %d features.', pca.oldDimension, pca.newDimension);
-  
-  console.log('Evaluation started (may take a while)...');
-  var options = {
-    svmType: nodesvm.SvmTypes.C_SVC,
-    kernelType: nodesvm.KernelTypes.RBF,
-    fold: nFold,
-    cValues: [0.125, 0.5, 2, 8],
-    gValues: [8, 2, 0.5, 0.125]
-  };
-  nodesvm.findBestParameters(pca.dataset, options, function (report) {
+svm.on('training-progressed', function (progressRate, remainingTime){
+  console.log('%d% - %s remaining...', progressRate * 100, hd(remainingTime));
+});
 
-    console.log('Evaluation result : \n', JSON.stringify(report, null, '\t'));
-    console.log('Total time : %s', hd(new Date() - start));
-    
-  }, function(progressRate, remainingTime){
-    // called during evaluation to report progress
-    // remainingTime in ms
-    console.log('%d% - %s remaining...', progressRate * 100, hd(remainingTime));
-  });
-}); 
+svm.once('dataset-reduced', function(oldDim, newDim, retainedVar){
+  console.log('Dataset dimensions reduced from %d to %d features using PCA.', oldDim, newDim);
+  console.log('%d% of the variance have been retained.', retainedVar* 100);
+});
+
+svm.once('trained', function(report){
+  console.log('SVM trained. report :\n%s', JSON.stringify(report, null, '\t'));
+  console.log('Total trainineg time : %s', hd(new Date() - start));
+});
+
+console.log('Start training. May take a while...');
+svm.trainFromFile(fileName);
 
 /* OUTPUT
-dataset loaded. Start dataset reduction (using PCA)..
-Dataset dimensions reduced from 254 to 28 features.
-Evaluation started (may take a while)...
-6% - 1 hour, 1 minute, 45 seconds, 285 milliseconds remaining...
-13% - 43 minutes, 15 seconds, 964 milliseconds remaining...
-19% - 33 minutes, 41 seconds, 487 milliseconds remaining...
-25% - 26 minutes, 50 seconds, 436 milliseconds remaining...
-31% - 26 minutes, 55 seconds, 169 milliseconds remaining...
-38% - 24 minutes, 43 seconds, 88 milliseconds remaining...
-44% - 21 minutes, 56 seconds, 538 milliseconds remaining...
-50% - 18 minutes, 53 seconds, 805 milliseconds remaining...
-56% - 18 minutes, 19 seconds, 890 milliseconds remaining...
-63% - 16 minutes, 17 seconds, 644 milliseconds remaining...
-69% - 13 minutes, 42 seconds, 20 milliseconds remaining...
-75% - 10 minutes, 54 seconds, 723 milliseconds remaining...
-81% - 8 minutes, 28 seconds, 438 milliseconds remaining...
-88% - 5 minutes, 21 seconds, 532 milliseconds remaining...
-94% - 2 minutes, 32 seconds, 495 milliseconds remaining...
+Dataset dimensions reduced from 254 to 28 features using PCA.
+99.03% of the variance have been retained.
+11% - 25 minutes, 13 seconds, 920 milliseconds remaining...
+22% - 17 minutes, 15 seconds, 401 milliseconds remaining...
+33% - 10 minutes, 34 seconds, 626 milliseconds remaining...
+44% - 9 minutes, 38 seconds, 975 milliseconds remaining...
+56.00000000000001% - 7 minutes, 29 seconds, 788 milliseconds remaining...
+67% - 4 minutes, 54 seconds, 1 millisecond remaining...
+78% - 2 minutes, 56 seconds, 960 milliseconds remaining...
+89% - 1 minute, 20 seconds, 380 milliseconds remaining...
 100% - 0 remaining...
-Evaluation result : 
- {
-  "accuracy": 0.982,
-  "fscore": 0.9771953239274362,
+SVM trained. report :
+{
+  "accuracy": 0.98004800480048,
+  "fscore": 0.9746267648828036,
   "C": 8,
   "gamma": 8,
-  "nbIterations": 16
+  "nbIterations": 9
 }
-Total time : 38 minutes, 57 seconds, 214 milliseconds
+Total trainineg time : 11 minutes, 48 seconds, 19 milliseconds
 
 */

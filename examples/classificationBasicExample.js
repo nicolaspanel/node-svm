@@ -1,35 +1,49 @@
 /**
   Simple example using C-SVC classificator to predict the xor function
   Dataset : xor problem loaded from file (libsvm format)
-  
-  Note : because dataset is normalized we also normalize inputs
+  Parameters : 
+   * C: 1
+   * gamma: 0.5 
+   * because XOR dataset is to small, we set nFold to 1 to avoid cross validation
+  Note : 
 **/
 'use strict';
 
-var nodesvm = require('../lib/nodesvm');
-var fileName = './examples/datasets/xor.ds';
-var svm = new nodesvm.SVM({
-  type: nodesvm.SvmTypes.C_SVC,
-  kernel: new nodesvm.RadialBasisFunctionKernel(0.5),
-  C: 1
+var nodesvm = require('../lib/nodesvm'),
+    fileName = './examples/datasets/xor.ds';
+
+var svm = new nodesvm.CSVC({
+  kernelType: nodesvm.KernelTypes.RBF,
+  gamma: 0.5,
+  C: 1,
+  nFold: 1 //  
 });
 
-nodesvm.readAndNormalizeDatasetAsync(fileName, function(xor){ 
-  var mu = xor.mu,
-      sigma = xor.sigma;
+svm.once('trained', function(report) {
+  console.log('SVM trained. report :\n%s', JSON.stringify(report, null, '\t'));
+  console.log('Lets predict XOR values');
   
-  svm.trainAsync(xor.dataset, function() {
-    [0,1].forEach(function(a){
-      [0,1].forEach(function(b){
-        var normalizedInput = nodesvm.meanNormalizeInput([a, b], mu, sigma);
-        var prediction = svm.predict(normalizedInput); 
-        console.log("%d XOR %d => %d", a, b, prediction);
-      });
+  [0,1].forEach(function(a){
+    [0,1].forEach(function(b){
+      var prediction = svm.predict([a, b]); 
+      console.log("%d XOR %d => %d", a, b, prediction);
     });
   });
+
 });
 
+svm.trainFromFile(fileName);
+
 /* OUTPUT 
+SVM trained. report :
+{
+  "accuracy": 1,
+  "fscore": 1,
+  "C": 1,
+  "gamma": 0.5,
+  "nbIterations": 1
+}
+Lets predict XOR values
 0 XOR 0 => 0
 0 XOR 1 => 1
 1 XOR 0 => 1

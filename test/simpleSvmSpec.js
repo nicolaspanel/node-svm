@@ -135,7 +135,6 @@ describe('C-SVC', function(){
 
   it('can be train from file', function(done){
     svm.trainFromFile(xorFileName, function (report) {
-      console.log(report);
       report.accuracy.should.equal(1);
       done();
     });
