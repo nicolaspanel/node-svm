@@ -11,7 +11,8 @@ node-svm
 # Support Vector Machines
 [Wikipedia](http://en.wikipedia.org/wiki/Support_vector_machine)  :
 
->support vector machines (SVMs, also support vector networks[1]) are supervised learning models with associated learning algorithms that analyze data and recognize patterns, used for classification and regression analysis. Given a set of training examples, each marked as belonging to one of two categories, an SVM training algorithm builds a model that assigns new examples into one category or the other, making it a non-probabilistic binary linear classifier. An SVM model is a representation of the examples as points in space, mapped so that the examples of the separate categories are divided by a clear gap that is as wide as possible. New examples are then mapped into that same space and predicted to belong to a category based on which side of the gap they fall on.
+>Support vector machines are supervised learning models that analyze data and recognize patterns. 
+>SVMs belong to a family of generalized linear classifiers and can be interpreted as an extension of the perceptron. They can also be considered a special case of Tikhonov regularization. A special property is that they simultaneously minimize the empirical classification error and maximize the geometric margin; hence they are also known as maximum margin classifiers.
 >[![Wikipedia image](http://upload.wikimedia.org/wikipedia/commons/1/1b/Kernel_Machine.png)](http://en.wikipedia.org/wiki/File:Kernel_Machine.png)
 
 # How to use it
@@ -69,7 +70,7 @@ var svm = new nodesvm.XXXX({
   
   // SVM specific parameters
   C: [0.03125, 0.125, 0.5, 2, 8],       // cost for C_SVC, EPSILON_SVR and NU_SVR
-  nu: [0.03125, 0.125, 0.5, 0.75, 1],   // for NU_SVC, ONE_CLASS SVM, and NU_SVR
+  nu: [0.03125, 0.125, 0.5, 0.75, 1],   // for NU_SVC and NU_SVR
   epsilon: [0.03125, 0.125, 0.5, 2, 8], // for EPSILON-SVR
 
   // training options
@@ -80,12 +81,11 @@ var svm = new nodesvm.XXXX({
   eps: 1e-3,              // stopping criteria 
   cacheSize: 100,         // cache siez in MB        
   probability : false     // whether to train a SVC or SVR model for probability estimates
-  }; 
 });
 ```
 Notice : 
- * `degree`, `gamma`, `r`, `C`, `nu` and `epsilon` can take one or more values. Example :  `degree: [2,3,4]` and `degree: 3`are both corrects
- * If at least one parameter as multiple options `node-svm` will go through all the combinations to see which one gives the best predictions (i.e. maximize f-score for classification and minimize Mean Square Error for regression).
+ * `degree`, `gamma`, `r`, `C`, `nu` and `epsilon` can take one or more values. Example :  `degree: [2,3,4]` and `degree: 3` are both corrects
+ * If at least one parameter as multiple options `node-svm` will go through all the combinations to see which one gives the best predictions (i.e. maximize [f-score](http://en.wikipedia.org/wiki/F1_score) for classification and minimize [Mean Squared Error](http://en.wikipedia.org/wiki/Mean_squared_error) for regression).
 
 ###Available kernels
  * Linear     : `nodesvm.KernelTypes.LINEAR`
