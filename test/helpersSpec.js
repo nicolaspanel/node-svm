@@ -318,7 +318,7 @@ describe('#createLibsvmModelFileContent', function() {
   });
   afterEach(function(){
     if(fs.existsSync(fileName)){
-      fs.unlinkSync(fileName);
+      //fs.unlinkSync(fileName);
     }
   });
   it('should be able to produce the XOR model', function () {
@@ -365,7 +365,7 @@ describe('#readLibsvmModelFileContent', function() {
   
   afterEach(function(){
     if(fs.existsSync(fileName)){
-      fs.unlinkSync(fileName);
+      //fs.unlinkSync(fileName);
     }
   });
 

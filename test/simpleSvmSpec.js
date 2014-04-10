@@ -184,7 +184,7 @@ describe('C-SVC', function(){
       var fileName = './test/models/simple_csvc.model';
       svm.saveToFile(fileName);
       fs.existsSync(fileName).should.be.true;
-      fs.unlinkSync(fileName);
+      //fs.unlinkSync(fileName);
     });
   });
 });
@@ -287,7 +287,7 @@ describe('NU-SVC', function(){
       var fileName = './examples/models/simple_nusvc.model';
       svm.saveToFile(fileName);
       fs.existsSync(fileName).should.be.true;
-      fs.unlinkSync(fileName);
+      //fs.unlinkSync(fileName);
     });
   });
 });
@@ -332,7 +332,7 @@ describe('EPSILON-SVR', function(){
       var fileName = './test/models/simple_epsilonsvr.model';
       svm.saveToFile(fileName);
       fs.existsSync(fileName).should.be.true;
-      fs.unlinkSync(fileName);
+      //fs.unlinkSync(fileName);
     });
   });
 });
@@ -360,7 +360,6 @@ describe('NU-SVR', function(){
       var fileName = './test/models/simple_nusvr.model';
       svm.saveToFile(fileName);
       fs.existsSync(fileName).should.be.true;
-      fs.unlinkSync(fileName);
     });
   });
 });
@@ -385,7 +384,7 @@ describe('Basic XOR', function(){
   });
   afterEach(function () {
     if (fs.existsSync(fileName)){
-      fs.unlinkSync(fileName);
+      //fs.unlinkSync(fileName);
     }
   });
   it('should be an instance of SimpleSvm', function () {
@@ -440,7 +439,7 @@ describe('Advanced XOR load from file', function(){
   });
   afterEach(function () {
     if (fs.existsSync(fileName)){
-      fs.unlinkSync(fileName);
+      //fs.unlinkSync(fileName);
     }
   });
       
