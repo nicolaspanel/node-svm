@@ -304,47 +304,6 @@ describe('#reduceInputDimension', function() {
     output.should.eql(expectedOutput);
   });
 });
-describe('#createLibsvmModelFileContent', function() {
-  var fileName = './test/models/test.model';
-  beforeEach(function(){
-    var svm = new nodesvm.SVM({
-      type: nodesvm.SvmTypes.C_SVC,
-      kernel: new nodesvm.RadialBasisFunctionKernel(0.5),
-      C: 1,
-      probability: true
-    });
-    svm.train(xorProblem);
-    svm.saveToFile(fileName);
-  });
-  afterEach(function(){
-    if(fs.existsSync(fileName)){
-      //fs.unlinkSync(fileName);
-    }
-  });
-  it('should be able to produce the XOR model', function () {
-    var actual = nodesvm.createLibsvmModelFileContent({
-      svmType: 0,
-      kernelType: 2,
-      gamma: 0.5,
-      degree: 2,
-      r: 1,
-      rho: 0,
-      nu: 0.1,
-      classes: [0, 1],
-      probA:  0.946065,
-      probB: '7.19126e-18',
-      nbSV : [2, 2],
-      supportVectors : [
-        [[0,0],1],
-        [[1,1],1],
-        [[0,1],-1],
-        [[1,0],-1]
-      ]
-    });
-    var expected = fs.readFileSync(fileName, 'utf8').toString();
-    actual.should.eql(expected);
-  });
-});
 
 describe('#readLibsvmModelFileContent', function() {
   var fileName = './test/models/test.model', 
