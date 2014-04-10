@@ -181,9 +181,10 @@ describe('C-SVC', function(){
       testFunc.should.throw();
     });
     it('can be save in a file', function(){
-      var fileName = './examples/models/simple_csvc.model';
+      var fileName = './test/models/simple_csvc.model';
       svm.saveToFile(fileName);
-      //fs.existsSync(fileName).should.be.true;
+      fs.existsSync(fileName).should.be.true;
+      fs.unlinkSync(fileName);
     });
   });
 });
@@ -285,7 +286,8 @@ describe('NU-SVC', function(){
     it('can be saved into a file', function(){
       var fileName = './examples/models/simple_nusvc.model';
       svm.saveToFile(fileName);
-      //fs.existsSync(fileName).should.be.true;
+      fs.existsSync(fileName).should.be.true;
+      fs.unlinkSync(fileName);
     });
   });
 });
@@ -327,9 +329,10 @@ describe('EPSILON-SVR', function(){
     });
     
     it('can be saved into a file', function(){
-      var fileName = './examples/models/simple_epsilonsvr.model';
+      var fileName = './test/models/simple_epsilonsvr.model';
       svm.saveToFile(fileName);
       fs.existsSync(fileName).should.be.true;
+      fs.unlinkSync(fileName);
     });
   });
 });
@@ -354,150 +357,115 @@ describe('NU-SVR', function(){
     });
     
     it('can be saved into a file', function(){
-      var fileName = './examples/models/simple_nusvr.model';
+      var fileName = './test/models/simple_nusvr.model';
       svm.saveToFile(fileName);
       fs.existsSync(fileName).should.be.true;
+      fs.unlinkSync(fileName);
     });
   });
 });
 
-describe('#loadSvmFromFile', function() {
-  var svm = null;
-  var fileName = './examples/models/basic-xor.model';
-  it('should throw an error if file do NOT exists', function () {
-    var testFunc = function(){
-      svm = nodesvm.loadSvmFromFile('./invalidFileName.model');
-    };
-    testFunc.should.throw();
-  });
-
-  it('should return an instance of SimpleSvm', function () {
-    svm = nodesvm.loadSvmFromFile(fileName);
-    svm.should.be.an.instanceOf(nodesvm.SimpleSvm);
-  });
-
-  describe('once loaded, svm', function () {
-    beforeEach(function () {
-      svm = nodesvm.loadSvmFromFile(fileName);
-    });
-    
-  });
-});
 
 describe('Basic XOR', function(){
+  var fileName = './test/models/basic-xor.model';
   var svm = null;
-  beforeEach(function(){
-    svm = new nodesvm.CSVC({
+  beforeEach(function(done){
+    var tempSvm = new nodesvm.CSVC({
       kernelType: nodesvm.KernelTypes.RBF,
       gamma: 0.5,
       C: 1,
       normalize: false,
       reduce: false
     });
-  });
-  describe('once trained', function () {
-    var fileName = './examples/models/basic-xor.model';
-    beforeEach(function(done){
-      svm.train(xorProblem, function () {
-        done();
-      });
-    });
-    it('can be saved into a file', function(){
-      svm.saveToFile(fileName);
-      fs.existsSync(fileName).should.be.true;
-    });
-    describe('once svm saved', function(){
-      var svm2 = null;
-      beforeEach(function  () {
-        svm.saveToFile(fileName);
-        svm2 = nodesvm.loadSvmFromFile(fileName);
-      });
-      
-      it('can be used by other svm to predict XOR', function () {
-        xorProblem.forEach(function(ex){
-          var prediction = svm2.predict(ex[0]);
-          prediction.should.equal(ex[1]);  //  means that y E {0;1}
-        });
-      });
-      it('should have remove the *.tmp file', function () {
-        fs.existsSync(fileName + '.tmp').should.be.false;
-      });
-      it('should use C_SVC type', function() {
-        svm2._svmType.should.equal(nodesvm.SvmTypes.C_SVC);
-      });
-      it('should use RBF kernel', function() {
-        svm2._kernelType.should.equal(nodesvm.KernelTypes.RBF);
-      });
-
-      it('should have gamma set to 0.5', function() {
-        svm2._gamma.should.eql([0.5]);
-      });
-      
-      it('should NOT use normalization', function() {
-        svm2._normalize.should.be.false;
-      });
-
-      it('should NOT use PCA', function() {
-        svm2._reduce.should.be.false;
-      });
-      
+    tempSvm.train(xorProblem, function () {
+      tempSvm.saveToFile(fileName);
+      svm = nodesvm.loadSvmFromFile(fileName);
+      done();
     });
   });
+  afterEach(function () {
+    if (fs.existsSync(fileName)){
+      fs.unlinkSync(fileName);
+    }
+  });
+  it('should be an instance of SimpleSvm', function () {
+    svm.should.be.an.instanceOf(nodesvm.SimpleSvm);
+  });   
+  it('can be used by other svm to predict XOR', function () {
+    xorProblem.forEach(function(ex){
+      var prediction = svm.predict(ex[0]);
+      prediction.should.equal(ex[1]);  //  means that y E {0;1}
+    });
+  });
+  it('should have remove the *.tmp file', function () {
+    fs.existsSync(fileName + '.tmp').should.be.false;
+  });
+  it('should use C_SVC type', function() {
+    svm._svmType.should.equal(nodesvm.SvmTypes.C_SVC);
+  });
+  it('should use RBF kernel', function() {
+    svm._kernelType.should.equal(nodesvm.KernelTypes.RBF);
+  });
+
+  it('should have gamma set to 0.5', function() {
+    svm._gamma.should.eql([0.5]);
+  });
+  
+  it('should NOT use normalization', function() {
+    svm._normalize.should.be.false;
+  });
+
+  it('should NOT use PCA', function() {
+    svm._reduce.should.be.false;
+  });
+      
 });
 
-describe('Advanced XOR', function(){
+describe('Advanced XOR load from file', function(){
+  var fileName = './examples/models/advanced-xor.model';
   var svm = null;
-  beforeEach(function(){
-    svm = new nodesvm.CSVC({
+  beforeEach(function(done){
+    var tempSvm = new nodesvm.CSVC({
       kernelType: nodesvm.KernelTypes.RBF,
       gamma: 0.5,
       C: 1,
       normalize: true,
       reduce: true
     });
+    tempSvm.train(xorProblem, function () {
+      tempSvm.saveToFile(fileName);
+      svm = nodesvm.loadSvmFromFile(fileName);
+      done();
+    });
   });
-  describe('once trained', function () {
-    var fileName = './examples/models/advanced-xor.model';
-    beforeEach(function(done){
-      svm.train(xorProblem, function () {
-        done();
-      });
-    });
-    it('can be saved into a file', function(){
-      svm.saveToFile(fileName);
-      fs.existsSync(fileName).should.be.true;
-    });
-    describe('once svm saved', function(){
-      var svm2 = null;
-      beforeEach(function  () {
-        svm.saveToFile(fileName);
-        svm2 = nodesvm.loadSvmFromFile(fileName);
-      });
+  afterEach(function () {
+    if (fs.existsSync(fileName)){
+      fs.unlinkSync(fileName);
+    }
+  });
       
-      it('can be used by other svm to predict XOR', function () {
-        xorProblem.forEach(function(ex){
-          var prediction = svm2.predict(ex[0]);
-          prediction.should.equal(ex[1]);  //  means that y E {0;1}
-        });
-      });
-      
-      it('should use normalization', function() {
-        svm2._normalize.should.be.true;
-      });
-      it('should have mu set to [0.5,0.5]', function() {
-        svm2._mu.should.eql([0.5,0.5]);
-      });
-      it('should have sigma set to [0.5,0.5]', function() {
-        svm2._sigma.should.eql([0.5,0.5]);
-      });
+  it('can be used by other svm to predict XOR', function () {
+    xorProblem.forEach(function(ex){
+      var prediction = svm.predict(ex[0]);
+      prediction.should.equal(ex[1]);  //  means that y E {0;1}
+    });
+  });
+  
+  it('should use normalization', function() {
+    svm._normalize.should.be.true;
+  });
+  it('should have mu set to [0.5,0.5]', function() {
+    svm._mu.should.eql([0.5,0.5]);
+  });
+  it('should have sigma set to [0.5,0.5]', function() {
+    svm._sigma.should.eql([0.5,0.5]);
+  });
 
-      it('should use PCA', function() {
-        svm2._reduce.should.be.true;
-      });
-      
-      it('should have u equal to Identity Matrix', function() {
-        svm2._u.should.eql([[-1,0],[0,-1]]);
-      });
-    });
+  it('should use PCA', function() {
+    svm._reduce.should.be.true;
+  });
+  
+  it('should have u equal to Identity Matrix', function() {
+    svm._u.should.eql([[-1,0],[0,-1]]);
   });
 });
