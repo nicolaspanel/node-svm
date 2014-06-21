@@ -224,7 +224,7 @@ describe('C-SVC', function(){
     it('its model can be used to setup new svm with same prediction capabilities', function(){
       var model= svm.getModel();
 	    console.log(model);
-      var newSvm = new nodesvm.SimpleSvm({model: model});
+      var newSvm = new nodesvm.SVM({model: model});
 //      newSvm.getModel().should.equal(model);
       xorProblem.forEach(function(ex){
         var prediction = newSvm.predict(ex[0]);

@@ -76,11 +76,11 @@ describe('Sigmoid kernel', function(){
   });
 });
 
-describe('SVM', function(){
+describe('BaseSVM', function(){
   describe('using NU_SVC with Sigmoid Kernel', function(){
     var svm = null;
     beforeEach(function(){
-      svm = new nodesvm.SVM({
+      svm = new nodesvm.BaseSVM({
         type: nodesvm.SvmTypes.NU_SVC,
         kernel: new nodesvm.SigmoidKernel(2),
         nu: 0.4
@@ -108,7 +108,7 @@ describe('SVM', function(){
     var svm = null;
     var problem = null;
     beforeEach(function(){
-      svm = new nodesvm.SVM({
+      svm = new nodesvm.BaseSVM({
         type: nodesvm.SvmTypes.EPSILON_SVR,
         kernel: new nodesvm.LinearKernel(),
         C: 1,
@@ -117,7 +117,7 @@ describe('SVM', function(){
       problem = xorNormProblem;
     });
     
-    it('should have a reference to the NodeSVM obj', function(){
+    it('should have a reference to the Node SVM obj', function(){
       svm._nodeSvm.should.be.ok;
     });
 
@@ -168,7 +168,7 @@ describe('SVM', function(){
   describe('using C_SVC on XOR normalized problem with RBF Kernel', function(){
     var svm = null, problem = null;
     beforeEach(function(){
-      svm = new nodesvm.SVM({
+      svm = new nodesvm.BaseSVM({
         type: nodesvm.SvmTypes.C_SVC,
         kernel: new nodesvm.RadialBasisFunctionKernel(0.5),
         C: 1,

@@ -15,7 +15,7 @@ var svm = new nodesvm.CSVC({
 });
 
 svm.once('trained', function  () {
-	var newSvm = new nodesvm.SimpleSvm({model: svm.getModel()});
+	var newSvm = new nodesvm.SVM({model: svm.getModel()});
 
   [0,1].forEach(function(a){
     [0,1].forEach(function(b){

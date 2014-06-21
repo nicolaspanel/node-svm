@@ -88,7 +88,7 @@ describe('#performNFoldCrossValidation', function(){
       });
     });
     
-    svc = new nodesvm.SVM({
+    svc = new nodesvm.BaseSVM({
       type: nodesvm.SvmTypes.C_SVC,
       kernel: new nodesvm.RadialBasisFunctionKernel(0.5),
       C: 1
@@ -108,7 +108,7 @@ describe('#evaluateSvm', function(){
         testset  = xorProblem,
         svc = null;
     
-    svc = new nodesvm.SVM({
+    svc = new nodesvm.BaseSVM({
       type: nodesvm.SvmTypes.C_SVC,
       kernel: new nodesvm.RadialBasisFunctionKernel(0.5),
       C: 1

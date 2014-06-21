@@ -61,7 +61,8 @@ Options with default values are listed below :
 ```javascript
 var nodesvm = require('node-svm');
 
-var svm = new nodesvm.XXXX({
+var svm = new nodesvm.SVM({
+  svmType: nodesvm.SvmTypes.C_SVC,
   // kernels parameters
   kernelType: nodesvm.KernelTypes.RBF,  
   degree: [2,3,4],                      // for POLY kernel
@@ -120,7 +121,7 @@ on('something-append', function(){
  // get your model back...
  //...
  // create a new svm
- var newSvm = new nodesvm.SimpleSvm({model: model});
+ var newSvm = new nodesvm.SVM({model: model});
  // use it with no new training...
 });
 ```

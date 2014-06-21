@@ -32,7 +32,6 @@ svm.once('dataset-reduced', function(oldDim, newDim, retainedVar){
 
 svm.once('trained', function(report){
   console.log('SVM trained. Report :\n%s', JSON.stringify(report, null, '\t'));
-
   console.log('SVM trained. Lets predict some values : ');
   for (var i = 0; i < testsamples.length;  i++){
     var test = testsamples[i];
