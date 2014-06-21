@@ -32,68 +32,9 @@ NAN_METHOD(NodeSvm::SetParameters) {
   
   assert(args[0]->IsObject());
   Local<Object> params = *args[0]->ToObject();
-  struct svm_parameter *svm_params = new svm_parameter();
-  svm_params->svm_type = C_SVC;
-  svm_params->kernel_type = RBF;
-  svm_params->degree = 3;
-  svm_params->gamma = 0;  // 1/num_features
-  svm_params->coef0 = 0;
-  svm_params->nu = 0.5;
-  svm_params->cache_size = 100;
-  svm_params->C = 1;
-  svm_params->eps = 1e-3;
-  svm_params->p = 0.1;
-  svm_params->shrinking = 1;
-  svm_params->probability = 0;
-  svm_params->nr_weight = 0;
-  svm_params->weight_label = NULL;
-  svm_params->weight = NULL;
+  obj->setParameters(params);
 
-  if (params->Has(String::New("type"))){
-    svm_params->svm_type = params->Get(String::New("type"))->IntegerValue();
-  }
-  if (params->Has(String::New("kernel"))){
-    svm_params->kernel_type = params->Get(String::New("kernel"))->IntegerValue();
-  }
-  if (params->Has(String::New("degree"))){
-    svm_params->degree = params->Get(String::New("degree"))->IntegerValue();
-  }
-  if (params->Has(String::New("gamma"))){
-    svm_params->gamma = params->Get(String::New("gamma"))->NumberValue();
-  }
-  if (params->Has(String::New("r"))){
-    svm_params->coef0 = params->Get(String::New("r"))->NumberValue();
-  }
-  if (params->Has(String::New("C"))){
-    svm_params->C = params->Get(String::New("C"))->NumberValue();
-  }
-  if (params->Has(String::New("nu"))){
-    svm_params->nu = params->Get(String::New("nu"))->NumberValue();
-  }
-  if (params->Has(String::New("epsilon"))){
-    svm_params->p = params->Get(String::New("epsilon"))->NumberValue();
-  }
-  if (params->Has(String::New("cacheSize"))){
-    svm_params->cache_size = params->Get(String::New("cacheSize"))->NumberValue();
-  }
-  if (params->Has(String::New("eps"))){
-    svm_params->eps = params->Get(String::New("eps"))->NumberValue();
-  }
-  if (params->Has(String::New("shrinking"))){
-    svm_params->shrinking = params->Get(String::New("shrinking"))->IntegerValue();
-  }
-  if (params->Has(String::New("probability"))){
-    svm_params->probability = params->Get(String::New("probability"))->IntegerValue();
-  }
-
-  obj->params = svm_params;
-  const char *error_msg;
-  error_msg =  svm_check_parameter(svm_params);
-  std::cout << error_msg << std::endl;
-  if (error_msg)
-    NanReturnValue(String::New("Invalid parameters"));
-  else  
-    NanReturnUndefined();
+  NanReturnUndefined();
 }
 
 NAN_METHOD(NodeSvm::Train) {
@@ -206,8 +147,19 @@ NAN_METHOD(NodeSvm::LoadFromFile) {
   name[4095] = 0;
 
   // Create a new empty array.
-  obj->loadModel(name);
+  obj->loadModelFromFile(name);
   delete[] name;
+  NanReturnUndefined();
+}
+
+NAN_METHOD(NodeSvm::SetModel) {
+  NanScope();
+  NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+  if (args.Length() != 1 || !args[0]->IsObject())
+    return ThrowException(Exception::Error(String::New("usage: NodeSvm.loadFromModel(model)")));
+
+  Local<Array> model = Array::Cast(*args[0]->ToObject());
+  obj->setModel(model);
   NanReturnUndefined();
 }
 
@@ -358,6 +310,8 @@ void NodeSvm::Init(Handle<Object> exports){
   
   tpl->PrototypeTemplate()->Set(String::NewSymbol("loadFromFile"),
       FunctionTemplate::New(NodeSvm::LoadFromFile)->GetFunction());
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("loadFromModel"),
+      FunctionTemplate::New(NodeSvm::SetModel)->GetFunction());
 
   tpl->PrototypeTemplate()->Set(String::NewSymbol("getModel"),
       FunctionTemplate::New(NodeSvm::GetModel)->GetFunction());

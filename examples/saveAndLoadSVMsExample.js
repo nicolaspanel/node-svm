@@ -1,17 +1,12 @@
 /**
-  Simple example using C-SVC classificator to predict the xor function
+  Simple example using C-SVC classificator to demonstrate how to save and reuse SVM's model
   Dataset : xor.ds
-  
-  Note : 
-   * we use 'nodesvm#loadSvmFromFile(path)' to create a new SVM from a file
-   * To save an existing svm, make sure it is trained and use svm#saveToFile(path).
 **/
 
 'use strict';
 
 var nodesvm = require('../lib/nodesvm'),
-    datasetFileName = './examples/datasets/xor.ds',
-    modelFileName = './examples/models/xor.model';
+    datasetFileName = './examples/datasets/xor.ds';
 
 var svm = new nodesvm.CSVC({
   kernelType: nodesvm.KernelTypes.RBF,
@@ -20,15 +15,14 @@ var svm = new nodesvm.CSVC({
 });
 
 svm.once('trained', function  () {
-  svm.saveToFile(modelFileName);
-
-  var newSvm = new nodesvm.loadSvmFromFile(modelFileName);
+	var newSvm = new nodesvm.SimpleSvm({model: svm.getModel()});
 
   [0,1].forEach(function(a){
     [0,1].forEach(function(b){
-      console.log("%d XOR %d => %d", a, b, svm.predict([a, b]));
+      console.log("%d XOR %d => %d", a, b, newSvm.predict([a, b]));
     });
-  }); 
+  });
+	process.exit(0);
 });
 
 svm.trainFromFile(datasetFileName);

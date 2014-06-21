@@ -22,12 +22,12 @@ var svm = new nodesvm.CSVC({
 });
 
 svm.once('trained', function(report) {
-  svm.saveToFile('./examples/models/svmguide1.model');
   console.log('SVM trained. Training report :\n%s', JSON.stringify(report, null, '\t'));
   
   nodesvm.readDatasetAsync(testingFile, function(testset){
-    svm.evaluate(testset, function(evalReport){
+	  svm.evaluate(testset, function(evalReport){
       console.log('Evaluation report against the testset:\n%s', JSON.stringify(evalReport, null, '\t'));
+	    process.exit(0);
     });
   });
 });

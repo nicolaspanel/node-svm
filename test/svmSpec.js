@@ -77,20 +77,6 @@ describe('Sigmoid kernel', function(){
 });
 
 describe('SVM', function(){
-  
-  describe('using bad parameters', function(){
-    it('should throw an error during initialization', function(){
-      var testFunc = function(){
-        var svm = new nodesvm.SVM({
-          type: nodesvm.SvmTypes.C_SVC,
-          kernel: new nodesvm.RadialBasisFunctionKernel(2),
-          C: 0 // c must be > 0
-        });
-      };
-      testFunc.should.throw();
-    });
-  });
-
   describe('using NU_SVC with Sigmoid Kernel', function(){
     var svm = null;
     beforeEach(function(){

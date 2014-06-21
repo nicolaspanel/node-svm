@@ -22,7 +22,6 @@ var svm = new nodesvm.CSVC({
 });
 
 svm.once('trained', function(report) {
-  svm.saveToFile('./examples/models/xor.model');
   console.log('SVM trained. report :\n%s', JSON.stringify(report, null, '\t'));
   console.log('Lets predict XOR values');
   
@@ -32,7 +31,7 @@ svm.once('trained', function(report) {
       console.log("%d XOR %d => %d", a, b, prediction);
     });
   });
-
+	process.exit(0);
 });
 
 svm.trainFromFile(fileName);

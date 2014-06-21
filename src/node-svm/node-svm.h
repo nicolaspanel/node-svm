@@ -29,6 +29,7 @@ class NodeSvm : public node::ObjectWrap
     static NAN_METHOD(PredictProbabilitiesAsync);
     static NAN_METHOD(SaveToFile);
     static NAN_METHOD(LoadFromFile);
+    static NAN_METHOD(SetModel);
     static NAN_METHOD(GetModel);
     static NAN_METHOD(New);
 
@@ -62,12 +63,194 @@ class NodeSvm : public node::ObjectWrap
     int saveModel(const char *fileName){
       return svm_save_model(fileName, model);
     };
-    void loadModel(const char *fileName){
+    void loadModelFromFile(const char *fileName){
       model = svm_load_model(fileName);
-      assert(model!=NULL);  
+      assert(model!=NULL);
       params = &model->param;
       assert(params!=NULL);  
     };
+
+    void setParameters(Local<Object> obj){
+      struct svm_parameter *svm_params = new svm_parameter();
+      svm_params->svm_type = C_SVC;
+      svm_params->kernel_type = RBF;
+      svm_params->degree = 3;
+      svm_params->gamma = 0;  // 1/num_features
+      svm_params->coef0 = 0;
+      svm_params->nu = 0.5;
+      svm_params->cache_size = 100;
+      svm_params->C = 1;
+      svm_params->eps = 1e-3;
+      svm_params->p = 0.1;
+      svm_params->shrinking = 1;
+      svm_params->probability = 0;
+      svm_params->nr_weight = 0;
+      svm_params->weight_label = NULL;
+      svm_params->weight = NULL;
+
+      if (obj->Has(String::New("svmType"))){
+        svm_params->svm_type = obj->Get(String::New("svmType"))->IntegerValue();
+      }
+      if (obj->Has(String::New("kernelType"))){
+        svm_params->kernel_type = obj->Get(String::New("kernelType"))->IntegerValue();
+      }
+      if (obj->Has(String::New("degree"))){
+        svm_params->degree = obj->Get(String::New("degree"))->IntegerValue();
+      }
+      if (obj->Has(String::New("gamma"))){
+        svm_params->gamma = obj->Get(String::New("gamma"))->NumberValue();
+      }
+      if (obj->Has(String::New("r"))){
+        svm_params->coef0 = obj->Get(String::New("r"))->NumberValue();
+      }
+      if (obj->Has(String::New("C"))){
+        svm_params->C = obj->Get(String::New("C"))->NumberValue();
+      }
+      if (obj->Has(String::New("nu"))){
+        svm_params->nu = obj->Get(String::New("nu"))->NumberValue();
+      }
+      if (obj->Has(String::New("epsilon"))){
+        svm_params->p = obj->Get(String::New("epsilon"))->NumberValue();
+      }
+      if (obj->Has(String::New("cacheSize"))){
+        svm_params->cache_size = obj->Get(String::New("cacheSize"))->NumberValue();
+      }
+      if (obj->Has(String::New("eps"))){
+        svm_params->eps = obj->Get(String::New("eps"))->NumberValue();
+      }
+      if (obj->Has(String::New("shrinking"))){
+        svm_params->shrinking = obj->Get(String::New("shrinking"))->IntegerValue();
+      }
+      if (obj->Has(String::New("probability"))){
+        svm_params->probability = obj->Get(String::New("probability"))->IntegerValue();
+      }
+
+      const char *error_msg;
+      error_msg =  svm_check_parameter(svm_params);
+      std::cout << error_msg << std::endl;
+      assert(!error_msg);
+      params = svm_params;
+    };
+
+    void setModel(Local<Object> obj){
+      assert(obj->Has(String::New("params")));
+      assert(obj->Get(String::New("params"))->IsObject());
+
+      setParameters(obj->Get(String::New("params"))->ToObject());
+      assert(params!=NULL);
+
+      struct svm_model *new_model = new svm_model();
+      new_model->free_sv = 1;	// XXX
+      new_model->rho = NULL;
+      new_model->probA = NULL;
+      new_model->probB = NULL;
+      new_model->sv_indices = NULL;
+      new_model->label = NULL;
+      new_model->nSV = NULL;
+
+      assert(obj->Has(String::New("l")));
+      assert(obj->Get(String::New("l"))->IsInt32());
+      new_model->l = obj->Get(String::New("l"))->IntegerValue();
+
+      new_model->nr_class = obj->Get(String::New("nrClass"))->IntegerValue();
+      int n = new_model->nr_class * (new_model->nr_class-1)/2;
+
+      // rho
+      assert(obj->Has(String::New("rho")));
+      assert(obj->Get(String::New("rho"))->IsArray());
+      Local<Array> rho = Array::Cast(*obj->Get(String::New("rho"))->ToObject());
+      assert(rho->Length()==n);
+      new_model->rho = new double[n];
+      for(int i=0;i<n;i++){
+        Local<Value> elt = rho->Get(i);
+        assert(elt->IsNumber());
+        new_model->rho[i] = elt->NumberValue();
+      }
+
+      // classes
+      assert(obj->Has(String::New("labels")));
+      assert(obj->Get(String::New("labels"))->IsArray());
+      Local<Array> labels = Array::Cast(*obj->Get(String::New("labels"))->ToObject());
+			assert(labels->Length()==new_model->nr_class);
+			new_model->label = new int[new_model->nr_class];
+			for(int i=0;i<new_model->nr_class;i++){
+				Local<Value> elt = labels->Get(i);
+        assert(elt->IsInt32());
+				new_model->label[i] = elt->IntegerValue();
+			}
+
+			// probA
+			if (obj->Has(String::New("probA"))){
+			  assert(obj->Get(String::New("probA"))->IsArray());
+        Local<Array> probA = Array::Cast(*obj->Get(String::New("probA"))->ToObject());
+        assert(probA->Length()==n);
+        new_model->probA = new double[n];
+        for(int i=0;i<n;i++){
+          Local<Value> elt = probA->Get(i);
+          assert(elt->IsNumber());
+          new_model->probA[i] = elt->NumberValue();
+        }
+			}
+
+			// probB
+      if (obj->Has(String::New("probB"))){
+        assert(obj->Get(String::New("probB"))->IsArray());
+        Local<Array> probB = Array::Cast(*obj->Get(String::New("probB"))->ToObject());
+        assert(probB->Length()==n);
+        new_model->probB = new double[n];
+        for(int i=0;i<n;i++){
+          Local<Value> elt = probB->Get(i);
+          assert(elt->IsNumber());
+          new_model->probB[i] = elt->NumberValue();
+        }
+      }
+
+      // nSV
+      assert(obj->Has(String::New("nbSupportVectors")));
+      assert(obj->Get(String::New("nbSupportVectors"))->IsArray());
+      Local<Array> nbSupportVectors = Array::Cast(*obj->Get(String::New("nbSupportVectors"))->ToObject());
+      assert(nbSupportVectors->Length()==new_model->nr_class);
+      new_model->nSV = new int[new_model->nr_class];
+      for(int i=0;i<new_model->nr_class;i++){
+        Local<Value> elt = nbSupportVectors->Get(i);
+        assert(elt->IsInt32());
+        new_model->nSV[i] = elt->IntegerValue();
+      }
+
+      // SV
+      assert(obj->Has(String::New("supportVectors")));
+      assert(obj->Get(String::New("supportVectors"))->IsArray());
+      Local<Array> supportVectors = Array::Cast(*obj->Get(String::New("supportVectors"))->ToObject());
+      assert(supportVectors->Length()==new_model->l);
+      int m = new_model->nr_class - 1;
+      int l = new_model->l;
+      new_model->sv_coef = new double *[m];
+      for(int i=0; i < m ;i++)
+      		new_model->sv_coef[i] = new double[l];
+      new_model->SV = new svm_node*[l];
+      for(int i = 0; i < l; i++) {
+        Local<Array> ex = Array::Cast(*supportVectors->Get(i));
+        assert(ex->Length()==2);
+        Local<Array> x = Array::Cast(*ex->Get(0));
+        Local<Array> y = Array::Cast(*ex->Get(1));
+
+        new_model->SV[i] = new svm_node[x->Length() + 1];
+        for(unsigned j = 0; j < x->Length(); ++j) {
+          new_model->SV[i][j].index = j+1;
+          new_model->SV[i][j].value = x->Get(j)->NumberValue();
+        }
+        new_model->SV[i][x->Length()].index = -1;
+
+        for(int j=0; j < m ;j++)
+          new_model->sv_coef[j][i] = y->Get(j)->NumberValue();
+      }
+
+
+      model = new_model;
+      model->param = *params;
+      assert(model!=NULL);
+    };
+
     Handle<Value> setSvmProblem(Local<Array> dataset){
       NanScope();
       struct svm_problem *prob = new svm_problem();
@@ -133,10 +316,12 @@ class NodeSvm : public node::ObjectWrap
     double predict(svm_node *x){
       return svm_predict(model, x);
     }
+
     void predictProbabilities(svm_node *x, double* prob_estimates){
       svm_predict_probability(model,x,prob_estimates);
     };
-    void getSvmNodes(Local<Array> inputs, svm_node *nodes){      
+
+    void getSvmNodes(Local<Array> inputs, svm_node *nodes){
       for (unsigned j=0; j < inputs->Length(); j++){
         double xi = inputs->Get(j)->NumberValue();
         nodes[j].index = j+1;
@@ -221,10 +406,6 @@ class NodeSvm : public node::ObjectWrap
           probA->Set(i, NanNew<Number>(model->probA[i]));
         obj->Set(NanNew<String>("probA"), probA);
       }
-      else
-      {
-        obj->Set(NanNew<String>("probA"), NanUndefined());
-      }
 
       if(model->probB)
       {
@@ -233,10 +414,6 @@ class NodeSvm : public node::ObjectWrap
         for(int i=0 ; i < n ; i++)
           probB->Set(i, NanNew<Number>(model->probB[i]));
         obj->Set(NanNew<String>("probB"), probB);
-      }
-      else
-      {
-        obj->Set(NanNew<String>("probB"), NanUndefined());
       }
 
       if(model->rho)
@@ -247,20 +424,16 @@ class NodeSvm : public node::ObjectWrap
           rho->Set(i, NanNew<Number>(model->rho[i]));
         obj->Set(NanNew<String>("rho"), rho);
       }
-      else
-      {
-        obj->Set(NanNew<String>("rho"), NanUndefined());
-      }
 
-      Local<Object> params = NanNew<Object>();
-      params->Set(NanNew<String>("svmType"), NanNew<Number>(model->param.svm_type));
-      params->Set(NanNew<String>("kernelType"), NanNew<Number>(model->param.kernel_type));
-      params->Set(NanNew<String>("degree"), NanNew<Number>(model->param.degree)); /* for poly */
-      params->Set(NanNew<String>("gamma"), NanNew<Number>(model->param.gamma));
-      params->Set(NanNew<String>("r"), NanNew<Number>(model->param.coef0));
-      params->Set(NanNew<String>("C"), NanNew<Number>(model->param.C));
-      params->Set(NanNew<String>("nu"), NanNew<Number>(model->param.nu));
-      params->Set(NanNew<String>("p"), NanNew<Number>(model->param.p));
+      Local<Object> parameters = NanNew<Object>();
+      parameters->Set(NanNew<String>("svmType"), NanNew<Number>(model->param.svm_type));
+      parameters->Set(NanNew<String>("kernelType"), NanNew<Number>(model->param.kernel_type));
+      parameters->Set(NanNew<String>("degree"), NanNew<Number>(model->param.degree)); /* for poly */
+      parameters->Set(NanNew<String>("gamma"), NanNew<Number>(model->param.gamma));
+      parameters->Set(NanNew<String>("r"), NanNew<Number>(model->param.coef0));
+      parameters->Set(NanNew<String>("C"), NanNew<Number>(model->param.C));
+      parameters->Set(NanNew<String>("nu"), NanNew<Number>(model->param.nu));
+      parameters->Set(NanNew<String>("p"), NanNew<Number>(model->param.p));
 
       Handle<Array> weightLabels = Array::New(model->param.nr_weight);
       Handle<Array> weights = Array::New(model->param.nr_weight);
@@ -268,26 +441,26 @@ class NodeSvm : public node::ObjectWrap
         weightLabels->Set(i, NanNew<Number>(model->param.weight_label[i]));
         weights->Set(i, NanNew<Number>(model->param.weight[i]));
       }
-      params->Set(NanNew<String>("weightLabels"), weightLabels);
-      params->Set(NanNew<String>("weighs"), weights);
+      parameters->Set(NanNew<String>("weightLabels"), weightLabels);
+      parameters->Set(NanNew<String>("weighs"), weights);
 
-      params->Set(NanNew<String>("cacheSize"), NanNew<Number>(model->param.cache_size));
-      params->Set(NanNew<String>("eps"), NanNew<Number>(model->param.eps));
+      parameters->Set(NanNew<String>("cacheSize"), NanNew<Number>(model->param.cache_size));
+      parameters->Set(NanNew<String>("eps"), NanNew<Number>(model->param.eps));
       if (model->param.shrinking){
-        params->Set(NanNew<String>("shrinking"), NanTrue());
+        parameters->Set(NanNew<String>("shrinking"), NanTrue());
       }
       else {
-        params->Set(NanNew<String>("shrinking"), NanFalse());
+        parameters->Set(NanNew<String>("shrinking"), NanFalse());
       }
 
       if (model->param.probability){
-        params->Set(NanNew<String>("probability"), NanTrue());
+        parameters->Set(NanNew<String>("probability"), NanTrue());
       }
       else {
-        params->Set(NanNew<String>("probability"), NanFalse());
+        parameters->Set(NanNew<String>("probability"), NanFalse());
       }
 
-      obj->Set(NanNew<String>("params"), params);
+      obj->Set(NanNew<String>("params"), parameters);
       return obj;
     };
   private:

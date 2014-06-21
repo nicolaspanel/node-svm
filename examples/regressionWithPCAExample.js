@@ -41,6 +41,7 @@ svm.once('trained', function(report){
     var prediction = svm.predict(inputs);
     console.log(' { #%d, expected: %d, predicted: %d}',i+1, expected, prediction);
   }
+	process.exit(0);
 });
 
 nodesvm.readDatasetAsync(fileName, function (ds) {
