@@ -105,21 +105,24 @@ Notice : `ONE_CLASS` SVM is not supported (yet)
 ##Training
 SVMs can be trained using `svm#train(dataset, [callback])`
 
-Notice :  Once trained, you can use `svm#saveToFile(path)` method to backup your svm model. Then you will be able to create new `svm` instances without having to train them again and again.
+Notice :  Once trained, you can use `svm#getModel()` method to backup your svm model. Then you will be able to create new `svm` instances without having to train them again and again.
 
 Pseudo code : 
 ```javascript
 var svm = new nodesvm.SVM(options);
 
-svm.once('trained', function{
-  svm.saveToFile('./path/to/myFile.model'); // svm need to be trained before you can save it
-  //...
-  var svm2 = nodesvm.loadSvmFromFile('./path/to/myFile.model');
-  svm2.predict(inputs);
-  // ...
-})
+svm.train(dataset, function(){
+  var model = svm.getModel();
+  // persist your model...
+});
 
-svm.train(dataset); 
+on('something-append', function(){
+ // get your model back...
+ //...
+ // create a new svm
+ var newSvm = new nodesvm.SimpleSvm({model: model});
+ // use it with no new training...
+});
 ```
 
 ##Predictions
