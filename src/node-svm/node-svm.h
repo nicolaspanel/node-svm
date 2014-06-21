@@ -29,6 +29,7 @@ class NodeSvm : public node::ObjectWrap
     static NAN_METHOD(PredictProbabilitiesAsync);
     static NAN_METHOD(SaveToFile);
     static NAN_METHOD(LoadFromFile);
+    static NAN_METHOD(GetModel);
     static NAN_METHOD(New);
 
     bool isTrained(){return model != NULL;};
@@ -142,6 +143,152 @@ class NodeSvm : public node::ObjectWrap
         nodes[j].value = xi;
       }
       nodes[inputs->Length()].index = -1;
+    };
+
+    Local<Object> getModel(){
+      Local<Object> obj = NanNew<Object>();
+      obj->Set(NanNew<String>("nrClass"), NanNew<Number>(model->nr_class));
+      obj->Set(NanNew<String>("l"), NanNew<Number>(model->l));
+
+      // Create a new array for support vectors
+      Handle<Array> supportVectors = Array::New(model->l);
+      const double * const *sv_coef = model->sv_coef;
+      const svm_node * const *SV = model->SV;
+      const int nb_outputs = model->nr_class - 1;
+      for(int i=0;i<model->l;i++)
+      {
+        Handle<Array> outputs = Array::New(nb_outputs);
+        for(int j=0; j < nb_outputs ; j++)
+          outputs->Set(j, NanNew<Number>(sv_coef[j][i]));
+
+        const svm_node *p = SV[i];
+
+//        if(param.kernel_type == PRECOMPUTED)
+//          fprintf(fp,"0:%d ",(int)(p->value));
+//        else
+        int max_index = 0;
+        int nb_index = 0;
+        while(p->index != -1)
+        {
+          nb_index++;
+          if (p->index > max_index){
+            max_index = p->index;
+          }
+          p++;
+        }
+//        fprintf(fp, "\n");
+        Handle<Array> inputs = Array::New(nb_index);
+        int p_i = 0;
+        for (int k=0; k < max_index ; k++)
+        {
+          if (k+1 == model->SV[i][p_i].index){
+            inputs->Set(k, NanNew<Number>(SV[i][p_i].value));
+            p_i++;
+          }
+          else {
+            inputs->Set(k, NanNew<Number>(0));
+          }
+        }
+        Handle<Array> example = Array::New(2);
+        example->Set(0, inputs);
+        example->Set(1, outputs);
+        supportVectors->Set(i, example);
+      }
+      obj->Set(NanNew<String>("supportVectors"), supportVectors);
+
+      if(model->nSV)
+      {
+        Handle<Array> nbSupportVectors = Array::New(model->nr_class);
+        for(int i=0; i < model->nr_class ; i++)
+        {
+          nbSupportVectors->Set(i, NanNew<Number>(model->nSV[i]));
+        }
+        obj->Set(NanNew<String>("nbSupportVectors"), nbSupportVectors);
+      }
+      if(model->label)
+      {
+        Handle<Array> labels = Array::New(model->nr_class);
+        for(int i=0 ; i < model->nr_class ; i++)
+          labels->Set(i, NanNew<Number>(model->label[i]));
+        obj->Set(NanNew<String>("labels"), labels);
+      }
+
+      if(model->probA) // regression has probA only
+      {
+        int n = model->nr_class*(model->nr_class-1)/2;
+        Handle<Array> probA = Array::New(n);
+        for(int i=0 ; i < n ; i++)
+          probA->Set(i, NanNew<Number>(model->probA[i]));
+        obj->Set(NanNew<String>("probA"), probA);
+      }
+      else
+      {
+        obj->Set(NanNew<String>("probA"), NanUndefined());
+      }
+
+      if(model->probB)
+      {
+        int n = model->nr_class*(model->nr_class-1)/2;
+        Handle<Array> probB = Array::New(n);
+        for(int i=0 ; i < n ; i++)
+          probB->Set(i, NanNew<Number>(model->probB[i]));
+        obj->Set(NanNew<String>("probB"), probB);
+      }
+      else
+      {
+        obj->Set(NanNew<String>("probB"), NanUndefined());
+      }
+
+      if(model->rho)
+      {
+        int n = model->nr_class*(model->nr_class-1)/2;
+        Handle<Array> rho = Array::New(n);
+        for(int i=0 ; i < n ; i++)
+          rho->Set(i, NanNew<Number>(model->rho[i]));
+        obj->Set(NanNew<String>("rho"), rho);
+      }
+      else
+      {
+        obj->Set(NanNew<String>("rho"), NanUndefined());
+      }
+
+      Local<Object> params = NanNew<Object>();
+      params->Set(NanNew<String>("svmType"), NanNew<Number>(model->param.svm_type));
+      params->Set(NanNew<String>("kernelType"), NanNew<Number>(model->param.kernel_type));
+      params->Set(NanNew<String>("degree"), NanNew<Number>(model->param.degree)); /* for poly */
+      params->Set(NanNew<String>("gamma"), NanNew<Number>(model->param.gamma));
+      params->Set(NanNew<String>("r"), NanNew<Number>(model->param.coef0));
+      params->Set(NanNew<String>("C"), NanNew<Number>(model->param.C));
+      params->Set(NanNew<String>("nu"), NanNew<Number>(model->param.nu));
+      params->Set(NanNew<String>("p"), NanNew<Number>(model->param.p));
+
+      Handle<Array> weightLabels = Array::New(model->param.nr_weight);
+      Handle<Array> weights = Array::New(model->param.nr_weight);
+      for(int i=0 ; i < model->param.nr_weight ; i++){
+        weightLabels->Set(i, NanNew<Number>(model->param.weight_label[i]));
+        weights->Set(i, NanNew<Number>(model->param.weight[i]));
+      }
+      params->Set(NanNew<String>("weightLabels"), weightLabels);
+      params->Set(NanNew<String>("weighs"), weights);
+
+      params->Set(NanNew<String>("cacheSize"), NanNew<Number>(model->param.cache_size));
+      params->Set(NanNew<String>("eps"), NanNew<Number>(model->param.eps));
+      if (model->param.shrinking){
+        params->Set(NanNew<String>("shrinking"), NanTrue());
+      }
+      else {
+        params->Set(NanNew<String>("shrinking"), NanFalse());
+      }
+
+      if (model->param.probability){
+        params->Set(NanNew<String>("probability"), NanTrue());
+      }
+      else {
+        params->Set(NanNew<String>("probability"), NanFalse());
+      }
+
+      obj->Set(NanNew<String>("params"), params);
+      return obj;
     };
   private:
     ~NodeSvm();

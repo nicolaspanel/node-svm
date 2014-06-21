@@ -17,9 +17,9 @@ var xorFileName = './examples/datasets/xor.ds';
 describe('C-SVC', function(){
   var svm = null;
   beforeEach(function(){
-    var options = {       
+    var options = {
     //   // kernels parameters
-    //   kernelType: nodesvm.KernelTypes.RBF,  
+    //   kernelType: nodesvm.KernelTypes.RBF,
     //   degree: [2,3,4],
     //   gamma: [0.03125, 0.125, 0.5, 2, 8],
     //   r: [0.125, 0.5, 2, 8],
@@ -29,11 +29,11 @@ describe('C-SVC', function(){
 
     //   // training options
     //   nFold: 4,
-    //   normalize: true, 
+    //   normalize: true,
     //   reduce: true, // use PCA to reduce dataset size
     //   retainedVariance: 0.99,
-    //   eps: 1e-3, // stopping criteria 
-    //   cacheSize: 100,     // cache siez in MB        
+    //   eps: 1e-3, // stopping criteria
+    //   cacheSize: 100,     // cache siez in MB
     //   probability : false // false by default
     }; // default
     svm = new nodesvm.CSVC(options);
@@ -85,11 +85,11 @@ describe('C-SVC', function(){
   it('should have stopping criteria set to 1e-3', function() {
     svm._eps.should.equal(1e-3);
   });
-  
+
   it('should have cache size set to 100', function() {
     svm._cacheSize.should.equal(100);
   });
-  
+
   it('should NOT use probabilities', function() {
     svm._probability.should.be.false;
   });
@@ -97,7 +97,7 @@ describe('C-SVC', function(){
   it('should have nFold set to 4', function() {
     svm._nFold.should.equal(4);
   });
-  
+
   it('should emit `dataset-normalized` event during evaluation', function(done){
     svm.once('dataset-normalized', function () {
       done();
@@ -151,7 +151,7 @@ describe('C-SVC', function(){
       svm.evaluate(xorProblem, function (report) {
         report.accuracy.should.equal(1);
         done();
-      });     
+      });
     });
     it('should perform very well on the training set (100% accuracy)', function(){
       xorProblem.forEach(function(ex){
@@ -167,7 +167,7 @@ describe('C-SVC', function(){
         });
       }, function(err){ done(); });
     });
-    
+
     it('should throw an error if try to predict probabilities', function(){
       var testFunc = function(){
         svm.predictProbabilities(xorProblem[0][0]);
@@ -183,8 +183,46 @@ describe('C-SVC', function(){
     it('can be save in a file', function(){
       var fileName = './test/models/simple_csvc.model';
       svm.saveToFile(fileName);
-      fs.existsSync(fileName).should.be.true;
       //fs.unlinkSync(fileName);
+    });
+
+    it('can export its model', function(){
+      var model= svm.getModel();
+      console.log(model);
+      model.should.containEql({
+        nrClass: 2,
+        l: 4,
+        supportVectors: [
+          [ [  1,  1 ], [  0.03125 ] ],
+          [ [ -1, -1 ], [  0.03125 ] ],
+          [ [  1, -1 ], [ -0.03125 ] ],
+          [ [ -1,  1 ], [ -0.03125 ] ]
+        ],
+        nbSupportVectors: [ 2, 2 ],
+        labels: [ 0, 1 ],
+        rho: [ 0 ],
+        normalize: true,
+        mu: [ 0.5, 0.5 ],
+        sigma: [ 0.5, 0.5 ],
+        reduce: true,
+        retainedVariance: 0.99,
+        u: [ [ -1, 0 ], [ 0, -1 ] ]
+      });
+      model.params.should.containEql({
+        svmType: nodesvm.SvmTypes.C_SVC,
+        kernelType: nodesvm.KernelTypes.RBF,
+        degree: 3, //default value
+        gamma: 0.03125,
+        r: 0,
+        C: 0.03125,
+        nu: 0.5,
+        p : 0.1,
+
+        cacheSize: 100,
+        eps: 0.001,
+        shrinking: true,
+        probability: false
+      });
     });
   });
 });
@@ -192,11 +230,8 @@ describe('C-SVC', function(){
 describe('NU-SVC', function(){
   var svm = null;
   beforeEach(function(){
-    var options = {       
+    var options = {
       kernelType: nodesvm.KernelTypes.POLY,
-      gamma: 2,
-      r: 1,
-      nu: 0.1,
       nFold: 3,
       normalize: false,
       reduce: false,
@@ -206,6 +241,7 @@ describe('NU-SVC', function(){
     }; // default
     svm = new nodesvm.NuSVC(options);
   });
+
   it('should use NU_SVC type', function() {
     svm._svmType.should.equal(nodesvm.SvmTypes.NU_SVC);
   });
@@ -218,25 +254,25 @@ describe('NU-SVC', function(){
     svm._degree.should.eql([2,3,4]);
   });
 
-  it('should have one parameter for gamma', function() {
-    svm._gamma.should.eql([2]);
+  it('should have gamma parameter set to default', function() {
+    svm._gamma.should.eql([0.03125, 0.125, 0.5, 2, 8]);
   });
 
-  it('should have one parameter for r', function() {
-    svm._r.should.eql([1]);
+  it('should have r parameter set to default', function() {
+    svm._r.should.eql([0.03125, 0.125, 0.5, 2, 8]);
   });
 
   it('should have no parameter for C', function() {
     svm._c.length.should.equal(0);
   });
-  it('should have one parameter for nu', function() {
-    svm._nu.should.eql([0.1]);
+  it('should have nu parameter set to default', function() {
+    svm._nu.should.eql([0.03125, 0.125, 0.5, 0.75, 1]);
   });
 
   it('should have nFold set to 3', function() {
     svm._nFold.should.equal(3);
   });
-  
+
   it('should NOT use normalization', function() {
     svm._normalize.should.be.false;
   });
@@ -249,7 +285,7 @@ describe('NU-SVC', function(){
   it('should have cache size set to 200', function() {
     svm._cacheSize.should.equal(200);
   });
-  
+
   it('should use probabilities', function() {
     svm._probability.should.be.true;
   });
@@ -260,6 +296,7 @@ describe('NU-SVC', function(){
         done();
       });
     });
+
     it('should be able to predict probabilities', function(){
       xorProblem.forEach(function(ex){
         var probs = svm.predictProbabilities(ex[0]);
@@ -283,12 +320,23 @@ describe('NU-SVC', function(){
         });
       }, function(err){ done(); });
     });
+
     it('can be saved into a file', function(){
-      var fileName = './examples/models/simple_nusvc.model';
+      var fileName = './test/models/simple_nusvc.model';
       svm.saveToFile(fileName);
       fs.existsSync(fileName).should.be.true;
       //fs.unlinkSync(fileName);
     });
+
+    it('can export its model', function(){
+      var model= svm.getModel();
+      model.should.containEql({  reduce: false  });
+      model.params.should.containEql({
+        svmType: nodesvm.SvmTypes.NU_SVC,
+        kernelType: nodesvm.KernelTypes.POLY
+      });
+    });
+
   });
 });
 
@@ -296,8 +344,7 @@ describe('EPSILON-SVR', function(){
   var svm = null;
   beforeEach(function(){
     var options = {       
-      kernelType: nodesvm.KernelTypes.LINEAR,
-      C: 2  
+      kernelType: nodesvm.KernelTypes.LINEAR
     }; // default
     svm = new nodesvm.EpsilonSVR(options);
   });
@@ -313,8 +360,8 @@ describe('EPSILON-SVR', function(){
     svm._gamma.length.should.equal(0);
   });
 
-  it('should have one parameter for C', function() {
-    svm._c.should.eql([2]);
+  it('should have C parameter set to default', function() {
+    svm._c.should.eql([0.03125, 0.125, 0.5, 2, 8]);
   });
 
   it('should have epsilon parameter set to default', function() {
@@ -334,7 +381,17 @@ describe('EPSILON-SVR', function(){
       fs.existsSync(fileName).should.be.true;
       //fs.unlinkSync(fileName);
     });
+
+    it('can export its model', function(){
+      var model= svm.getModel();
+      model.params.should.containEql({
+        svmType: nodesvm.SvmTypes.EPSILON_SVR,
+        kernelType: nodesvm.KernelTypes.LINEAR
+      });
+    });
   });
+
+
 });
 
 describe('NU-SVR', function(){
@@ -355,11 +412,18 @@ describe('NU-SVR', function(){
         done();
       });
     });
-    
+
     it('can be saved into a file', function(){
       var fileName = './test/models/simple_nusvr.model';
       svm.saveToFile(fileName);
       fs.existsSync(fileName).should.be.true;
+    });
+
+    it('can export its model', function(){
+      var model= svm.getModel();
+      model.params.should.containEql({
+        svmType: nodesvm.SvmTypes.NU_SVR
+      });
     });
   });
 });
@@ -389,7 +453,7 @@ describe('Basic XOR', function(){
   });
   it('should be an instance of SimpleSvm', function () {
     svm.should.be.an.instanceOf(nodesvm.SimpleSvm);
-  });   
+  });
   it('can be used by other svm to predict XOR', function () {
     xorProblem.forEach(function(ex){
       var prediction = svm.predict(ex[0]);
@@ -409,7 +473,7 @@ describe('Basic XOR', function(){
   it('should have gamma set to 0.5', function() {
     svm._gamma.should.eql([0.5]);
   });
-  
+
   it('should NOT use normalization', function() {
     svm._normalize.should.be.false;
   });
@@ -417,8 +481,9 @@ describe('Basic XOR', function(){
   it('should NOT use PCA', function() {
     svm._reduce.should.be.false;
   });
-      
+
 });
+
 
 describe('Advanced XOR load from file', function(){
   var fileName = './examples/models/advanced-xor.model';
@@ -442,14 +507,14 @@ describe('Advanced XOR load from file', function(){
       //fs.unlinkSync(fileName);
     }
   });
-      
+
   it('can be used by other svm to predict XOR', function () {
     xorProblem.forEach(function(ex){
       var prediction = svm.predict(ex[0]);
       prediction.should.equal(ex[1]);  //  means that y E {0;1}
     });
   });
-  
+
   it('should use normalization', function() {
     svm._normalize.should.be.true;
   });
@@ -463,7 +528,7 @@ describe('Advanced XOR load from file', function(){
   it('should use PCA', function() {
     svm._reduce.should.be.true;
   });
-  
+
   it('should have u equal to Identity Matrix', function() {
     svm._u.should.eql([[-1,0],[0,-1]]);
   });

@@ -1,1 +1,66 @@
-{"svmType":0,"kernelType":2,"gamma":0.5,"nbClasses":2,"rho":0,"classes":[0,1],"nbSV":[2,2],"supportVectors":[[[1,1],1],[[-1,-1],1],[[1,-1],-1],[[-1,1],-1]],"normalize":true,"mu":[0.5,0.5],"sigma":[0.5,0.5],"reduce":true,"retainedVariance":0.99,"u":[[-1,0],[0,-1]]}
+{
+  "svmType": 0,
+  "kernelType": 2,
+  "gamma": 0.5,
+  "nbClasses": 2,
+  "rho": 0,
+  "classes": [
+    0,
+    1
+  ],
+  "nbSV": [
+    2,
+    2
+  ],
+  "supportVectors": [
+    [
+      [
+        1,
+        1
+      ],
+      1
+    ],
+    [
+      [
+        -1,
+        -1
+      ],
+      1
+    ],
+    [
+      [
+        1,
+        -1
+      ],
+      -1
+    ],
+    [
+      [
+        -1,
+        1
+      ],
+      -1
+    ]
+  ],
+  "normalize": true,
+  "mu": [
+    0.5,
+    0.5
+  ],
+  "sigma": [
+    0.5,
+    0.5
+  ],
+  "reduce": true,
+  "retainedVariance": 0.99,
+  "u": [
+    [
+      -1,
+      0
+    ],
+    [
+      0,
+      -1
+    ]
+  ]
+}

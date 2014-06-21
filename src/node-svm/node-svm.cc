@@ -112,6 +112,15 @@ NAN_METHOD(NodeSvm::Train) {
   NanReturnUndefined();
 }
 
+NAN_METHOD(NodeSvm::GetModel) {
+  NanScope();
+  NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+
+  // check obj
+  assert(obj->isTrained());
+  NanReturnValue(obj->getModel());
+}
+
 NAN_METHOD(NodeSvm::TrainAsync) {
   NanScope();
   NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
@@ -349,7 +358,9 @@ void NodeSvm::Init(Handle<Object> exports){
   
   tpl->PrototypeTemplate()->Set(String::NewSymbol("loadFromFile"),
       FunctionTemplate::New(NodeSvm::LoadFromFile)->GetFunction());
-  
+
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("getModel"),
+      FunctionTemplate::New(NodeSvm::GetModel)->GetFunction());
 
   constructor = Persistent<Function>::New(tpl->GetFunction());
   exports->Set(String::NewSymbol("NodeSvm"), constructor);
