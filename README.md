@@ -30,7 +30,7 @@ var xorProblem = [
 var svm = new nodesvm.CSVC({ // classification 
   kernel: nodesvm.KernelTypes.RBF,
   C: 1.0,
-  gamma: 0,5
+  gamma: 0.5
 });
 
 svm.once('trained', function(report) {
