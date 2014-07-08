@@ -28,7 +28,7 @@ var xorProblem = [
   [[1, 1], 0]
 ];
 var svm = new nodesvm.CSVC({ // classification 
-  kernel: nodesvm.KernelTypes.RBF,
+  kernelType: nodesvm.KernelTypes.RBF,
   C: 1.0,
   gamma: 0.5
 });
