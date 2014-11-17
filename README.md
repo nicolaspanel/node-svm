@@ -12,7 +12,7 @@ node-svm
 [Wikipedia](http://en.wikipedia.org/wiki/Support_vector_machine)  :
 
 >Support vector machines are supervised learning models that analyze data and recognize patterns. 
->SVMs belong to a family of generalized linear classifiers and can be interpreted as an extension of the perceptron. They can also be considered a special case of Tikhonov regularization. A special property is that they simultaneously minimize the empirical classification error and maximize the geometric margin; hence they are also known as maximum margin classifiers.
+>A special property is that they simultaneously minimize the empirical classification error and maximize the geometric margin; hence they are also known as maximum margin classifiers.
 >[![Wikipedia image](http://upload.wikimedia.org/wikipedia/commons/1/1b/Kernel_Machine.png)](http://en.wikipedia.org/wiki/File:Kernel_Machine.png)
 
 # How to use it
@@ -168,7 +168,9 @@ If you feel that the community will benefit from your changes, please send a pul
 ###Segmentation fault
 Q : Node returns 'segmentation fault' error during training. What's going on?
 
-A : Your dataset is empty or its format is incorrect.
+A1 : Your dataset is empty or its format is incorrect.
+
+A2 : Your dataset is too big.
 
 ###Difference between nu-SVC and C-SVC
 Q : What is the difference between nu-SVC and C-SVC?
