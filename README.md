@@ -14,7 +14,7 @@ Support Vector Machine (SVM) library for nodejs.
 >[![Wikipedia image](http://upload.wikimedia.org/wikipedia/commons/1/1b/Kernel_Machine.png)](http://en.wikipedia.org/wiki/File:Kernel_Machine.png)
 
 # Installation
-`npm install --save-dev node-svm`
+`npm install --save node-svm`
 
 # How to use it
 First of all, if you are not familiar with SVM, I highly recommend to read [this guide](http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf).
