@@ -1,6 +1,6 @@
 # node-svm
 
-Support Vector Machines (SVM) library for nodejs.
+Support Vector Machines (SVM) library for [nodejs](http://nodejs.org/).
 
 [![NPM](https://nodei.co/npm/node-svm.png?downloads=true)](https://nodei.co/npm/node-svm/)
 [![Build Status](https://travis-ci.org/nicolaspanel/node-svm.png)](https://travis-ci.org/nicolaspanel/node-svm) [![Coverage Status](https://coveralls.io/repos/nicolaspanel/node-svm/badge.png?branch=master)](https://coveralls.io/r/nicolaspanel/node-svm?branch=master)
