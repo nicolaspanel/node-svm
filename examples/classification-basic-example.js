@@ -7,7 +7,7 @@
  Note : because XOR dataset is to small, we set k-fold paramater to 1 to avoid cross validation
  **/
 'use strict';
-
+var so = require('stringify-object');
 var nodesvm = require('../lib');
 
 var xor = [
@@ -24,7 +24,7 @@ var svm = new nodesvm.CSVC({
 
 svm.train(xor)
     .spread(function (model, report) {
-        console.log('SVM trained. \nReport :\n%s', JSON.stringify(report, null, '\t'));
+        console.log('SVM trained. \nReport :\n%s', so(report));
 
         console.log('Lets predict XOR values');
         xor.forEach(function(ex){

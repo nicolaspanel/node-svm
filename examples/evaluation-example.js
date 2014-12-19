@@ -9,10 +9,11 @@
 */
 'use strict';
 
-var Q = require('q'),
-    nodesvm = require('../lib'),
-    trainingFile = './examples/datasets/svmguide1.ds',
-    testingFile = './examples/datasets/svmguide1.t.ds';
+var so = require('stringify-object');
+var Q = require('q');
+var nodesvm = require('../lib');
+var trainingFile = './examples/datasets/svmguide1.ds';
+var testingFile = './examples/datasets/svmguide1.t.ds';
 
 var svm = new nodesvm.CSVC({
     gamma: 0.25,
@@ -31,7 +32,7 @@ Q.all([
             return svm.evaluate(testingSet);
         });
 }).done(function (evaluationReport) {
-    console.log('Accuracy against the testset:\n', JSON.stringify(evaluationReport, null, '\t'));
+    console.log('Accuracy against the testset:\n', so(evaluationReport));
 });
 
 

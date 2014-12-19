@@ -1,0 +1,23 @@
+
+Usage:
+{{#condense}}
+{{#each usage}}
+    {{#cyan}}node-svm{{/cyan}} {{.}}
+{{/each}}
+{{/condense}}
+
+Commands:
+{{#condense}}
+{{#each commands}}
+    {{#rpad length="23"}}{{@key}}{{/rpad}} {{.}}
+{{/each}}
+{{/condense}}
+
+Options:
+{{#condense}}
+{{#each options}}
+    {{#yellow}}{{#rpad length="23"}}{{#if shorthand}}{{shorthand}}, {{/if}}{{flag}}{{/rpad}}{{/yellow}} {{description}}
+{{/each}}
+{{/condense}}
+
+See '{{#cyan}}node-svm{{/cyan}} help <command>' for more information on a specific command.

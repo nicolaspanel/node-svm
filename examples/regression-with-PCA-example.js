@@ -9,9 +9,10 @@
 
 'use strict';
 
-var nodesvm = require('../lib'),
-    _a = require('mout/array'),
-    fileName = './examples/datasets/housing.ds';
+var so = require('stringify-object');
+var nodesvm = require('../lib');
+var _a = require('mout/array');
+var fileName = './examples/datasets/housing.ds';
 
 
 var svm = new nodesvm.EpsilonSVR({
@@ -30,7 +31,7 @@ nodesvm.read(fileName)
         // train the svm with entire dataset
         return svm.train(dataset)
             .spread(function (model, report) {
-                console.log('SVM trained. \nReport :\n%s', JSON.stringify(report, null, '\t'));
+                console.log('SVM trained. \nReport :\n%s', so(report));
                 return dataset;
             });
     })

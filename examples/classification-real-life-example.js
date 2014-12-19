@@ -12,9 +12,10 @@
 **/
 'use strict';
 
-var nodesvm = require('../lib'),
-    fileName = './examples/datasets/webspam_unigram_subset20000.ds',
-    start = new Date();
+var so = require('stringify-object');
+var nodesvm = require('../lib');
+var fileName = './examples/datasets/webspam_unigram_subset20000.ds';
+var start = new Date();
 
 var svm = new nodesvm.CSVC({
 //  gamma: 8,
@@ -31,7 +32,7 @@ nodesvm.read(fileName)
         return svm.train(dataset);
     })
     .spread(function (model, report) {
-        console.log('SVM trained. \nReport :\n%s', JSON.stringify(report, null, '\t'));
+        console.log('SVM trained. \nReport :\n%s', so(report));
     }).done(function () {
         console.log('done.');
     });
