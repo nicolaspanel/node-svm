@@ -1,6 +1,6 @@
 {
   "name": "node-svm",
-  "version": "2.0.0",
+  "version": "2.0.0-beta",
   "description": "Support Vector Machine for nodejs",
   "main": "lib",
   "scripts": {
