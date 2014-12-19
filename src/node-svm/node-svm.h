@@ -103,8 +103,8 @@ class NodeSvm : public node::ObjectWrap
       if (obj->Has(String::New("r"))){
         svm_params->coef0 = obj->Get(String::New("r"))->NumberValue();
       }
-      if (obj->Has(String::New("C"))){
-        svm_params->C = obj->Get(String::New("C"))->NumberValue();
+      if (obj->Has(String::New("c"))){
+        svm_params->C = obj->Get(String::New("c"))->NumberValue();
       }
       if (obj->Has(String::New("nu"))){
         svm_params->nu = obj->Get(String::New("nu"))->NumberValue();
@@ -118,16 +118,15 @@ class NodeSvm : public node::ObjectWrap
       if (obj->Has(String::New("eps"))){
         svm_params->eps = obj->Get(String::New("eps"))->NumberValue();
       }
-      if (obj->Has(String::New("shrinking"))){
-        svm_params->shrinking = obj->Get(String::New("shrinking"))->IntegerValue();
+      if (obj->Has(String::New("shrinking")) && !obj->Get(String::New("shrinking"))->BooleanValue()){
+        svm_params->shrinking = 0;
       }
-      if (obj->Has(String::New("probability"))){
-        svm_params->probability = obj->Get(String::New("probability"))->IntegerValue();
+      if (obj->Has(String::New("probability")) && obj->Get(String::New("probability"))->BooleanValue()){
+        svm_params->probability = 1;
       }
 
       const char *error_msg;
       error_msg =  svm_check_parameter(svm_params);
-      std::cout << error_msg << std::endl;
       assert(!error_msg);
       params = svm_params;
     };
@@ -153,7 +152,7 @@ class NodeSvm : public node::ObjectWrap
       new_model->l = obj->Get(String::New("l"))->IntegerValue();
 
       new_model->nr_class = obj->Get(String::New("nrClass"))->IntegerValue();
-      int n = new_model->nr_class * (new_model->nr_class-1)/2;
+      unsigned int n = new_model->nr_class * (new_model->nr_class-1)/2;
 
       // rho
       assert(obj->Has(String::New("rho")));
@@ -161,7 +160,7 @@ class NodeSvm : public node::ObjectWrap
       Local<Array> rho = Array::Cast(*obj->Get(String::New("rho"))->ToObject());
       assert(rho->Length()==n);
       new_model->rho = new double[n];
-      for(int i=0;i<n;i++){
+      for(unsigned int i=0;i<n;i++){
         Local<Value> elt = rho->Get(i);
         assert(elt->IsNumber());
         new_model->rho[i] = elt->NumberValue();
@@ -173,7 +172,7 @@ class NodeSvm : public node::ObjectWrap
       Local<Array> labels = Array::Cast(*obj->Get(String::New("labels"))->ToObject());
 			assert(labels->Length()==new_model->nr_class);
 			new_model->label = new int[new_model->nr_class];
-			for(int i=0;i<new_model->nr_class;i++){
+			for(unsigned int i=0;i<new_model->nr_class;i++){
 				Local<Value> elt = labels->Get(i);
         assert(elt->IsInt32());
 				new_model->label[i] = elt->IntegerValue();
@@ -185,7 +184,7 @@ class NodeSvm : public node::ObjectWrap
         Local<Array> probA = Array::Cast(*obj->Get(String::New("probA"))->ToObject());
         assert(probA->Length()==n);
         new_model->probA = new double[n];
-        for(int i=0;i<n;i++){
+        for(unsigned int i=0;i<n;i++){
           Local<Value> elt = probA->Get(i);
           assert(elt->IsNumber());
           new_model->probA[i] = elt->NumberValue();
@@ -198,7 +197,7 @@ class NodeSvm : public node::ObjectWrap
         Local<Array> probB = Array::Cast(*obj->Get(String::New("probB"))->ToObject());
         assert(probB->Length()==n);
         new_model->probB = new double[n];
-        for(int i=0;i<n;i++){
+        for(unsigned int i=0;i<n;i++){
           Local<Value> elt = probB->Get(i);
           assert(elt->IsNumber());
           new_model->probB[i] = elt->NumberValue();
@@ -211,7 +210,7 @@ class NodeSvm : public node::ObjectWrap
       Local<Array> nbSupportVectors = Array::Cast(*obj->Get(String::New("nbSupportVectors"))->ToObject());
       assert(nbSupportVectors->Length()==new_model->nr_class);
       new_model->nSV = new int[new_model->nr_class];
-      for(int i=0;i<new_model->nr_class;i++){
+      for(unsigned int i=0;i<new_model->nr_class;i++){
         Local<Value> elt = nbSupportVectors->Get(i);
         assert(elt->IsInt32());
         new_model->nSV[i] = elt->IntegerValue();
@@ -431,7 +430,7 @@ class NodeSvm : public node::ObjectWrap
       parameters->Set(NanNew<String>("degree"), NanNew<Number>(model->param.degree)); /* for poly */
       parameters->Set(NanNew<String>("gamma"), NanNew<Number>(model->param.gamma));
       parameters->Set(NanNew<String>("r"), NanNew<Number>(model->param.coef0));
-      parameters->Set(NanNew<String>("C"), NanNew<Number>(model->param.C));
+      parameters->Set(NanNew<String>("c"), NanNew<Number>(model->param.C));
       parameters->Set(NanNew<String>("nu"), NanNew<Number>(model->param.nu));
       parameters->Set(NanNew<String>("p"), NanNew<Number>(model->param.p));
 

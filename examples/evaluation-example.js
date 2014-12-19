@@ -5,34 +5,35 @@
   training set : svmguide1.ds
   test set     : svmguide1.t.ds
   
-  NOTE : No scaling / normalization used. Expect accuracy with default params to be 66.925%
+  NOTE : No scaling / normalization used. Expect 66.925% accuracy with default parameters
 */
 'use strict';
 
-var nodesvm = require('../lib/nodesvm'), 
+var Q = require('q'),
+    nodesvm = require('../lib'),
     trainingFile = './examples/datasets/svmguide1.ds',
     testingFile = './examples/datasets/svmguide1.t.ds';
 
 var svm = new nodesvm.CSVC({
-  kernelType: nodesvm.KernelTypes.RBF,
-  gamma: 0.25,
-  C: [0.5, 1], // allow you to evaluate several values during training
-  normalize: false,
-  reduce: false
+    gamma: 0.25,
+    c: 1, // allow you to evaluate several values during training
+    normalize: false,
+    reduce: false,
+    kFold: 1 // disable k-fold cross-validation
 });
 
-svm.once('trained', function(report) {
-  console.log('SVM trained. Training report :\n%s', JSON.stringify(report, null, '\t'));
-  
-  nodesvm.readDatasetAsync(testingFile, function(testset){
-	  svm.evaluate(testset, function(evalReport){
-      console.log('Evaluation report against the testset:\n%s', JSON.stringify(evalReport, null, '\t'));
-	    process.exit(0);
-    });
-  });
+Q.all([
+    nodesvm.read(trainingFile),
+    nodesvm.read(testingFile)
+]).spread(function (trainingSet, testingSet) {
+    return svm.train(trainingSet)
+        .then(function () {
+            return svm.evaluate(testingSet);
+        });
+}).done(function (evaluationReport) {
+    console.log('Accuracy against the testset:\n', JSON.stringify(evaluationReport, null, '\t'));
 });
 
-svm.trainFromFile(trainingFile);
 
 /* OUTPUT 
 SVM trained. Training report :

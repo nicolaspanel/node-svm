@@ -9,48 +9,45 @@
 
 'use strict';
 
-var nodesvm = require('../lib/nodesvm'),
-    _ = require('underscore'),
+var nodesvm = require('../lib'),
+    _a = require('mout/array'),
     fileName = './examples/datasets/housing.ds';
 
-var testsamples = null;
 
 var svm = new nodesvm.EpsilonSVR({
-  kernelType: nodesvm.KernelTypes.RBF,
-  gamma: [0.125, 0.5, 2],
-  C: [8, 16, 32],
+  gamma: [0.125, 0.5, 1],
+  c: [8, 16, 32],
   epsilon: [0.001, 0.125, 0.5],
-  normalize: true, // default value
-  reduce: true, // default value
-  retainedVariance: 0.98
+  normalize: true, // (default)
+  reduce: true, // (default)
+  retainedVariance: 0.995,
+  kFold: 5
 });
 
-svm.once('dataset-reduced', function(oldDim, newDim, retainedVar){
-  console.log('Dataset reduced from %d to %d features using PCA.', oldDim, newDim);
-  console.log('%d% of the variance have been retained.\n', retainedVar * 100);
-});
 
-svm.once('trained', function(report){
-  console.log('SVM trained. Report :\n%s', JSON.stringify(report, null, '\t'));
-  console.log('SVM trained. Lets predict some values : ');
-  for (var i = 0; i < testsamples.length;  i++){
-    var test = testsamples[i];
-    var inputs = test[0];
-    var expected = test[1];
-    var prediction = svm.predict(inputs);
-    console.log(' { #%d, expected: %d, predicted: %d}',i+1, expected, prediction);
-  }
-	process.exit(0);
-});
+nodesvm.read(fileName)
+    .then(function (dataset) {
+        // train the svm with entire dataset
+        return svm.train(dataset)
+            .spread(function (model, report) {
+                console.log('SVM trained. \nReport :\n%s', JSON.stringify(report, null, '\t'));
+                return dataset;
+            });
+    })
+    .then(function (dataset) {
+        // randomly pick m values and display predictions
+        _a.pick(dataset, 5).forEach(function (ex, i) {
+            var prediction = svm.predictSync(ex[0]);
+            console.log(' { #%d, expected: %d, predicted: %d}',i+1, ex[1], prediction);
+        });
+    })
+    .fail(function (err) {
+        throw err;
+    })
+    .done(function () {
+        console.log('done');
+    });
 
-nodesvm.readDatasetAsync(fileName, function (ds) {
-  ds = _.shuffle(ds);
-  var trainingsetSize = Math.round(0.95 * ds.length);
-  var traininset = _.first(ds, trainingsetSize);
-  var testset = _.last(ds, ds.length - trainingsetSize);
-  testsamples = _.sample(testset, 20);
-  svm.train(traininset);
-});
 
 /* OUTPUT
 Dataset reduced from 13 to 11 features using PCA.

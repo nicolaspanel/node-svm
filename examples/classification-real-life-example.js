@@ -12,40 +12,29 @@
 **/
 'use strict';
 
-var nodesvm = require('../lib/nodesvm'),
-    _ = require('underscore'),
-    hd = require("humanize-duration"),
+var nodesvm = require('../lib'),
     fileName = './examples/datasets/webspam_unigram_subset20000.ds',
-    nFold= 4,
     start = new Date();
 
 var svm = new nodesvm.CSVC({
-  kernelType: nodesvm.KernelTypes.RBF,
-  gamma: [8, 2, 0.5],
-  C: [0.5, 2, 8],
-  nFold: 3,
+//  gamma: 8,
+//  c: 8,
+  kFold: 4,
   normalize: false,
   reduce: true, // default value
   retainedVariance: 0.99 // default value 
 });
 
-svm.on('training-progressed', function (progressRate, remainingTime){
-  console.log('%d% - %s remaining...', progressRate * 100, hd(remainingTime));
-});
-
-svm.once('dataset-reduced', function(oldDim, newDim, retainedVar){
-  console.log('Dataset dimensions reduced from %d to %d features using PCA.', oldDim, newDim);
-  console.log('%d% of the variance have been retained.', retainedVar* 100);
-});
-
-svm.once('trained', function(report){
-  console.log('SVM trained. report :\n%s', JSON.stringify(report, null, '\t'));
-  console.log('Total training time : %s', hd(new Date() - start));
-	process.exit(0);
-});
-
-console.log('Start training. May take a while...');
-svm.trainFromFile(fileName);
+nodesvm.read(fileName)
+    .then(function (dataset) {
+        console.log('start training...');
+        return svm.train(dataset);
+    })
+    .spread(function (model, report) {
+        console.log('SVM trained. \nReport :\n%s', JSON.stringify(report, null, '\t'));
+    }).done(function () {
+        console.log('done.');
+    });
 
 /* OUTPUT
 Dataset dimensions reduced from 254 to 28 features using PCA.

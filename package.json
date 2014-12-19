@@ -1,8 +1,8 @@
 {
   "name": "node-svm",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "Support Vector Machine for nodejs",
-  "main": "./lib/nodesvm.js",
+  "main": "lib",
   "scripts": {
     "test": "grunt"
   },
@@ -29,24 +29,34 @@
   },
   "homepage": "https://github.com/nicolaspanel/node-svm",
   "dependencies": {
-    "async": "~0.6.2",
-    "moment": "^2.7.0",
-    "nan": "^1.2.0",
-    "node-gyp": "~0.13.0",
-    "numeric": "~1.2.6",
-    "underscore": "~1.6.0"
+    "bower-logger": "~0.2.2",
+    "graceful-fs": "^3.0.5",
+    "moment": "^2.8.4",
+    "mout": "^0.11.0",
+    "nan": "^1.3.0",
+    "node-gyp": "~0.13.1",
+    "nopt": "~3.0.0",
+    "numeric": "^1.2.6",
+    "optimist": "^0.6.1",
+    "osenv": "^0.1.0",
+    "q": "^1.1.2",
+    "underscore": "^1.7.0"
   },
   "devDependencies": {
-    "mocha": "~1.17.1",
-    "should": ">=0.5.x",
-    "grunt": "~0.4.1",
-    "grunt-cli": "latest",
-    "grunt-contrib-jshint": "~0.4.3",
-    "grunt-node-gyp": "~0.3.0",
-    "humanize-duration": "~0.8.0",
-    "blanket": "~1.1.6",
-    "coveralls": "~2.10.0",
-    "mocha-lcov-reporter": "0.0.1",
-    "grunt-mocha-cov": "~0.2.1"
+    "coveralls": "~2.11.0",
+    "expect.js": "^0.3.1",
+    "grunt": "~0.4.4",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-exec": "~0.4.2",
+    "grunt-node-gyp": "^0.5.0",
+    "grunt-simple-mocha": "~0.4.0",
+    "istanbul": "~0.3.2",
+    "load-grunt-tasks": "~0.6.0",
+    "mocha": "~1.21.4"
+  },
+  "bin": {
+    "node-svm": "./bin/node-svm.js"
   }
 }
