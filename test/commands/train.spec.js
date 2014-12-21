@@ -3,7 +3,7 @@
 var path = require('path');
 var expect = require('expect.js');
 
-var helpers = require('../test-helpers');
+var helpers = require('../helpers');
 var commands = helpers.require('lib/commands');
 var defaultConfig = require('../../lib/core/config');
 

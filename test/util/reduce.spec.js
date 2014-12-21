@@ -2,7 +2,7 @@
 
 var expect = require('expect.js');
 var numeric = require('numeric');
-var helpers = require('../../lib/helpers');
+var utils = require('../../lib/util');
 
 
 describe('#reduce', function(){
@@ -18,12 +18,12 @@ describe('#reduce', function(){
             [[ 1,  1,  1], 0]
         ];
         it('should retain 100 percent of the variance', function () {
-            var result = helpers.reduce(dataset);
+            var result = utils.reduce(dataset);
             expect(result.retainedVariance).to.be(1);
         });
 
         it('should reduce inputs to have a dimension of 2', function () {
-            var result = helpers.reduce(dataset);
+            var result = utils.reduce(dataset);
             expect(numeric.dim(result.dataset)).to.eql([8, 2, 2]);
             expect(numeric.dim(result.U)).to.eql([3, 2]);
         });
@@ -41,7 +41,7 @@ describe('#reduce', function(){
         ];
 
         it('should NOT have been reduced if expect 99% of the variance to be retained', function () {
-            var result = helpers.reduce(dataset, 0.99);
+            var result = utils.reduce(dataset, 0.99);
             expect(numeric.dim(dataset)).to.eql([8, 2, 3]);
             expect(result.retainedVariance).to.be(1);
         });

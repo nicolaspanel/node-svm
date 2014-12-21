@@ -1,12 +1,12 @@
 'use strict';
 
-var helpers = require('../../lib/helpers');
+var utils = require('../../lib/util');
 var expect = require('expect.js');
 
 describe('#cross-combinations', function(){
 
     it('should work', function () {
-        var combs = helpers.crossCombinations([
+        var combs = utils.crossCombinations([
             [0,1],
             [0,1],
             []
