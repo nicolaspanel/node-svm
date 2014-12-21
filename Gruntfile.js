@@ -35,11 +35,8 @@ module.exports = function (grunt) {
             ]
         },
         exec: {
-            cover: {
-                command: 'STRICT_REQUIRE=1 node node_modules/istanbul/lib/cli.js cover --dir ./test/reports node_modules/mocha/bin/_mocha -- -R dot test/**/*.spec.js'
-            },
             coveralls: {
-                command: 'node node_modules/.bin/coveralls < test/reports/lcov.info'
+                command: 'STRICT_REQUIRE=1 node node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R dot test/**/*.spec.js && cat ./coverage/lcov.info | ./node_modules/.bin/coveralls && rm -rf ./coverage'
             }
         },
         watch: {
@@ -48,9 +45,7 @@ module.exports = function (grunt) {
         }
     });
     grunt.registerTask('test', ['jshint', 'gyp:addon', 'simplemocha:full']);
-    grunt.registerTask('cover', 'exec:cover');
-    grunt.registerTask('coveralls', 'exec:coveralls');
-    grunt.registerTask('travis', ['test', 'cover', 'coveralls']);
+    grunt.registerTask('travis', ['test', 'exec:coveralls']);
 
     grunt.registerTask('default', 'test');
 };

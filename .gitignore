@@ -20,4 +20,4 @@ build
 Vagrantfile
 .vagrant
 
-test/reports
+coverage/
