@@ -6,7 +6,7 @@
 Training parameters:
     {{#cyan}}{{#rpad length="25"}}k-fold{{/rpad}}{{/cyan}}: {{kFold}}
     {{#cyan}}{{#rpad length="25"}}Normalize{{/rpad}}{{/cyan}}: {{normalize}}
-    {{#cyan}}{{#rpad length="25"}}Reduce{{/rpad}}{{/cyan}}: {{reduce}}{{#if renderRetainedVariance}}(retained variance: {{retainedVariance}}){{/if}}
+    {{#cyan}}{{#rpad length="25"}}Reduce{{/rpad}}{{/cyan}}: {{reduce}} {{#if renderRetainedVariance}}(retained variance: {{retainedVariance}}){{/if}}
     {{#cyan}}{{#rpad length="25"}}Stopping criterion (eps){{/rpad}}{{/cyan}}: {{eps}}
     {{#cyan}}{{#rpad length="25"}}Cache size{{/rpad}}{{/cyan}}: {{cacheSize}}
     {{#cyan}}{{#rpad length="25"}}Shrinking heuristic{{/rpad}}{{/cyan}}: {{#if shrinking}}Enabled{{else}}Disabled{{/if}}
