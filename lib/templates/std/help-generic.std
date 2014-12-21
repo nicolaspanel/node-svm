@@ -17,6 +17,7 @@ Options:
     {{#yellow}}{{#rpad length="23"}}{{#if shorthand}}{{shorthand}}, {{/if}}{{flag}}{{/rpad}}{{/yellow}} {{description}}
         {{/each}}
     {{/condense}}
+
     Additionally all global options listed in '{{#cyan}}node-svm{{/cyan}} help' are available
 {{else}}
     All global options listed in '{{#cyan}}node-svm{{/cyan}} help' are available

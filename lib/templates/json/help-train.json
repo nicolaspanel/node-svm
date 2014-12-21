@@ -1,0 +1,90 @@
+{
+    "command": "train",
+    "description": "Train a new model with given data set",
+    "usage": [
+        "train <dataset file> [<where to save the prediction model>] [<options>]"
+    ],
+    "options": [
+        {
+            "shorthand":   "-S",
+            "flag":        "--svm-type",
+            "description": "svm type (C_SVC, NU_SVC, ONE_CLASS, EPSILON_SVR or NU_SVR"
+        },
+        {
+            "shorthand":   "-K",
+            "flag":        "--kernel-type",
+            "description": "kernel type (LINEAR, POLY, RBF or SIGMOID)"
+        },
+        {
+            "shorthand":   "-D",
+            "flag":        "--degree",
+            "description": "degree in kernel function (for POLY kernels), can be a number or an array of number"
+        },
+        {
+            "shorthand":   "-G",
+            "flag":        "--gamma",
+            "description": "gamma in kernel function (for POLY, RBF and SIGMOID kernels), can be a number or an array of number"
+        },
+        {
+            "shorthand":   "-R",
+            "flag":        "--r",
+            "description": "coef0 in kernel function (for POLY and SIGMOID kernels), can be a number or an array of number"
+        },
+        {
+            "shorthand":   "-C",
+            "flag":        "--c",
+            "description": "cost parameter (for C_SVC, EPSILON_SVR and NU_SVR), can be a number or an array of number"
+        },
+        {
+            "shorthand":   "-N",
+            "flag":        "--nu",
+            "description": "nu parameter (for NU_SVC and NU_SVR), can be a number or an array of number"
+        },
+        {
+            "shorthand":   "-E",
+            "flag":        "--epsilon",
+            "description": "epsilon parameter in loss function (for EPSILON_SVR), can be a number or an array of number"
+        },
+        {
+            "flag":        "--k-fold",
+            "description": "k parameter for k-fold cross-validation (disable CV using k-fold=1)"
+        },
+        {
+            "flag":        "--no-normalize",
+            "description": "disable mean normalization"
+        },
+        {
+            "flag":        "--no-reduce",
+            "description": "disable Principal Component Analysis (PCA) reduction"
+        },
+        {
+            "flag":        "--retained-variance",
+            "description": "retained variance for PCA reduction"
+        },
+        {
+            "flag":        "--eps",
+            "description": "tolerance of termination criterion"
+        },
+        {
+            "flag":        "--no-shrinking",
+            "description": "disable the shrinking heuristics"
+        },
+        {
+            "flag":        "--probability",
+            "description": "enable probability estimates for SVC or SVR models"
+        },
+        {
+            "flag":        "--no-color",
+            "description": "disable colors"
+        },
+        {
+            "flag":        "--no-interactive",
+            "description": "disable prompts"
+        },
+        {
+            "shorthand":   "-h",
+            "flag":        "--help",
+            "description": "Show this help message"
+        }
+    ]
+}

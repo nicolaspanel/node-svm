@@ -28,6 +28,7 @@ describe('Config', function () {
 
         it('should return default training values', function(){
             expect(config.normalize).to.be(true);
+            expect(config.reduce).to.be(true);
             expect(config.retainedVariance).to.be(0.99);
             expect(config.eps).to.be(1e-3);
             expect(config.cacheSize).to.be(100);
@@ -37,9 +38,7 @@ describe('Config', function () {
             expect(config.color).to.be(true);
         });
         it('should handle .node-svmrc values', function(){
-            expect(config.kFold).to.be(4);
-            expect(config.reduce).to.be(false);
-            expect(config.timeout).to.be(1e4);
+            expect(config.kFold).to.be(1);
         });
     });
 

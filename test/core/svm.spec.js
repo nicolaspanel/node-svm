@@ -139,8 +139,8 @@ describe('SVM', function(){
         it('should normalise inputs', function(){
             expect(svm.normalize()).to.be(true);
         });
-        it('should not reduce inputs', function(){
-            expect(svm.reduce()).to.be(false);
+        it('should reduce inputs', function(){
+            expect(svm.reduce()).to.be(true);
         });
         it('should not be trained already', function(){
             expect(svm.isTrained()).to.be(false);

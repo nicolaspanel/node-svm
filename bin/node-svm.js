@@ -5,7 +5,7 @@ process.bin = process.title = 'node-svm';
 
 var mout= require('mout'),
     Q = require('q'),
-    Logger = require('bower-logger'),
+    Logger = require('../lib/util/logger'),
     abbrev = require('abbrev'),
     pkg = require('../package.json'),
     cli = require('../lib/util/cli'),
