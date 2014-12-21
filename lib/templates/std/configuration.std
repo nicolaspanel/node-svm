@@ -1,0 +1,15 @@
+================= Associated Configuration ================
+
+    {{#cyan}}{{#rpad length="25"}}Classifier{{/rpad}}{{/cyan}}: {{svmType}} with {{#if renderC }}c={{c}} {{/if}}{{#if renderNu }}Nu={{nu}} {{/if}}{{#if renderEpsilon}}epsilon={{epsilon}}{{/if}}
+    {{#cyan}}{{#rpad length="25"}}Kernel{{/rpad}}{{/cyan}}: {{kernelType}} with {{#if renderDegree}}degree={{degree}} {{/if}}{{#if renderGamma}}gamma={{gamma}} {{/if}}{{#if renderR}}r={{r}}{{/if}}
+
+Training parameters:
+    {{#cyan}}{{#rpad length="25"}}k-fold{{/rpad}}{{/cyan}}: {{kFold}}
+    {{#cyan}}{{#rpad length="25"}}Normalize{{/rpad}}{{/cyan}}: {{normalize}}
+    {{#cyan}}{{#rpad length="25"}}Reduce{{/rpad}}{{/cyan}}: {{reduce}}{{#if renderRetainedVariance}}(retained variance: {{retainedVariance}}){{/if}}
+    {{#cyan}}{{#rpad length="25"}}Stopping criterion (eps){{/rpad}}{{/cyan}}: {{eps}}
+    {{#cyan}}{{#rpad length="25"}}Cache size{{/rpad}}{{/cyan}}: {{cacheSize}}
+    {{#cyan}}{{#rpad length="25"}}Shrinking heuristic{{/rpad}}{{/cyan}}: {{#if shrinking}}Enabled{{else}}Disabled{{/if}}
+    {{#cyan}}{{#rpad length="25"}}Probability estimates{{/rpad}}{{/cyan}}: {{#if probability}}Enabled{{else}}Disabled{{/if}}
+
+===========================================================

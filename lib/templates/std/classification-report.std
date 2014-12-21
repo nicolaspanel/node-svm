@@ -1,0 +1,17 @@
+================== Classification report ==================
+
+Accuracy    : {{#cyan}}{{percent accuracy}}{{/cyan}}
+Recall      : {{#cyan}}{{number recall 4}}{{/cyan}}
+Precision   : {{#cyan}}{{number precision 4}}{{/cyan}}
+F1-score    : {{#cyan}}{{number fscore 4}}{{/cyan}}
+
+Reports for each class:
+{{#condense}}
+{{#rpad length="15"}}{{/rpad}} {{#rpad length="15"}}Recall{{/rpad}} {{#rpad length="15"}}Precision{{/rpad}} {{#rpad length="15"}}F1-score{{/rpad}}
+{{#each class}}
+    {{#yellow}}{{#rpad length="11"}}class {{@key}}{{/rpad}}{{/yellow}} {{#rpad length="15"}}{{number this.recall 4}}{{/rpad}} {{#rpad length="15"}}{{number this.precision 4}}{{/rpad}} {{#rpad length="15"}}{{number this.fscore 4}}{{/rpad}}
+{{/each}}
+{{/condense}}
+
+
+===========================================================
