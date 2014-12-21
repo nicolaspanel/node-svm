@@ -432,7 +432,7 @@ class NodeSvm : public node::ObjectWrap
       parameters->Set(NanNew<String>("r"), NanNew<Number>(model->param.coef0));
       parameters->Set(NanNew<String>("c"), NanNew<Number>(model->param.C));
       parameters->Set(NanNew<String>("nu"), NanNew<Number>(model->param.nu));
-      parameters->Set(NanNew<String>("p"), NanNew<Number>(model->param.p));
+      parameters->Set(NanNew<String>("epsilon"), NanNew<Number>(model->param.p));
 
       Handle<Array> weightLabels = Array::New(model->param.nr_weight);
       Handle<Array> weights = Array::New(model->param.nr_weight);

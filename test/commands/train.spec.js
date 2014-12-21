@@ -114,6 +114,59 @@ describe('node-svm train', function () {
         });
 
     });
+    it('should ask for cost, epsilon and gamma when using EPSILON_SVR with RBF kernel', function (done) {
+        var asked = {};
+        var logger = commands.train(config);
+        logger.on('prompt', function(prompts, answer){
+            var answers = {};
+            prompts.forEach(function (prompt) {
+                asked[prompt.name] = (asked[prompt.name] || 0) +1;
+                switch (prompt.name){
+                    case 'svmType':
+                        answers.svmType = 'EPSILON_SVR';
+                        break ;
+                    case 'kernelType':
+                        answers.kernelType = 'RBF';
+                        break ;
+                    case 'c':
+                        answers.c = '1';
+                        break;
+                    case 'epsilon':
+                        answers.epsilon = '1';
+                        break;
+                    case 'gamma':
+                        answers.gamma = '0.5';
+                        break;
+                    case 'confirmation':
+                        answers.confirmation = 'true';
+                        break;
+                    case 'saveModel':
+                        answers.saveModel = 'false';
+                        break;
+                    default :
+                        answers[prompt.name] = defaults[prompt.name].toString();
+                }
+            });
+            answer(answers);
+        });
+
+        logger.on('end', function(){
+            expect(asked).to.eql({
+                svmType: 1,
+                kernelType:1,
+                c: 1,
+                epsilon: 1,
+                gamma: 1,
+                normalize: 1,
+                reduce: 1,
+                retainedVariance: 1,
+                confirmation: 1,
+                saveModel: 1
+            });
+            done();
+        });
+
+    });
 
     it('should ask for nothing if interactions disabled', function (done) {
         config.interactive = false;
