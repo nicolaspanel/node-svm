@@ -1,6 +1,6 @@
 'use strict';
 
-var lib = require('../../lib');
+var read = require('../../lib/util/read-dataset');
 var expect = require('expect.js');
 var xorProblem = [
     [[0, 0], 0],
@@ -12,7 +12,7 @@ var xorProblem = [
 describe('#read', function(){
     describe('libsvm format', function () {
         it('should be able to read the xor problem', function (done) {
-            lib.read('./examples/datasets/xor.ds')
+            read('./examples/datasets/xor.ds')
                 .then(function(problem){
                     expect(problem.length).to.be(4);
                     expect(problem).to.eql(xorProblem);
@@ -20,7 +20,7 @@ describe('#read', function(){
         });
         it('should be able to read the svmguide problem in less than 200ms', function (done) {
             this.timeout(200);
-            lib.read('./examples/datasets/svmguide1.ds')
+            read('./examples/datasets/svmguide1.ds')
                 .then(function(problem){
                     expect(problem.length).to.be(3089);
                 }).done(done);
@@ -28,7 +28,7 @@ describe('#read', function(){
     });
     describe('json format', function () {
         it('should be able to read the xor problem', function (done) {
-            lib.read('./examples/datasets/xor.json')
+            read('./examples/datasets/xor.json')
                 .then(function(problem){
                     expect(problem.length).to.be(4);
                     expect(problem).to.eql(xorProblem);
