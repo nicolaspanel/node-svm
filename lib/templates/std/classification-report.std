@@ -1,9 +1,9 @@
 ================== Classification report ==================
 
-Accuracy    : {{#cyan}}{{percent accuracy}}{{/cyan}}
-Recall      : {{#cyan}}{{number recall 4}}{{/cyan}}
-Precision   : {{#cyan}}{{number precision 4}}{{/cyan}}
-F1-score    : {{#cyan}}{{number fscore 4}}{{/cyan}}
+  Accuracy    : {{#cyan}}{{percent accuracy}}{{/cyan}}
+  Recall      : {{#cyan}}{{number recall 4}}{{/cyan}}
+  Precision   : {{#cyan}}{{number precision 4}}{{/cyan}}
+  F1-score    : {{#cyan}}{{number fscore 4}}{{/cyan}}
 
 tested on {{size}} examples.
 

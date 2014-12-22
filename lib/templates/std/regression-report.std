@@ -1,8 +1,8 @@
 ==================== Regression report ====================
 
-Mean Squared Error : {{#cyan}}{{number mse 2}}{{/cyan}}
-Standard deviation : {{#cyan}}{{number std 2}}{{/cyan}}
-Mean error         : {{#cyan}}{{number mean 2}}{{/cyan}}
+  Mean Squared Error : {{#cyan}}{{number mse 2}}{{/cyan}}
+  Standard deviation : {{#cyan}}{{number std 2}}{{/cyan}}
+  Mean error         : {{#cyan}}{{number mean 2}}{{/cyan}}
 
 tested on {{size}} examples.
 
