@@ -37,6 +37,7 @@ describe('Classification Evaluator', function(){
             expect(report.fscore).to.be(0);
             expect(report.precision).to.be(0);
             expect(report.recall).to.be(0);
+            expect(report.size).to.be(8);
 
         });
 
@@ -47,6 +48,7 @@ describe('Classification Evaluator', function(){
                 expect(classReport).to.have.property('fscore');
                 expect(classReport).to.have.property('precision');
                 expect(classReport).to.have.property('recall');
+                expect(classReport).to.have.property('size');
             });
         });
 

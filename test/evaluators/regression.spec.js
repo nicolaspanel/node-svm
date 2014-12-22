@@ -30,6 +30,7 @@ describe ('Regression Evaluator', function(){
             expect(report.mse).to.be(3.5);
             expect(report).to.have.property('mean');
             expect(report).to.have.property('std');
+            expect(report.size).to.be(8);
         });
 
     });
@@ -48,8 +49,7 @@ describe ('Regression Evaluator', function(){
             var report = regression.evaluate(testSet, clf);
             expect(report.mse).to.be(0);
             expect(report.std).to.be(0);
-            expect(report.mean).to.be(0);
+            expect(report.size).to.be(8);
         });
     });
 });
-
