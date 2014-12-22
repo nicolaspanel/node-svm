@@ -66,6 +66,7 @@ describe('node-svm train', function () {
             svmType: svmTypes.NU_SVC,
             kernelType: kernelTypes.POLY
         });
+
         var asked = {};
         var logger = commands.train({
             svmType: svmTypes.NU_SVC,
@@ -73,6 +74,7 @@ describe('node-svm train', function () {
             kFold: 1,
             pathToDataset: './examples/datasets/xor.json'
         });
+
         logger.on('prompt', function(prompts, answer){
             var answers = {};
             prompts.forEach(function (prompt) {
