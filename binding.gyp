@@ -3,7 +3,7 @@
     {
       'target_name': 'addon',
       'sources': [
-        './src/libsvm-318/svm.cpp',
+        './src/libsvm/svm.cpp',
         './src/addon.cc',
         './src/node-svm/node-svm.cc'
       ],

@@ -1,7 +1,7 @@
 #ifndef _LIBSVM_H
 #define _LIBSVM_H
 
-#define LIBSVM_VERSION 318
+#define LIBSVM_VERSION 320
 
 #ifdef __cplusplus
 extern "C" {
@@ -53,7 +53,7 @@ struct svm_model
 {
 	struct svm_parameter param;	/* parameter */
 	int nr_class;		/* number of classes, = 2 in regression/one class svm */
-	int l;			   /* total #SV */
+	int l;			/* total #SV */
 	struct svm_node **SV;		/* SVs (SV[l]) */
 	double **sv_coef;	/* coefficients for SVs in decision functions (sv_coef[k-1][l]) */
 	double *rho;		/* constants in decision functions (rho[k*(k-1)/2]) */
