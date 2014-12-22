@@ -227,6 +227,7 @@ describe('SVM', function(){
 
         });
     });
+
     describe('using EPSILON_SVR', function () {
         var svm;
         beforeEach(function () {
