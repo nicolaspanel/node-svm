@@ -1,3 +1,4 @@
 {
-    "k-fold": 1
+    "k-fold": 1,
+    "cache-size": 1000
 }

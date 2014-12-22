@@ -8,7 +8,7 @@ Training parameters:
     {{#cyan}}{{#rpad length="25"}}Normalization{{/rpad}}{{/cyan}}: {{#if normalize}}Enabled{{else}}Disabled{{/if}}
     {{#cyan}}{{#rpad length="25"}}PCA reduction{{/rpad}}{{/cyan}}: {{#if reduce}}Enabled{{else}}Disabled{{/if}} {{#if renderRetainedVariance}}(retained variance: {{retainedVariance}}){{/if}}
     {{#cyan}}{{#rpad length="25"}}Stopping criterion (eps){{/rpad}}{{/cyan}}: {{eps}}
-    {{#cyan}}{{#rpad length="25"}}Cache size{{/rpad}}{{/cyan}}: {{cacheSize}}
+    {{#cyan}}{{#rpad length="25"}}Cache size{{/rpad}}{{/cyan}}: {{cacheSize}}MB
     {{#cyan}}{{#rpad length="25"}}Shrinking heuristic{{/rpad}}{{/cyan}}: {{#if shrinking}}Enabled{{else}}Disabled{{/if}}
     {{#cyan}}{{#rpad length="25"}}Probability estimates{{/rpad}}{{/cyan}}: {{#if probability}}Enabled{{else}}Disabled{{/if}}
 

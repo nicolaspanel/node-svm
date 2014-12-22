@@ -31,7 +31,6 @@ describe('Config', function () {
             expect(config.reduce).to.be(true);
             expect(config.retainedVariance).to.be(0.99);
             expect(config.eps).to.be(1e-3);
-            expect(config.cacheSize).to.be(100);
             expect(config.probability).to.be(false);
         });
         it('should return cli values', function(){
@@ -39,6 +38,7 @@ describe('Config', function () {
         });
         it('should handle .node-svmrc values', function(){
             expect(config.kFold).to.be(1);
+            expect(config.cacheSize).to.be(1000);
         });
     });
 
