@@ -1,0 +1,36 @@
+{
+    "nrClass":2,
+    "l":4,
+    "supportVectors":[
+        [[1,1],[0.03125]],
+        [[-1,-1],[0.03125]],
+        [[1,-1],[-0.03125]],
+        [[-1,1],[-0.03125]]
+    ],
+    "nbSupportVectors":[2,2],
+    "labels":[0,1],
+    "rho":[0],
+    "params":{
+        "svmType":0,
+        "kernelType":2,
+        "degree":0,
+        "gamma":0.001,
+        "r":0,
+        "c":0.03125,
+        "nu":0,
+        "epsilon":0,
+        "kFold":1,
+        "normalize":true,
+        "reduce":true,
+        "retainedVariance":0.99,
+        "eps":0.001,
+        "cacheSize":1000,
+        "shrinking":true,
+        "probability":false,
+        "mu":[0.5,0.5],
+        "sigma":[0.5,0.5],
+        "u":[[-1,0],[0,-1]],
+        "weightLabels":[],
+        "weighs":[]
+    }
+}
