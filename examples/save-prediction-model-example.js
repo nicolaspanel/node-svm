@@ -14,10 +14,7 @@ var xor = [
     [[1, 1], 0]
 ];
 
-var svm = new nodesvm.CSVC({
-    gamma: 0.5,
-    c: 1
-});
+var svm = new nodesvm.CSVC();
 
 svm.train(xor).spread(function (model, report) {
     var newSvm = nodesvm.restore(model);
@@ -27,9 +24,14 @@ svm.train(xor).spread(function (model, report) {
     });
 });
 
-/* OUTPUT 
- 0 XOR 0 => 0
- 0 XOR 1 => 1
- 1 XOR 0 => 1
- 1 XOR 1 => 0
+/*************************
+ *        OUTPUT         *
+ *************************
+
+0 XOR 0 => 0
+0 XOR 1 => 1
+1 XOR 0 => 1
+1 XOR 1 => 0
+
  */
+

@@ -35,33 +35,39 @@ svm.train(xor)
         console.log('done.');
     });
 
-/* OUTPUT 
- SVM trained.
- Report :
- {
-     "accuracy": 1,
-     "fscore": 1,
-     "recall": 1,
-     "precision": 1,
-     "class": {
-         "0": {
-             "precision": 1,
-             "recall": 1,
-             "fscore": 1
-         },
-         "1": {
-             "precision": 1,
-             "recall": 1,
-             "fscore": 1
-         }
-     },
-     "retainedVariance": 1
- }
- Lets predict XOR values
- 0 XOR 0 => 0
- 0 XOR 1 => 1
- 1 XOR 0 => 1
- 1 XOR 1 => 0
- done.
+/*************************
+ *        OUTPUT         *
+ *************************
+
+SVM trained.
+Report :
+{
+	accuracy: 1,
+	fscore: 1,
+	recall: 1,
+	precision: 1,
+	class: {
+		'0': {
+			precision: 1,
+			recall: 1,
+			fscore: 1,
+			size: 2
+		},
+		'1': {
+			precision: 1,
+			recall: 1,
+			fscore: 1,
+			size: 2
+		}
+	},
+	size: 4,
+	retainedVariance: 1
+}
+Lets predict XOR values
+0 XOR 0 => 0
+0 XOR 1 => 1
+1 XOR 0 => 1
+1 XOR 1 => 0
+done.
  */
 

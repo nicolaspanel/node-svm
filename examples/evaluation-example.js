@@ -36,22 +36,31 @@ Q.all([
 });
 
 
-/* OUTPUT 
-SVM trained. Training report :
-{
-  "accuracy": 0.945919689119171,
-  "fscore": 0.8900697016228053,
-  "C": 1,
-  "gamma": 0.25,
-  "nbIterations": 2
+/*************************
+ *        OUTPUT         *
+ *************************
+
+Accuracy against the testset:
+ {
+	accuracy: 0.66925,
+	fscore: 0.5079955373744887,
+	recall: 0.3415,
+	precision: 0.6022349743279976,
+	class: {
+		'0': {
+			precision: 0.9912917271407837,
+			recall: 0.3415,
+			fscore: 0.5079955373744887,
+			size: 2000
+		},
+		'1': {
+			precision: 0.6022349743279976,
+			recall: 0.997,
+			fscore: 0.7508943701751083,
+			size: 2000
+		}
+	},
+	size: 4000
 }
-Evaluation report against the testset:
-{
-  "nfold": 1,
-  "accuracy": 0.66925,
-  "fscore": 0.5079955373744887,
-  "precision": 0.6022349743279976,
-  "recall": 0.3415,
-  "subsetsReports": [...]
-}
+
 */

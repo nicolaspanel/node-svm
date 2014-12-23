@@ -46,41 +46,29 @@ nodesvm.read(fileName)
         throw err;
     })
     .done(function () {
-        console.log('done');
+        console.log('done.');
     });
 
 
-/* OUTPUT
-Dataset reduced from 13 to 11 features using PCA.
-98.20% of the variance have been retained.
+/*************************
+ *        OUTPUT         *
+ *************************
 
-SVM trained. Report :
-{
-  "mse": 5.605383189519437,
-  "C": 32,
-  "gamma": 0.5,
-  "epsilon": 0.125,
-  "nbIterations": 27
-}
-SVM trained. Lets predict some values : 
- { #1, expected: 33.1, predicted: 31.872021937864574}
- { #2, expected: 7.2, predicted: 7.759332979168485}
- { #3, expected: 22.4, predicted: 24.661293282902776}
- { #4, expected: 16.7, predicted: 17.23850569448206}
- { #5, expected: 23.2, predicted: 22.59888436738391}
- { #6, expected: 25.2, predicted: 27.66896902786514}
- { #7, expected: 24.1, predicted: 21.185879126591416}
- { #8, expected: 32.5, predicted: 25.944815405122178}
- { #9, expected: 19.9, predicted: 20.07654893587641}
- { #10, expected: 24.4, predicted: 23.607902550407395}
- { #11, expected: 19.9, predicted: 17.008426112160603}
- { #12, expected: 23.1, predicted: 22.88491868303525}
- { #13, expected: 20.3, predicted: 21.33280841773401}
- { #14, expected: 19.4, predicted: 19.83713955583848}
- { #15, expected: 23.8, predicted: 23.413447472664327}
- { #16, expected: 34.9, predicted: 37.65820946495587}
- { #17, expected: 14.9, predicted: 12.816421129579158}
- { #18, expected: 16.2, predicted: 15.959022651206888}
- { #19, expected: 27.1, predicted: 26.396166945355507}
- { #20, expected: 22, predicted: 22.883406497245783}
+ SVM trained.
+ Report :
+ {
+	mse: 13.274198493484645,
+	std: 3.640774430552408,
+	mean: -0.13769545860496132,
+	size: 506,
+	retainedVariance: 0.995114672273733
+ }
+ { #1, expected: 24.4, predicted: 23.8999543384696}
+ { #2, expected: 13.8, predicted: 13.300135350506823}
+ { #3, expected: 16.2, predicted: 16.23335871065006}
+ { #4, expected: 31.5, predicted: 32.19532581790853}
+ { #5, expected: 13.9, predicted: 14.399888566573079}
+
+done.
+
 */

@@ -47,9 +47,10 @@ Q.all([
     console.log('Accuracy against the testset:\n', so(evaluationReport));
 });
 
-/*
- * OUTPUT
- *
+
+/*************************
+ *        OUTPUT         *
+ *************************
 
 Accuracy against the testset:
  {
