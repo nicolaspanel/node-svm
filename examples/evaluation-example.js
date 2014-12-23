@@ -11,11 +11,11 @@
 
 var so = require('stringify-object');
 var Q = require('q');
-var nodesvm = require('../lib');
+var svm = require('../lib');
 var trainingFile = './examples/datasets/svmguide1.ds';
 var testingFile = './examples/datasets/svmguide1.t.ds';
 
-var svm = new nodesvm.CSVC({
+var clf = new svm.CSVC({
     gamma: 0.25,
     c: 1, // allow you to evaluate several values during training
     normalize: false,
@@ -24,12 +24,12 @@ var svm = new nodesvm.CSVC({
 });
 
 Q.all([
-    nodesvm.read(trainingFile),
-    nodesvm.read(testingFile)
+    svm.read(trainingFile),
+    svm.read(testingFile)
 ]).spread(function (trainingSet, testingSet) {
-    return svm.train(trainingSet)
+    return clf.train(trainingSet)
         .then(function () {
-            return svm.evaluate(testingSet);
+            return clf.evaluate(testingSet);
         });
 }).done(function (evaluationReport) {
     console.log('Accuracy against the testset:\n', so(evaluationReport));

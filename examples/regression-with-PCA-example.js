@@ -10,12 +10,12 @@
 'use strict';
 
 var so = require('stringify-object');
-var nodesvm = require('../lib');
+var svm = require('../lib');
 var _a = require('mout/array');
 var fileName = './examples/datasets/housing.ds';
 
 
-var svm = new nodesvm.EpsilonSVR({
+var clf = new svm.EpsilonSVR({
   gamma: [0.125, 0.5, 1],
   c: [8, 16, 32],
   epsilon: [0.001, 0.125, 0.5],
@@ -26,10 +26,10 @@ var svm = new nodesvm.EpsilonSVR({
 });
 
 
-nodesvm.read(fileName)
+svm.read(fileName)
     .then(function (dataset) {
         // train the svm with entire dataset
-        return svm.train(dataset)
+        return clf.train(dataset)
             .spread(function (model, report) {
                 console.log('SVM trained. \nReport :\n%s', so(report));
                 return dataset;
@@ -38,7 +38,7 @@ nodesvm.read(fileName)
     .then(function (dataset) {
         // randomly pick m values and display predictions
         _a.pick(dataset, 5).forEach(function (ex, i) {
-            var prediction = svm.predictSync(ex[0]);
+            var prediction = clf.predictSync(ex[0]);
             console.log(' { #%d, expected: %d, predicted: %d}',i+1, ex[1], prediction);
         });
     })

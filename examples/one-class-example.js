@@ -22,13 +22,13 @@
 
 var so = require('stringify-object');
 var Q = require('q');
-var nodesvm = require('../lib');
+var svm = require('../lib');
 var trainingFile = './examples/datasets/one-class.train.json';
 var testingFile = './examples/datasets/one-class.test.json';
 
-var svm = new nodesvm.OneClassSVM({
+var clf = new svm.OneClassSVM({
     nu: 0.1,
-    kernelType: nodesvm.kernelTypes.RBF,
+    kernelType: svm.kernelTypes.RBF,
     gamma: 0.1,
     normalize: false,
     reduce: false,
@@ -36,12 +36,12 @@ var svm = new nodesvm.OneClassSVM({
 });
 
 Q.all([
-    nodesvm.read(trainingFile),
-    nodesvm.read(testingFile)
+    svm.read(trainingFile),
+    svm.read(testingFile)
 ]).spread(function (trainingSet, testingSet) {
-    return svm.train(trainingSet)
+    return clf.train(trainingSet)
         .spread(function (model, report) {
-            return svm.evaluate(testingSet);
+            return clf.evaluate(testingSet);
         });
 }).done(function (evaluationReport) {
     console.log('Accuracy against the testset:\n', so(evaluationReport));
