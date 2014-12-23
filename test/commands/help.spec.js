@@ -20,4 +20,11 @@ describe('node-svm help', function () {
             done();
         });
     });
+    it('should return evaluate help if command name is "evaluate"', function(done){
+        var logger = commands.help('evaluate');
+        logger.on('end',function(data){
+            expect(data).to.eql(helpers.require('lib/templates/json/help-evaluate.json'));
+            done();
+        });
+    });
 });

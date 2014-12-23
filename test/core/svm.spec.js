@@ -128,8 +128,9 @@ describe('SVM', function(){
     describe('using default config', function () {
         var svm;
         beforeEach(function () {
-            svm = new SVM();
+            svm = new SVM({ kFold:1 });
         });
+
         it('should use C_SVC classifier', function(){
             expect(svm.getSvmType()).to.be(svmTypes.C_SVC);
         });

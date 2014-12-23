@@ -19,6 +19,9 @@ Options:
     {{/condense}}
 
     Additionally all global options listed in '{{#cyan}}node-svm{{/cyan}} help' are available
+
 {{else}}
     All global options listed in '{{#cyan}}node-svm{{/cyan}} help' are available
+
 {{/if}}
+

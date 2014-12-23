@@ -1,0 +1,14 @@
+{
+    "command": "evaluate",
+    "description": "Evaluate a model against a test set",
+    "usage": [
+        "evaluate <model file> <testset file> [<options>]"
+    ],
+    "options": [
+        {
+            "shorthand":   "-h",
+            "flag":        "--help",
+            "description": "Show this help message"
+        }
+    ]
+}
