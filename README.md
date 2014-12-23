@@ -16,7 +16,7 @@ Support Vector Machines (SVM) library for [nodejs](http://nodejs.org/).
 `npm install --save node-svm`
 
 # Quick start
-Ff you are not familiar with SVM I highly recommend to read [this guide](http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf).
+If you are not familiar with SVM I highly recommend to read [this guide](http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf).
 
 Here's an example of using [node-svm](https://github.com/nicolaspanel/node-svm) to approximate the XOR function :
 
@@ -30,10 +30,11 @@ var xor = [
     [[1, 1], 0]
 ];
 
-// initialize predictor
+// initialize a new predictor
 var clf = new svm.CSVC();
 
 clf.train(xor).done(function () {
+    // predict things
     xor.forEach(function(ex){
         var prediction = clf.predictSync(ex[0]);
         console.log('%d XOR %d => %d', ex[0][0], ex[0][1], prediction);
@@ -56,7 +57,9 @@ __Note__: There's no reason to use SVM to figure out XOR BTW...
 # API
 
 ## Classifiers
+
 Possible classifiers are:
+
 | Classifier  | Type                       | Parameters     | Initialization                    |
 |-------------|----------------------------|----------------|-----------------------------------|
 | C_SVC       | multi-class classification | `c`            | `clf = new svm.CSVC(opts)`        |
@@ -66,7 +69,9 @@ Possible classifiers are:
 | NU_SVR      | regression                 | `c`, `nu`      | `clf = new svm.NuSVR(opts)`       |
 
 ## Kernels
+
 Possible kernels are:
+
 | Kernel  | Parameters                     |
 |---------|--------------------------------|
 | LINEAR  | No paramter                    |
@@ -76,7 +81,9 @@ Possible kernels are:
 
 
 ## Parameters and options
+
 Possible parameters/options :  
+
 | Name             | default value(s)                 | description                                                                                           |
 |------------------|----------------------------------|-------------------------------------------------------------------------------------------------------|
 | svmType          | `C_SVC`                          | Used classifier                                                                                       | 
@@ -116,18 +123,17 @@ var clf = new svm.SVM({
     retainedVariance: 0.99, 
     eps: 1e-3,              
     cacheSize: 200,               
-    shrinking : false     
+    shrinking : true,     
     probability : false     
 });
 ```
 
-__Note__ :   If at least one parameter has multiple values, [node-svm](https://github.com/nicolaspanel/node-svm/) will go through all possible combinations to see which one gives the best predictions (i.e. it performs grid search to maximize [f-score](http://en.wikipedia.org/wiki/F1_score) for classification and minimize [Mean Squared Error](http://en.wikipedia.org/wiki/Mean_squared_error) for regression).
+__Note__ :   If at least one parameter has multiple values, [node-svm](https://github.com/nicolaspanel/node-svm/) will go through all possible combinations to see which one gives the best predictions (it performs grid search to maximize [f-score](http://en.wikipedia.org/wiki/F1_score) for classification and minimize [Mean Squared Error](http://en.wikipedia.org/wiki/Mean_squared_error) for regression).
 
 
 ##Training
 
-SVMs can be trained using `svm#train(dataset)` 
-
+SVMs can be trained using `svm#train(dataset)` method.
 
 Pseudo code : 
 ```javascript
@@ -141,8 +147,8 @@ clf
 ```
 
 __Notes__ :  
- * `trainedModel` can be used to restore the classificator. Example:  `var clf2 = svm.restore(trainedModel);`.
- * `trainingReport` contains informations about predictor's accuracy (such as mse, precison, recall, fscore, retained variance etc.)
+ * `trainedModel` can be used to restore the predictor later (use `svm#restore(trainedModel)` function to do so).
+ * `trainingReport` contains information about predictor's accuracy (such as MSE, precison, recall, fscore, retained variance etc.)
 
 ## Prediction
 Once trained, you can use the classifier object to predict values for new inputs. You can do so : 
@@ -150,15 +156,17 @@ Once trained, you can use the classifier object to predict values for new inputs
  * Asynchronously using `clf#predict(inputs).then(function(predicted){ ... });`
 
 **If you enabled probabilities during initialization**  you can also predict probabilities for each class  : 
- * Synchronously using `svm#predictProbabilities(inputs)`. 
- * Asynchronously using `svm#predictProbabilitiesAsync(inputs, callback)`.
+ * Synchronously using `clf#predictProbabilitiesSync(inputs)`. 
+ * Asynchronously using `clf#predictProbabilities(inputs).then(function(probabilities){ ... })`.
 
 __Note__ : `inputs` must be a 1d array of numbers
 
 ## Model evaluation
 Once the predictor is trained it can be evaluated against a test set. 
+
 Pseudo code : 
 ```javascript
+var svm = require('node-svm');
 var clf = new svm.SVM(options);
  
 svm.read(trainFile)
@@ -177,7 +185,7 @@ svm.read(trainFile)
  ```
 # CLI
 
-[node-svm](https://github.com/nicolaspanel/node-svm/) comes with a build in Command Line Interpreter.
+[node-svm](https://github.com/nicolaspanel/node-svm/) comes with a build-in Command Line Interpreter.
 
 To use it you have to install [node-svm](https://github.com/nicolaspanel/node-svm/) globally using `npm install -g node-svm`
 
@@ -201,7 +209,7 @@ Train a new model with given data set
 ```shell
 $ node-svm evaluate <model file> <testset file> [<options>]
 ```
-Evaluate a model's accuracy against a test set
+Evaluate model's accuracy against a test set
 
 # How it work
 
