@@ -16,7 +16,7 @@ Support Vector Machines (SVM) library for [nodejs](http://nodejs.org/).
 `npm install --save node-svm`
 
 # Quick start
-If you are not familiar with SVM I highly recommend to read [this guide](http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf).
+If you are not familiar with SVM I highly recommend this [guide](http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf).
 
 Here's an example of using [node-svm](https://github.com/nicolaspanel/node-svm) to approximate the XOR function :
 
@@ -60,13 +60,13 @@ __Note__: There's no reason to use SVM to figure out XOR BTW...
 
 Possible classifiers are:
 
-| Classifier  | Type                       | Parameters     | Initialization                    |
-|-------------|----------------------------|----------------|-----------------------------------|
-| C_SVC       | multi-class classification | `c`            | `clf = new svm.CSVC(opts)`        |
-| NU_SVC      | multi-class classification | `nu`           | `clf = new svm.NuSVC(opts)`       |
-| ONE_CLASS   | one-class classification   | `nu`           | `clf = new svm.OneClassSVM(opts)` |
-| EPSILON_SVR | regression                 | `c`, `epsilon` | `clf = new svm.EpsilonSVR(opts)`  |
-| NU_SVR      | regression                 | `c`, `nu`      | `clf = new svm.NuSVR(opts)`       |
+| Classifier  | Type                   | Params         | Initialization                |
+|-------------|------------------------|----------------|-------------------------------|
+| C_SVC       | multi-class classifier | `c`            | `= new svm.CSVC(opts)`        |
+| NU_SVC      | multi-class classifier | `nu`           | `= new svm.NuSVC(opts)`       |
+| ONE_CLASS   | one-class classifier   | `nu`           | `= new svm.OneClassSVM(opts)` |
+| EPSILON_SVR | regression             | `c`, `epsilon` | `= new svm.EpsilonSVR(opts)`  |
+| NU_SVR      | regression             | `c`, `nu`      | `= new svm.NuSVR(opts)`       |
 
 ## Kernels
 
@@ -74,26 +74,26 @@ Possible kernels are:
 
 | Kernel  | Parameters                     |
 |---------|--------------------------------|
-| LINEAR  | No paramter                    |
-| POLY    | `degree`, `gamma`, `r` (coef0) |
+| LINEAR  | No parameter                   |
+| POLY    | `degree`, `gamma`, `r`         |
 | RBF     |`gamma`                         |
-| SIGMOID | `gamma`, `r` (coef0)           |
+| SIGMOID | `gamma`, `r`                   |
 
 
 ## Parameters and options
 
-Possible parameters/options :  
+Possible parameters/options are:  
 
-| Name             | default value(s)                 | description                                                                                           |
+| Name             | Default value(s)                 | Description                                                                                           |
 |------------------|----------------------------------|-------------------------------------------------------------------------------------------------------|
 | svmType          | `C_SVC`                          | Used classifier                                                                                       | 
 | kernelType       | `RBF`                            | Used kernel                                                                                           |
-| c                | `[0.03125, 0.125, 0.5, 2, 8]`    | Cost for `C_SVC`, `EPSILON_SVR` and `NU_SVR`. Can be a `Number` or an `Array` of numbers |
-| nu               | `[0.03125, 0.125, 0.5, 0.75, 1]` | For `NU_SVC`, `ONE_CLASS` and `NU_SVR`. Can be a `Number` or an `Array` of numbers  |
-| epsilon          | `[0.03125, 0.125, 0.5, 2, 8]`    | For `EPSILON_SVR`. Can be a `Number` or an `Array` of numbers  |
+| c                | `[0.01, 0.125, 0.5, 2]`          | Cost for `C_SVC`, `EPSILON_SVR` and `NU_SVR`. Can be a `Number` or an `Array` of numbers |
+| nu               | `[0.01, 0.125, 0.5,  1]`         | For `NU_SVC`, `ONE_CLASS` and `NU_SVR`. Can be a `Number` or an `Array` of numbers  |
+| epsilon          | `[0.01, 0.125, 0.5, 1]`          | For `EPSILON_SVR`. Can be a `Number` or an `Array` of numbers  |
 | degree           | `[2,3,4]`                        | For `POLY` kernel. Can be a `Number` or an `Array` of numbers  |
-| gamma            | `[0.001, 0.03125, 0.125, 0.5, 1]`| For `POLY`, `RBF` and `SIGMOID` kernels. Can be a `Number` or an `Array` of numbers  |
-| r                | `[0.125, 0.5, 0, 1, 2, 8]`       | For `POLY` and `SIGMOID` kernels. Can be a `Number` or an `Array` of numbers  |
+| gamma            | `[0.001, 0.01, 0.125, 0.5]`      | For `POLY`, `RBF` and `SIGMOID` kernels. Can be a `Number` or an `Array` of numbers  |
+| r                | `[0.125, 0.5, 0, 1, 2]`          | For `POLY` and `SIGMOID` kernels. Can be a `Number` or an `Array` of numbers  |
 | kFold            | `4`                              | `k` parameter for [k-fold cross validation]( http://en.wikipedia.org/wiki/Cross-validation_(statistics)#k-fold_cross-validation). `k` must be >= 1. If `k===1` then entire dataset is use for both testing and training.  |
 | normalize        | `true`                           | Whether to use [mean normalization](http://en.wikipedia.org/wiki/Normalization_(statistics)) during data pre-processing  |
 | reduce           | `true`                           | Whether to use [PCA](http://en.wikipedia.org/wiki/Principal_component_analysis) to reduce dataset's dimensions during data pre-processing  |
@@ -128,7 +128,7 @@ var clf = new svm.SVM({
 });
 ```
 
-__Note__ :   If at least one parameter has multiple values, [node-svm](https://github.com/nicolaspanel/node-svm/) will go through all possible combinations to see which one gives the best predictions (it performs grid search to maximize [f-score](http://en.wikipedia.org/wiki/F1_score) for classification and minimize [Mean Squared Error](http://en.wikipedia.org/wiki/Mean_squared_error) for regression).
+__Note__ :   If at least one parameter has multiple values, [node-svm](https://github.com/nicolaspanel/node-svm/) will go through all possible combinations to see which one gives the best predictions (it performs grid-search to maximize [f-score](http://en.wikipedia.org/wiki/F1_score) for classification and minimize [Mean Squared Error](http://en.wikipedia.org/wiki/Mean_squared_error) for regression).
 
 
 ##Training
@@ -213,7 +213,9 @@ Evaluate model's accuracy against a test set
 
 # How it work
 
-`node-svm` uses the official libsvm C++ library, version 3.20. For more information see also : 
+`node-svm` uses the official libsvm C++ library, version 3.20. 
+
+For more information see also : 
  * [libsvm web site](http://www.csie.ntu.edu.tw/~cjlin/libsvm/)
  * Chih-Chung Chang and Chih-Jen Lin, LIBSVM : a library for support vector machines. ACM Transactions on Intelligent Systems and Technology, 2:27:1--27:27, 2011.
  * [Wikipedia article about SVM](https://en.wikipedia.org/wiki/Support_vector_machine)
