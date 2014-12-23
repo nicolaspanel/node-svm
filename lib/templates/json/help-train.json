@@ -8,7 +8,7 @@
         {
             "shorthand":   "-S",
             "flag":        "--svm-type",
-            "description": "svm type (C_SVC, NU_SVC, ONE_CLASS, EPSILON_SVR or NU_SVR"
+            "description": "svm type (C_SVC, NU_SVC, ONE_CLASS, EPSILON_SVR or NU_SVR)"
         },
         {
             "shorthand":   "-K",
