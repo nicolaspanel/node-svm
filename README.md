@@ -84,24 +84,24 @@ Possible kernels are:
 
 Possible parameters/options are:  
 
-| Name             | Default value(s)                 | Description                                                                                           |
-|------------------|----------------------------------|-------------------------------------------------------------------------------------------------------|
-| svmType          | `C_SVC`                          | Used classifier                                                                                       | 
-| kernelType       | `RBF`                            | Used kernel                                                                                           |
-| c                | `[0.01, 0.125, 0.5, 2]`          | Cost for `C_SVC`, `EPSILON_SVR` and `NU_SVR`. Can be a `Number` or an `Array` of numbers |
-| nu               | `[0.01, 0.125, 0.5,  1]`         | For `NU_SVC`, `ONE_CLASS` and `NU_SVR`. Can be a `Number` or an `Array` of numbers  |
-| epsilon          | `[0.01, 0.125, 0.5, 1]`          | For `EPSILON_SVR`. Can be a `Number` or an `Array` of numbers  |
-| degree           | `[2,3,4]`                        | For `POLY` kernel. Can be a `Number` or an `Array` of numbers  |
-| gamma            | `[0.001, 0.01, 0.125, 0.5]`      | For `POLY`, `RBF` and `SIGMOID` kernels. Can be a `Number` or an `Array` of numbers  |
-| r                | `[0.125, 0.5, 0, 1, 2]`          | For `POLY` and `SIGMOID` kernels. Can be a `Number` or an `Array` of numbers  |
-| kFold            | `4`                              | `k` parameter for [k-fold cross validation]( http://en.wikipedia.org/wiki/Cross-validation_(statistics)#k-fold_cross-validation). `k` must be >= 1. If `k===1` then entire dataset is use for both testing and training.  |
-| normalize        | `true`                           | Whether to use [mean normalization](http://en.wikipedia.org/wiki/Normalization_(statistics)) during data pre-processing  |
-| reduce           | `true`                           | Whether to use [PCA](http://en.wikipedia.org/wiki/Principal_component_analysis) to reduce dataset's dimensions during data pre-processing  |
-| retainedVariance | `0.99`                           | Define the acceptable impact on data integrity (require `reduce` to be `true`)  |
-| eps              | `1e-3`                           | Tolerance of termination criterion  |
-| cacheSize        | `1e2`                            | Cache size in MB.  |
-| shrinking        | `true`                           | Whether to use the shrinking heuristics |
-| probability      | `false`                          | Whether to train a SVC or SVR model for probability estimates |
+| Name             | Default value(s)       | Description                                                                                           |
+|------------------|------------------------|-------------------------------------------------------------------------------------------------------|
+| svmType          | `C_SVC`                | Used classifier                                                                                       | 
+| kernelType       | `RBF`                  | Used kernel                                                                                           |
+| c                | `[0.01,0.125,0.5,1,2]` | Cost for `C_SVC`, `EPSILON_SVR` and `NU_SVR`. Can be a `Number` or an `Array` of numbers |
+| nu               | `[0.01,0.125,0.5,1]`   | For `NU_SVC`, `ONE_CLASS` and `NU_SVR`. Can be a `Number` or an `Array` of numbers  |
+| epsilon          | `[0.01,0.125,0.5,1]`   | For `EPSILON_SVR`. Can be a `Number` or an `Array` of numbers  |
+| degree           | `[2,3,4]`              | For `POLY` kernel. Can be a `Number` or an `Array` of numbers  |
+| gamma            | `[0.001,0.01,0.5]`     | For `POLY`, `RBF` and `SIGMOID` kernels. Can be a `Number` or an `Array` of numbers  |
+| r                | `[0.125,0.5,0,1]`      | For `POLY` and `SIGMOID` kernels. Can be a `Number` or an `Array` of numbers  |
+| kFold            | `4`                    | `k` parameter for [k-fold cross validation]( http://en.wikipedia.org/wiki/Cross-validation_(statistics)#k-fold_cross-validation). `k` must be >= 1. If `k===1` then entire dataset is use for both testing and training.  |
+| normalize        | `true`                 | Whether to use [mean normalization](http://en.wikipedia.org/wiki/Normalization_(statistics)) during data pre-processing  |
+| reduce           | `true`                 | Whether to use [PCA](http://en.wikipedia.org/wiki/Principal_component_analysis) to reduce dataset's dimensions during data pre-processing  |
+| retainedVariance | `0.99`                 | Define the acceptable impact on data integrity (require `reduce` to be `true`)  |
+| eps              | `1e-3`                 | Tolerance of termination criterion  |
+| cacheSize        | `1e2`                  | Cache size in MB.  |
+| shrinking        | `true`                 | Whether to use the shrinking heuristics |
+| probability      | `false`                | Whether to train a SVC or SVR model for probability estimates |
 
 The example below shows how to use them:
 
@@ -128,7 +128,9 @@ var clf = new svm.SVM({
 });
 ```
 
-__Note__ :   If at least one parameter has multiple values, [node-svm](https://github.com/nicolaspanel/node-svm/) will go through all possible combinations to see which one gives the best predictions (it performs grid-search to maximize [f-score](http://en.wikipedia.org/wiki/F1_score) for classification and minimize [Mean Squared Error](http://en.wikipedia.org/wiki/Mean_squared_error) for regression).
+__Notes__ :   
+ * If at least one parameter has multiple values, [node-svm](https://github.com/nicolaspanel/node-svm/) will go through all possible combinations to see which one gives the best predictions (it performs grid-search to maximize [f-score](http://en.wikipedia.org/wiki/F1_score) for classification and minimize [Mean Squared Error](http://en.wikipedia.org/wiki/Mean_squared_error) for regression).
+ * You can override default values using an `.nodesvmrc` file (JSON).
 
 
 ##Training

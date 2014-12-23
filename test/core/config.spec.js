@@ -19,9 +19,9 @@ describe('Config', function () {
             expect(config.svmType).to.be(svmTypes.C_SVC);
             expect(config.kernelType).to.be(kernelTypes.RBF);
             expect(config.degree).to.eql([]);
-            expect(config.gamma).to.eql([0.001, 0.03125, 0.125, 0.5, 1]);
+            expect(config.gamma).to.eql([ 0.001, 0.01, 0.5 ]);
             expect(config.r).to.eql([]);
-            expect(config.c).to.eql([0.03125, 0.125, 0.5, 2, 8]);
+            expect(config.c).to.eql([ 0.01, 0.125, 0.5, 1, 2 ]);
             expect(config.nu).to.eql([]);
             expect(config.epsilon).to.eql([]);
         });
@@ -55,10 +55,10 @@ describe('Config', function () {
             expect(config.svmType).to.be(svmTypes.NU_SVC);
             expect(config.kernelType).to.be(kernelTypes.RBF);
             expect(config.degree).to.eql([]);
-            expect(config.gamma).to.eql([0.001, 0.03125, 0.125, 0.5, 1]);
+            expect(config.gamma).to.eql([ 0.001, 0.01, 0.5 ]);
             expect(config.r).to.eql([]);
             expect(config.c).to.eql([]);
-            expect(config.nu).to.eql([0.03125, 0.125, 0.5, 0.75, 1]);
+            expect(config.nu).to.eql([ 0.01, 0.125, 0.5, 1 ]);
             expect(config.epsilon).to.eql([]);
         });
 
@@ -76,11 +76,11 @@ describe('Config', function () {
             expect(config.svmType).to.be(svmTypes.EPSILON_SVR);
             expect(config.kernelType).to.be(kernelTypes.RBF);
             expect(config.degree).to.eql([]);
-            expect(config.gamma).to.eql([0.001, 0.03125, 0.125, 0.5, 1]);
+            expect(config.gamma).to.eql([ 0.001, 0.01, 0.5 ]);
             expect(config.r).to.eql([]);
-            expect(config.c).to.eql([0.03125, 0.125, 0.5, 2, 8]);
+            expect(config.c).to.eql([ 0.01, 0.125, 0.5, 1, 2 ]);
             expect(config.nu).to.eql([]);
-            expect(config.epsilon).to.eql([0.03125, 0.125, 0.5, 2, 8]);
+            expect(config.epsilon).to.eql([ 0.01, 0.125, 0.5, 1 ]);
         });
 
     });
@@ -98,10 +98,10 @@ describe('Config', function () {
             expect(config.svmType).to.be(svmTypes.NU_SVR);
             expect(config.kernelType).to.be(kernelTypes.RBF);
             expect(config.degree).to.eql([]);
-            expect(config.gamma).to.eql([0.001, 0.03125, 0.125, 0.5, 1]);
+            expect(config.gamma).to.eql([ 0.001, 0.01, 0.5 ]);
             expect(config.r).to.eql([]);
-            expect(config.c).to.eql([0.03125, 0.125, 0.5, 2, 8]);
-            expect(config.nu).to.eql([0.03125, 0.125, 0.5, 0.75, 1]);
+            expect(config.c).to.eql([ 0.01, 0.125, 0.5, 1, 2 ]);
+            expect(config.nu).to.eql([ 0.01, 0.125, 0.5, 1 ]);
             expect(config.epsilon).to.eql([]);
         });
 
@@ -122,7 +122,7 @@ describe('Config', function () {
             expect(config.degree).to.eql([]);
             expect(config.gamma).to.eql([]);
             expect(config.r).to.eql([]);
-            expect(config.c).to.eql([0.03125, 0.125, 0.5, 2, 8]);
+            expect(config.c).to.eql([ 0.01, 0.125, 0.5, 1, 2 ]);
             expect(config.nu).to.eql([]);
             expect(config.epsilon).to.eql([]);
         });
@@ -141,9 +141,9 @@ describe('Config', function () {
             expect(config.svmType).to.be(svmTypes.C_SVC);
             expect(config.kernelType).to.be(kernelTypes.POLY);
             expect(config.degree).to.eql([2,3,4]);
-            expect(config.gamma).to.eql([0.001, 0.03125, 0.125, 0.5, 1]);
-            expect(config.r).to.eql([0.125, 0.5, 0, 1, 2, 8]);
-            expect(config.c).to.eql([0.03125, 0.125, 0.5, 2, 8]);
+            expect(config.gamma).to.eql([ 0.001, 0.01, 0.5 ]);
+            expect(config.r).to.eql([0.125, 0.5, 0, 1]);
+            expect(config.c).to.eql([ 0.01, 0.125, 0.5, 1, 2 ]);
             expect(config.nu).to.eql([]);
             expect(config.epsilon).to.eql([]);
         });
@@ -162,9 +162,9 @@ describe('Config', function () {
             expect(config.svmType).to.be(svmTypes.C_SVC);
             expect(config.kernelType).to.be(kernelTypes.SIGMOID);
             expect(config.degree).to.eql([]);
-            expect(config.gamma).to.eql([0.001, 0.03125, 0.125, 0.5, 1]);
-            expect(config.r).to.eql([0.125, 0.5, 0, 1, 2, 8]);
-            expect(config.c).to.eql([0.03125, 0.125, 0.5, 2, 8]);
+            expect(config.gamma).to.eql([ 0.001, 0.01, 0.5 ]);
+            expect(config.r).to.eql([0.125, 0.5, 0, 1]);
+            expect(config.c).to.eql([ 0.01, 0.125, 0.5, 1, 2 ]);
             expect(config.nu).to.eql([]);
             expect(config.epsilon).to.eql([]);
         });
