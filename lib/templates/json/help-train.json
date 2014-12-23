@@ -2,7 +2,8 @@
     "command": "train",
     "description": "Train a new model with given data set",
     "usage": [
-        "train <dataset file> [<where to save the prediction model>] [<options>]"
+        "train <dataset file> [<options>]",
+        "train <dataset file> <where to save the prediction model> [<options>]"
     ],
     "options": [
         {

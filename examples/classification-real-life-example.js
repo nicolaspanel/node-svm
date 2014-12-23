@@ -20,15 +20,15 @@ var start = new Date();
 var svm = new nodesvm.CSVC({
 //  gamma: 8,
 //  c: 8,
-  kFold: 4,
+  kFold: 5,
   normalize: false,
   reduce: true, // default value
-  retainedVariance: 0.99 // default value 
+  retainedVariance: 0.95
 });
 
 nodesvm.read(fileName)
     .then(function (dataset) {
-        console.log('start training...');
+        console.log('start training (may take a while)...');
         return svm.train(dataset);
     })
     .spread(function (model, report) {
@@ -41,6 +41,31 @@ nodesvm.read(fileName)
  *        OUTPUT         *
  *************************
 
-
+ start training (may take a while)...
+ SVM trained.
+ Report :
+ {
+     accuracy: 0.94545,
+     fscore: 0.9300327069839032,
+     recall: 0.9202944536108644,
+     precision: 0.9399792584910552,
+     class: {
+         '1': {
+             precision: 0.9488849096532639,
+             recall: 0.9618018315320518,
+             fscore: 0.9552997090998484,
+             size: 12121
+         },
+         '-1': {
+             precision: 0.9399792584910552,
+             recall: 0.9202944536108644,
+             fscore: 0.9300327069839032,
+             size: 7879
+         }
+     },
+     size: 20000,
+     retainedVariance: 0.9903772241548948
+ }
+ done.
 
 */

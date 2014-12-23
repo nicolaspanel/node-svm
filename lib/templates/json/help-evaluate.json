@@ -1,6 +1,6 @@
 {
     "command": "evaluate",
-    "description": "Evaluate a model against a test set",
+    "description": "Evaluate a model's accuracy against a test set",
     "usage": [
         "evaluate <model file> <testset file> [<options>]"
     ],

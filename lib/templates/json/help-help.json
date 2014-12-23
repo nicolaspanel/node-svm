@@ -2,7 +2,8 @@
     "command": "help",
     "description": "Display help information about node-svm",
     "usage": [
-        "help"
+        "help",
+        "help <command>"
     ],
     "options": []
 }

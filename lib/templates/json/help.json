@@ -5,8 +5,7 @@
     "commands": {
         "help":            "Display help information about node-svm",
         "train":           "Train a new model with given data set",
-        "evaluate":        "Evaluate model's accuracy against a given test set",
-        "predict":         "Use model to predict new values"
+        "evaluate":        "Evaluate model's accuracy against a given test set"
     },
     "options": [
         {
