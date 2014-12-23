@@ -96,7 +96,8 @@ class NodeSvm : public node::ObjectWrap
                 svm_params->C = obj->Get(String::New("c"))->NumberValue();
             }
             if (svm_params->svm_type == NU_SVC ||
-                svm_params->svm_type == NU_SVR){
+                svm_params->svm_type == NU_SVR ||
+                svm_params->svm_type == ONE_CLASS){
                 assert(obj->Has(String::New("nu")));
                 svm_params->nu = obj->Get(String::New("nu"))->NumberValue();
                 assert(svm_params->nu > 0 && 
@@ -451,7 +452,8 @@ class NodeSvm : public node::ObjectWrap
                 parameters->Set(NanNew<String>("c"), NanNew<Number>(model->param.C));
             }
             if (model->param.svm_type == NU_SVC ||
-                model->param.svm_type == NU_SVR){
+                model->param.svm_type == NU_SVR ||
+                model->param.svm_type == ONE_CLASS){
                 parameters->Set(NanNew<String>("nu"), NanNew<Number>(model->param.nu));
             }
             if (model->param.svm_type == EPSILON_SVR){

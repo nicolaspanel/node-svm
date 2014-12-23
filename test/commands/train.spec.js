@@ -221,5 +221,48 @@ describe('node-svm train', function () {
 
     });
 
+    it('can train ONE_CLASS svm', function(done){
+        var defaults = defaultConfig({
+            svmType: svmTypes.ONE_CLASS,
+            kernelType: kernelTypes.RBF
+        });
+        var args = {
+            svmType: svmTypes.ONE_CLASS,
+            kernelType: kernelTypes.RBF,
+            normalize: false,
+            reduce: false,
+            nu: 0.1,
+            gamma: 0.1,
+            pathToDataset: './examples/datasets/one-class.train.json'
+        };
+        var asked = {};
+        var logger = commands.train(args);
+        logger.on('prompt', function(prompts, answer){
+            var answers = {};
+            prompts.forEach(function (prompt) {
+                asked[prompt.name] = (asked[prompt.name] || 0) +1;
+                switch (prompt.name){
+                    case 'confirmation':
+                        answers.confirmation = 'true';
+                        break;
+                    case 'saveModel':
+                        answers.saveModel = 'false';
+                        break;
+                    default :
+                        answers[prompt.name] = defaults[prompt.name].toString();
+                }
+            });
+            answer(answers);
+        });
+
+        logger.on('end', function(){
+            expect(asked).to.eql({
+                confirmation: 1,
+                saveModel: 1,
+                kFold: 1
+            });
+            done();
+        });
+    });
 
 });
