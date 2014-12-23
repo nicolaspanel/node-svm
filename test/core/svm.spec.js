@@ -42,11 +42,17 @@ describe('baseSVM', function () {
     describe('once trained', function () {
         var trainedModel;
         beforeEach(function (done) {
-            baseSvm.train(xor, { gamma: 0.5 })
-                .then(function (model) {
-                    trainedModel = model;
-                    done();
-                });
+            baseSvm
+            .train(xor, { 
+                svmType: svmTypes.C_SVC,
+                kernelType: kernelTypes.RBF,
+                c: 1,
+                gamma: 0.5 
+            })
+            .then(function (model) {
+                trainedModel = model;
+                done();
+            });
         });
         it('can predict synchronously', function () {
             xor.forEach(function (ex) {
@@ -80,12 +86,17 @@ describe('baseSVM', function () {
                 expect(trainedModel.labels).to.eql([0, 1]);
             });
             it('should contain params', function(){
-                expect(trainedModel.params).to.be.an('object');
-                expect(trainedModel.params.svmType).to.be(svmTypes.C_SVC);
-                expect(trainedModel.params.kernelType).to.be(kernelTypes.RBF);
-                expect(trainedModel.params.gamma).to.be(0.5);
-                expect(trainedModel.params.shrinking).to.be(true);
-                expect(trainedModel.params.probability).to.be(false);
+                expect(trainedModel.params).to.eql({ 
+                    svmType: svmTypes.C_SVC,
+                    kernelType: kernelTypes.RBF,
+                    c: 1,
+                    gamma: 0.5,
+
+                    cacheSize: 100,
+                    eps: 1e-3,
+                    shrinking: true,
+                    probability: false
+                });
             });
         });
     });
@@ -104,13 +115,15 @@ describe('baseSVM', function () {
         it('can predict probabilities synchronously', function () {
             xor.forEach(function (ex) {
                 var predicted = baseSvm.predictProbabilitiesSync(ex[0]);
-                expect(predicted).to.be.an('object');
+                expect(predicted[0]).to.be.a('number');
+                expect(predicted[1]).to.be.a('number');
             });
         });
         it('can predict probabilities asynchronously', function (done) {
             Q.all(xor.map(function(ex){
                 return baseSvm.predictProbabilities(ex[0]).then(function(predicted){
-                    expect(predicted).to.be.an('object');
+                    expect(predicted[0]).to.be.a('number');
+                    expect(predicted[1]).to.be.a('number');
                 });
             })).done(function () {
                 done();
