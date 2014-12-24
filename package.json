@@ -64,6 +64,6 @@
     "mocha-lcov-reporter": "0.0.1"
   },
   "bin": {
-    "node-svm": "./bin/node-svm.js"
+    "node-svm": "./bin/node-svm"
   }
 }
