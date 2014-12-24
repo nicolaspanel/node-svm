@@ -4,6 +4,8 @@
   Standard deviation : {{#cyan}}{{number std 2}}{{/cyan}}
   Mean error         : {{#cyan}}{{number mean 2}}{{/cyan}}
 
+{{#if reduce}}Retained variance: {{percent retainedVariance}} using {{retainedDimension}}/{{initialDimension}} dimensions{{/if}}
+
 tested on {{size}} examples.
 
 ===========================================================

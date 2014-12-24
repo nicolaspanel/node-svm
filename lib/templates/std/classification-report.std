@@ -5,6 +5,8 @@
   Precision   : {{#cyan}}{{number precision 4}}{{/cyan}}
   F1-score    : {{#cyan}}{{number fscore 4}}{{/cyan}}
 
+{{#if reduce}}Retained variance: {{percent retainedVariance}} using {{retainedDimension}}/{{initialDimension}} dimensions{{/if}}
+
 tested on {{size}} examples.
 
 Reports for each class:
