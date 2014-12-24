@@ -20,6 +20,9 @@ var xor = [
 var clf = new svm.CSVC();
 
 clf.train(xor)
+    .progress(function(progress){
+        console.log('training progress: %d%', Math.round(progress*100));
+    })
     .spread(function (model, report) {
         xor.forEach(function(ex){
             var prediction = clf.predictSync(ex[0]);

@@ -28,7 +28,10 @@ var clf = new svm.CSVC({
 svm.read(fileName)
     .then(function (dataset) {
         console.log('start training (may take a while)...');
-        return clf.train(dataset);
+        return clf.train(dataset)
+            .progress(function(progress){
+                console.log('training progress: %d%', Math.round(progress*100));
+            });
     })
     .spread(function (model, report) {
         console.log('SVM trained. \nReport :\n%s', so(report));

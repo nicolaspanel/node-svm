@@ -40,6 +40,9 @@ Q.all([
     svm.read(testingFile)
 ]).spread(function (trainingSet, testingSet) {
     return clf.train(trainingSet)
+        .progress(function(progress){
+            console.log('training progress: %d%', Math.round(progress*100));
+        })
         .spread(function (model, report) {
             return clf.evaluate(testingSet);
         });

@@ -30,6 +30,9 @@ svm.read(fileName)
     .then(function (dataset) {
         // train the svm with entire dataset
         return clf.train(dataset)
+            .progress(function(progress){
+                console.log('training progress: %d%', Math.round(progress*100));
+            })
             .spread(function (model, report) {
                 console.log('SVM trained. \nReport :\n%s', so(report));
                 return dataset;

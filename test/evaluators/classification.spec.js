@@ -4,7 +4,9 @@ var assert = require('assert'),
     expect = require('expect.js'),
     Q = require('q'),
     mout = require('mout'),
-    classification = require('../../lib/evaluators/classification');
+    svmTypes = require('../../lib/core/svm-types'),
+    evaluators = require('../../lib/evaluators'),
+    classification = evaluators.classification;
 
 var testSet = [
     [[0, 0, 0], '0'],
@@ -18,6 +20,16 @@ var testSet = [
 ];
 
 describe('Classification Evaluator', function(){
+    it('should be default classifier for C_SVC', function () {
+        expect(evaluators.getDefault({ svmType: svmTypes.C_SVC })).to.be(classification);
+    });
+    it('should be default classifier for NU_SVC', function () {
+        expect(evaluators.getDefault({ svmType: svmTypes.NU_SVC })).to.be(classification);
+    });
+    it('should be default classifier for ONE_CLASS', function () {
+        expect(evaluators.getDefault({ svmType: svmTypes.ONE_CLASS })).to.be(classification);
+    });
+
     describe('with bad classifier', function () {
         var clf;
 

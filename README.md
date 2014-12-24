@@ -1,6 +1,6 @@
 # node-svm
 
-Support Vector Machines (SVM) library for [nodejs](http://nodejs.org/).
+Support Vector Machine (SVM) library for [nodejs](http://nodejs.org/).
 
 [![NPM](https://nodei.co/npm/node-svm.png?downloads=true)](https://nodei.co/npm/node-svm/)
 [![Build Status](https://travis-ci.org/nicolaspanel/node-svm.png)](https://travis-ci.org/nicolaspanel/node-svm) [![Coverage Status](https://coveralls.io/repos/nicolaspanel/node-svm/badge.png?branch=master)](https://coveralls.io/r/nicolaspanel/node-svm?branch=master)
@@ -88,20 +88,20 @@ Possible parameters/options are:
 |------------------|------------------------|-------------------------------------------------------------------------------------------------------|
 | svmType          | `C_SVC`                | Used classifier                                                                                       | 
 | kernelType       | `RBF`                  | Used kernel                                                                                           |
-| c                | `[0.01,0.125,0.5,1,2]` | Cost for `C_SVC`, `EPSILON_SVR` and `NU_SVR`. Can be a `Number` or an `Array` of numbers |
-| nu               | `[0.01,0.125,0.5,1]`   | For `NU_SVC`, `ONE_CLASS` and `NU_SVR`. Can be a `Number` or an `Array` of numbers  |
-| epsilon          | `[0.01,0.125,0.5,1]`   | For `EPSILON_SVR`. Can be a `Number` or an `Array` of numbers  |
-| degree           | `[2,3,4]`              | For `POLY` kernel. Can be a `Number` or an `Array` of numbers  |
-| gamma            | `[0.001,0.01,0.5]`     | For `POLY`, `RBF` and `SIGMOID` kernels. Can be a `Number` or an `Array` of numbers  |
-| r                | `[0.125,0.5,0,1]`      | For `POLY` and `SIGMOID` kernels. Can be a `Number` or an `Array` of numbers  |
+| c                | `[0.01,0.125,0.5,1,2]` | Cost for `C_SVC`, `EPSILON_SVR` and `NU_SVR`. Can be a `Number` or an `Array` of numbers              |
+| nu               | `[0.01,0.125,0.5,1]`   | For `NU_SVC`, `ONE_CLASS` and `NU_SVR`. Can be a `Number` or an `Array` of numbers                    |
+| epsilon          | `[0.01,0.125,0.5,1]`   | For `EPSILON_SVR`. Can be a `Number` or an `Array` of numbers                                         |
+| degree           | `[2,3,4]`              | For `POLY` kernel. Can be a `Number` or an `Array` of numbers                                         |
+| gamma            | `[0.001,0.01,0.5]`     | For `POLY`, `RBF` and `SIGMOID` kernels. Can be a `Number` or an `Array` of numbers                   |
+| r                | `[0.125,0.5,0,1]`      | For `POLY` and `SIGMOID` kernels. Can be a `Number` or an `Array` of numbers                          |
 | kFold            | `4`                    | `k` parameter for [k-fold cross validation]( http://en.wikipedia.org/wiki/Cross-validation_(statistics)#k-fold_cross-validation). `k` must be >= 1. If `k===1` then entire dataset is use for both testing and training.  |
 | normalize        | `true`                 | Whether to use [mean normalization](http://en.wikipedia.org/wiki/Normalization_(statistics)) during data pre-processing  |
 | reduce           | `true`                 | Whether to use [PCA](http://en.wikipedia.org/wiki/Principal_component_analysis) to reduce dataset's dimensions during data pre-processing  |
-| retainedVariance | `0.99`                 | Define the acceptable impact on data integrity (require `reduce` to be `true`)  |
-| eps              | `1e-3`                 | Tolerance of termination criterion  |
-| cacheSize        | `1e2`                  | Cache size in MB.  |
-| shrinking        | `true`                 | Whether to use the shrinking heuristics |
-| probability      | `false`                | Whether to train a SVC or SVR model for probability estimates |
+| retainedVariance | `0.99`                 | Define the acceptable impact on data integrity (require `reduce` to be `true`)                        |
+| eps              | `1e-3`                 | Tolerance of termination criterion                                                                    |
+| cacheSize        | `200`                  | Cache size in MB.                                                                                     |
+| shrinking        | `true`                 | Whether to use the shrinking heuristics                                                               |
+| probability      | `false`                | Whether to train a SVC or SVR model for probability estimates                                         |
 
 The example below shows how to use them:
 
@@ -129,7 +129,7 @@ var clf = new svm.SVM({
 ```
 
 __Notes__ :   
- * If at least one parameter has multiple values, [node-svm](https://github.com/nicolaspanel/node-svm/) will go through all possible combinations to see which one gives the best predictions (it performs grid-search to maximize [f-score](http://en.wikipedia.org/wiki/F1_score) for classification and minimize [Mean Squared Error](http://en.wikipedia.org/wiki/Mean_squared_error) for regression).
+ * If at least one parameter has multiple values, [node-svm](https://github.com/nicolaspanel/node-svm/) will go through all possible combinations to see which one gives the best results (it performs grid-search to maximize [f-score](http://en.wikipedia.org/wiki/F1_score) for classification and minimize [Mean Squared Error](http://en.wikipedia.org/wiki/Mean_squared_error) for regression).
  * You can override default values using an `.nodesvmrc` file (JSON).
 
 
@@ -143,13 +143,16 @@ var clf = new svm.SVM(options);
 
 clf
 .train(dataset)
+.progress(function(ratio){
+    // ...
+})
 .spread(function(trainedModel, trainingReport){
     // ...
 });
 ```
 
 __Notes__ :  
- * `trainedModel` can be used to restore the predictor later (use `svm#restore(trainedModel)` function to do so).
+ * `trainedModel` can be used to restore the predictor later (see [this example](https://github.com/nicolaspanel/node-svm/blob/master/examples/save-prediction-model-example.js) for more information).
  * `trainingReport` contains information about predictor's accuracy (such as MSE, precison, recall, fscore, retained variance etc.)
 
 ## Prediction
@@ -189,7 +192,7 @@ svm.read(trainFile)
 
 [node-svm](https://github.com/nicolaspanel/node-svm/) comes with a build-in Command Line Interpreter.
 
-To use it you have to install [node-svm](https://github.com/nicolaspanel/node-svm/) globally using `npm install -g node-svm`
+To use it you have to install [node-svm](https://github.com/nicolaspanel/node-svm/) globally using `npm install -g node-svm`.
 
 See `$ node-svm -h` for complete command line reference.
 

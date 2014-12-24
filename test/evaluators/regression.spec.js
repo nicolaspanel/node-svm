@@ -4,7 +4,9 @@ var assert = require('assert'),
     expect = require('expect.js'),
     Q = require('q'),
     mout = require('mout'),
-    regression = require('../../lib/evaluators/regression');
+    svmTypes = require('../../lib/core/svm-types'),
+    evaluators = require('../../lib/evaluators'),
+    regression = evaluators.regression;
 
 var testSet = [
     [[0, 0, 0], '0'],
@@ -19,6 +21,12 @@ var testSet = [
 
 
 describe ('Regression Evaluator', function(){
+    it('should be default classifier for EPSILON_SVR', function () {
+        expect(evaluators.getDefault({ svmType: svmTypes.EPSILON_SVR })).to.be(regression);
+    });
+    it('should be default classifier for NU_SVR', function () {
+        expect(evaluators.getDefault({ svmType: svmTypes.NU_SVR })).to.be(regression);
+    });
     describe ('with bad classifier', function () {
         var clf;
         beforeEach(function () {
