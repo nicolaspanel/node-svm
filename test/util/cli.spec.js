@@ -5,6 +5,7 @@ var cli = require('../../lib/util/cli');
 
 
 describe('cli', function () {
+
     describe('help', function () {
         var opts = { help: { type: Boolean, shorthand: 'h' }};
         it('should support shorthand', function () {
@@ -33,6 +34,7 @@ describe('cli', function () {
             expect(options).to.have.property('help', true);
         });
     });
+
     describe('version', function () {
         var opts = { version: { type: Boolean, shorthand: 'v' }};
         it('should support shorthand', function () {

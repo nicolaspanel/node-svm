@@ -130,7 +130,7 @@ var clf = new svm.SVM({
 
 __Notes__ :   
  * If at least one parameter has multiple values, [node-svm](https://github.com/nicolaspanel/node-svm/) will go through all possible combinations to see which one gives the best results (it performs grid-search to maximize [f-score](http://en.wikipedia.org/wiki/F1_score) for classification and minimize [Mean Squared Error](http://en.wikipedia.org/wiki/Mean_squared_error) for regression).
- * You can override default values using an `.nodesvmrc` file (JSON).
+ * You can override default values by  creating a `.nodesvmrc` file (JSON) at the root of your project.
 
 
 ##Training
@@ -143,7 +143,7 @@ var clf = new svm.SVM(options);
 
 clf
 .train(dataset)
-.progress(function(ratio){
+.progress(function(rate){
     // ...
 })
 .spread(function(trainedModel, trainingReport){

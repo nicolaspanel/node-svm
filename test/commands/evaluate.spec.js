@@ -61,6 +61,4 @@ describe('node-svm evaluate', function () {
         });
     });
 
-
-
 });
