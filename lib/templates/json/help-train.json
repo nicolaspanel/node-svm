@@ -79,8 +79,9 @@
             "description": "disable colors"
         },
         {
-            "flag":        "--no-interactive",
-            "description": "disable prompts"
+            "shorthand":   "-i",
+            "flag":        "--interactive",
+            "description": "Enable interactions (help you select which parameters you want to use)"
         },
         {
             "shorthand":   "-h",

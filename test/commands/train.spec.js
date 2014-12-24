@@ -23,6 +23,7 @@ describe('node-svm train', function () {
         var args = {
             svmType: svmTypes.C_SVC,
             kernelType: kernelTypes.RBF,
+            interactive: true,
             pathToDataset: './examples/datasets/xor.json'
         };
         var asked = {};
@@ -72,6 +73,7 @@ describe('node-svm train', function () {
             svmType: svmTypes.NU_SVC,
             kernelType: kernelTypes.POLY,
             kFold: 1,
+            interactive: true,
             pathToDataset: './examples/datasets/xor.json'
         });
 
@@ -121,6 +123,7 @@ describe('node-svm train', function () {
             kernelType: kernelTypes.LINEAR,
             reduce: false,
             kFold: 1,
+            interactive: true,
             pathToDataset: './examples/datasets/xor.json'
         });
         logger.on('prompt', function(prompts, answer){
@@ -171,6 +174,7 @@ describe('node-svm train', function () {
             kernelType: kernelTypes.RBF,
             reduce: true,
             normalize: false,
+            interactive: true,
             kFold: 1,
             pathToDataset: './examples/datasets/xor.json'
         });
@@ -227,6 +231,7 @@ describe('node-svm train', function () {
             kernelType: kernelTypes.RBF
         });
         var args = {
+            interactive: true,
             svmType: svmTypes.ONE_CLASS,
             kernelType: kernelTypes.RBF,
             normalize: false,

@@ -210,6 +210,8 @@ $ node-svm train <dataset file> [<where to save the prediction model>] [<options
 ```
 Train a new model with given data set
 
+__Note__: use `$ node-svm train <dataset file> -i` to set parameters values dynamically.
+
 ## evaluate
 ```shell
 $ node-svm evaluate <model file> <testset file> [<options>]
