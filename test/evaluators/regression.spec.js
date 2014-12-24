@@ -8,15 +8,11 @@ var assert = require('assert'),
     evaluators = require('../../lib/evaluators'),
     regression = evaluators.regression;
 
-var testSet = [
-    [[0, 0, 0], '0'],
-    [[0, 0, 1], '1'],
-    [[0, 1, 0], '2'],
-    [[0, 1, 1], '3'],
-    [[1, 0, 0], '0'],
-    [[1, 0, 1], '1'],
-    [[1, 1, 0], '2'],
-    [[1, 1, 1], '3']
+var xor = [
+    [[0, 0], 0],
+    [[0, 1], 1],
+    [[1, 0], 1],
+    [[1, 1], 0]
 ];
 
 
@@ -30,15 +26,17 @@ describe ('Regression Evaluator', function(){
     describe ('with bad classifier', function () {
         var clf;
         beforeEach(function () {
-            clf = { predictSync: function(state){ return'0'; } };
+            clf = { predictSync: function(state){ return 0; } };
         });
 
-        it ('should report a mse of 3.5', function(){
-            var report = regression.evaluate(testSet, clf);
-            expect(report.mse).to.be(3.5);
-            expect(report).to.have.property('mean');
-            expect(report).to.have.property('std');
-            expect(report.size).to.be(8);
+        it ('should report bad results', function(){
+            var report = regression.evaluate(xor, clf);
+            expect(report).to.eql({
+                mse: 0.5,
+                std: 0.5,
+                mean: -0.5,
+                size: xor.length
+            });
         });
 
     });
@@ -48,16 +46,19 @@ describe ('Regression Evaluator', function(){
         beforeEach(function () {
             clf = {
                 predictSync: function(state){
-                    return [['0', '1'], ['2', '3']][state[1]][state[2]];
+                    return [[0, 1], [1, 0]][state[0]][state[1]];
                 }
             };
         });
 
-        it ('should report a mse/std error/mean errror of 0', function(){
-            var report = regression.evaluate(testSet, clf);
-            expect(report.mse).to.be(0);
-            expect(report.std).to.be(0);
-            expect(report.size).to.be(8);
+        it ('should report a mse/std error/mean error of 0', function(){
+            var report = regression.evaluate(xor, clf);
+            expect(report).to.eql({
+                mse: 0,
+                std:0,
+                mean: 0,
+                size: xor.length
+            });
         });
     });
 });
