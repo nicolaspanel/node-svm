@@ -15,18 +15,21 @@
 var so = require('stringify-object');
 var svm = require('../lib');
 var fileName = './examples/datasets/webspam_unigram_subset20000.ds';
+var numeric = require('numeric');
 
 var clf = new svm.CSVC({
-  gamma: 8,
+  gamma: [0.01, 0.1],
   c: 8,
-  kFold: 5,
-  normalize: false,
+  kFold: 4,
+  normalize: true,
   reduce: true, // default value
   retainedVariance: 0.95
 });
 
 svm.read(fileName)
     .then(function (dataset) {
+        console.log('dataset\'s x dimensions: ', numeric.dim(dataset.map(function(ex){ return ex[0]; })));
+
         console.log('start training (may take a while)...');
         return clf.train(dataset)
             .progress(function(progress){

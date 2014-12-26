@@ -1,6 +1,7 @@
 'use strict';
 
 var read = require('../../lib/util/read-dataset');
+var numeric = require('numeric');
 var expect = require('expect.js');
 var xorProblem = [
     [[0, 0], 0],
@@ -22,9 +23,10 @@ describe('#read', function(){
             this.timeout(200);
             read('./examples/datasets/svmguide1.ds')
                 .then(function(problem){
-                    expect(problem.length).to.be(3089);
+                    expect(numeric.dim(problem)).to.eql([3089, 2, 4]);
                 }).done(done);
         });
+        
     });
     describe('json format', function () {
         it('should be able to read the xor problem', function (done) {
