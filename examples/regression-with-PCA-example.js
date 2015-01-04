@@ -2,9 +2,9 @@
   Show how to use Principal Component Analysis (PCA) to reduce the datatset's dimension
   
   Dataset : Housing, more info here http://archive.ics.uci.edu/ml/datasets/Housing
-  SVM TYPE : EPSILON-SVR (regression)
+  SVM TYPE : EPSILON_SVR (regression)
 
-  NOTE : Also use mean normalizationfor better performences 
+  NOTE : Also use mean normalization for better performance
 **/
 
 'use strict';
@@ -57,21 +57,24 @@ svm.read(fileName)
  *        OUTPUT         *
  *************************
 
+ [training progress... ]
  SVM trained.
  Report :
  {
-	mse: 13.274198493484645,
-	std: 3.640774430552408,
-	mean: -0.13769545860496132,
-	size: 506,
-	retainedVariance: 0.995114672273733
+     mse: 12.840723874926569,
+     std: 3.5807999959488956,
+     mean: -0.13636445262226565,
+     size: 506,
+     reduce: true,
+     retainedVariance: 0.995114672273733,
+     retainedDimension: 12,
+     initialDimension: 13
  }
- { #1, expected: 24.4, predicted: 23.8999543384696}
- { #2, expected: 13.8, predicted: 13.300135350506823}
- { #3, expected: 16.2, predicted: 16.23335871065006}
- { #4, expected: 31.5, predicted: 32.19532581790853}
- { #5, expected: 13.9, predicted: 14.399888566573079}
-
-done.
+ { #1, expected: 28, predicted: 28.49960798991779}
+ { #2, expected: 25, predicted: 24.499820075688632}
+ { #3, expected: 23, predicted: 22.70164253213565}
+ { #4, expected: 26, predicted: 26.174256533573505}
+ { #5, expected: 18, predicted: 17.488069908365038}
+ done.
 
 */

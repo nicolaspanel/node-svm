@@ -4,8 +4,8 @@
 
  Training set is composed of 200 inliers examples (see `one-class.train.json`)
  Test set is composed of :
-      - 100 inliers (labeled 1)
-      - 20 outliers (labeled -1)
+      - 100 inliers (labelled 1)
+      - 20 outliers (labelled -1)
   (see `one-class.test.json`)
 
  Parameters:
@@ -43,11 +43,11 @@ Q.all([
         .progress(function(progress){
             console.log('training progress: %d%', Math.round(progress*100));
         })
-        .spread(function (model, report) {
+        .then(function () {
             return clf.evaluate(testingSet);
         });
 }).done(function (evaluationReport) {
-    console.log('Accuracy against the testset:\n', so(evaluationReport));
+    console.log('Accuracy against the test set:\n', so(evaluationReport));
 });
 
 
@@ -55,7 +55,7 @@ Q.all([
  *        OUTPUT         *
  *************************
 
-Accuracy against the testset:
+Accuracy against the test set:
  {
 	accuracy: 0.9666666666666667,
 	fscore: 0.9090909090909091,
