@@ -47,7 +47,8 @@ describe('baseSVM', function () {
                 svmType: svmTypes.C_SVC,
                 kernelType: kernelTypes.RBF,
                 c: 1,
-                gamma: 0.5 
+                gamma: 0.5 ,
+                probability: true
             })
             .then(function (model) {
                 trainedModel = model;
@@ -57,6 +58,23 @@ describe('baseSVM', function () {
         it('can predict synchronously', function () {
             xor.forEach(function (ex) {
                 expect(baseSvm.predictSync(ex[0])).to.be(ex[1]);
+            });
+        });
+        it('can predict probability synchronously', function () {
+            xor.forEach(function (ex) {
+                var props = baseSvm.predictProbabilitiesSync(ex[0]);
+                expect(props).to.have.property('0');
+                expect(props).to.have.property('1');
+            });
+        });
+        it('can predict probability asynchronously', function (done) {
+            Q.all(xor.map(function(ex){
+                return baseSvm.predictProbabilities(ex[0]).then(function(props){
+                    expect(props).to.have.property('0');
+                    expect(props).to.have.property('1');
+                });
+            })).done(function () {
+                done();
             });
         });
         it('can predict asynchronously', function (done) {
@@ -69,13 +87,6 @@ describe('baseSVM', function () {
             });
 
         });
-        it('can be restore from model and used for new predictions', function(){
-            var newSvm = BaseSVM.restore(trainedModel);
-            expect(newSvm.isTrained()).to.be(true);
-            xor.forEach(function (ex) {
-                expect(newSvm.predictSync(ex[0])).to.be(ex[1]);
-            });
-        });
         describe('model', function () {
             it('should contain SV', function(){
                 expect(trainedModel.supportVectors).to.be.an('array');
@@ -86,7 +97,7 @@ describe('baseSVM', function () {
                 expect(trainedModel.labels).to.eql([0, 1]);
             });
             it('should contain params', function(){
-                expect(trainedModel.params).to.eql({ 
+                expect(trainedModel.params).to.eql({
                     svmType: svmTypes.C_SVC,
                     kernelType: kernelTypes.RBF,
                     c: 1,
@@ -95,46 +106,31 @@ describe('baseSVM', function () {
                     cacheSize: 100,
                     eps: 1e-3,
                     shrinking: true,
-                    probability: false
+                    probability: true
+                });
+            });
+        });
+
+        describe('once restored', function () {
+            var restored = null;
+            beforeEach(function () {
+                restored = BaseSVM.restore(trainedModel);
+            });
+            it('can be restore from model and used for new predictions', function(){
+                xor.forEach(function (ex) {
+                    expect(restored.predictSync(ex[0])).to.be(ex[1]);
+                });
+            });
+            it('can be restore from model and used for new probabilities predictions', function(){
+                xor.forEach(function (ex) {
+                    var props = restored.predictProbabilitiesSync(ex[0]);
+                    expect(props).to.have.property('0');
+                    expect(props).to.have.property('1');
                 });
             });
         });
     });
-    describe('once trained with probabilities', function () {
-        var trainedModel;
-        beforeEach(function (done) {
-            baseSvm.train(xor, {
-                gamma: 0.5,
-                probability: true
-            })
-            .then(function (model) {
-                trainedModel = model;
-                done();
-            });
-        });
-        it('can predict probabilities synchronously', function () {
-            xor.forEach(function (ex) {
-                var predicted = baseSvm.predictProbabilitiesSync(ex[0]);
-                expect(predicted[0]).to.be.a('number');
-                expect(predicted[1]).to.be.a('number');
-            });
-        });
-        it('can predict probabilities asynchronously', function (done) {
-            Q.all(xor.map(function(ex){
-                return baseSvm.predictProbabilities(ex[0]).then(function(predicted){
-                    expect(predicted[0]).to.be.a('number');
-                    expect(predicted[1]).to.be.a('number');
-                });
-            })).done(function () {
-                done();
-            });
-        });
-        describe('model', function () {
-            it('should contain params', function(){
-                expect(trainedModel.params.probability).to.be(true);
-            });
-        });
-    });
+
 });
 
 describe('SVM', function(){
