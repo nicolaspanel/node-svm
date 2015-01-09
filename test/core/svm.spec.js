@@ -13,6 +13,12 @@ var xor = [
     [[1, 0], 1],
     [[1, 1], 0]
 ];
+var xorRegression = [
+    [[0, 0], 0],
+    [[0, 1], 1],
+    [[1, 0], 1],
+    [[1, 1], 0]
+];
 var redundantXor = [
     [[0, 0, 0, 0], 0],
     [[0, 0, 1, 1], 1],
@@ -246,11 +252,11 @@ describe('SVM', function(){
                 kFold:1
             });
         });
-        it('should use C_SVC classifier', function(){
+        it('should use EPSILON_SVR classifier', function(){
             expect(svm.getSvmType()).to.be(svmTypes.EPSILON_SVR);
         });
 
-        describe('once EPSILON_SVR', function () {
+        describe('once trained', function () {
             var trainedModel, trainingReport;
             beforeEach(function (done) {
                 svm.train(xor)

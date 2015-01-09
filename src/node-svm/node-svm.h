@@ -199,15 +199,27 @@ class NodeSvm : public node::ObjectWrap
             }
 
             // classes
-            assert(obj->Has(String::New("labels")));
-            assert(obj->Get(String::New("labels"))->IsArray());
-            Local<Array> labels = Array::Cast(*obj->Get(String::New("labels"))->ToObject());
-            //assert(labels->Length()==new_model->nr_class);
-            new_model->label = new int[new_model->nr_class];
-            for(int i=0;i<new_model->nr_class;i++){
-                Local<Value> elt = labels->Get(i);
-                assert(elt->IsInt32());
-                new_model->label[i] = elt->IntegerValue();
+            if (obj->Has(String::New("labels"))){
+                assert(obj->Get(String::New("labels"))->IsArray());
+                Local<Array> labels = Array::Cast(*obj->Get(String::New("labels"))->ToObject());
+                //assert(labels->Length()==new_model->nr_class);
+                new_model->label = new int[new_model->nr_class];
+                for(int i=0;i<new_model->nr_class;i++){
+                    Local<Value> elt = labels->Get(i);
+                    assert(elt->IsInt32());
+                    new_model->label[i] = elt->IntegerValue();
+                }
+                // nSV
+                assert(obj->Has(String::New("nbSupportVectors")));
+                assert(obj->Get(String::New("nbSupportVectors"))->IsArray());
+                Local<Array> nbSupportVectors = Array::Cast(*obj->Get(String::New("nbSupportVectors"))->ToObject());
+                assert((int)nbSupportVectors->Length() == new_model->nr_class);
+                new_model->nSV = new int[new_model->nr_class];
+                for (int i=0;i<new_model->nr_class;i++){
+                    Local<Value> elt = nbSupportVectors->Get(i);
+                    assert(elt->IsInt32());
+                    new_model->nSV[i] = elt->IntegerValue();
+                }
             }
 
             // probA
@@ -236,17 +248,7 @@ class NodeSvm : public node::ObjectWrap
                 }
             }
 
-            // nSV
-            assert(obj->Has(String::New("nbSupportVectors")));
-            assert(obj->Get(String::New("nbSupportVectors"))->IsArray());
-            Local<Array> nbSupportVectors = Array::Cast(*obj->Get(String::New("nbSupportVectors"))->ToObject());
-            assert((int)nbSupportVectors->Length() == new_model->nr_class);
-            new_model->nSV = new int[new_model->nr_class];
-            for (int i=0;i<new_model->nr_class;i++){
-                Local<Value> elt = nbSupportVectors->Get(i);
-                assert(elt->IsInt32());
-                new_model->nSV[i] = elt->IntegerValue();
-            }
+
 
             // SV
             assert(obj->Has(String::New("supportVectors")));
