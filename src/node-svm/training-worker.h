@@ -28,7 +28,7 @@ class TrainingWorker : public NanAsyncWorker {
   void HandleOKCallback () {
     NanScope();
 
-	#ifdef _WIN32
+#ifdef _WIN32
     // On windows you get "error C2466: cannot allocate an array of constant size 0" and we use a pointer
     Local<Value>* argv;
 #else
