@@ -22,7 +22,12 @@ NAN_METHOD(NodeSvm::New) {
     else {
         // Invoked as plain function `MyObject(...)`, turn into construct call.
         const int argc = 0;
-        Local<Value> argv[argc] = {  };
+#ifdef _WIN32
+    // On windows you get "error C2466: cannot allocate an array of constant size 0" and we use a pointer
+    Local<Value>* argv;
+#else
+    Local<Value> argv[argc];
+#endif
         return scope.Close(constructor->NewInstance(argc, argv));
     }
 }
