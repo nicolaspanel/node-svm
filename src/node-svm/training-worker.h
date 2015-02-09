@@ -35,7 +35,6 @@ class TrainingWorker : public NanAsyncWorker {
     Local<Value> argv[0];
 #endif
 
-
     callback->Call(0, argv);
   };
 

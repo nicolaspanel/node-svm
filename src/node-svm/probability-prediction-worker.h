@@ -36,12 +36,12 @@ class ProbabilityPredictionWorker : public NanAsyncWorker {
   void HandleOKCallback () {
     NanScope();
     // Create the result array
-    Handle<Array> probs = Array::New(nbClass);
+    Handle<Array> probs = NanNew<Array>(nbClass);
     for (int j=0; j < nbClass; j++){
-      probs->Set(j, Number::New(prob_estimates[j]));
+      probs->Set(j, NanNew<Number>(prob_estimates[j]));
     }
     Local<Value> argv[] = {
-      Local<Value>::New(probs)
+      NanNew<Value>(probs)
     };
     callback->Call(1, argv);
   };

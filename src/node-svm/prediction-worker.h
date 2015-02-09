@@ -31,7 +31,7 @@ class PredictionWorker : public NanAsyncWorker {
   void HandleOKCallback () {
     NanScope();
     Local<Value> argv[] = {
-      Number::New(prediction)
+      NanNew<Number>(prediction)
     };
     callback->Call(1, argv);
   };
