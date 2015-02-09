@@ -10,6 +10,8 @@
 #include "../../node_modules/nan/nan.h"
 #include "../libsvm/svm.h"
 
+
+
 using namespace v8;
 
 class NodeSvm : public node::ObjectWrap
@@ -81,8 +83,8 @@ class NodeSvm : public node::ObjectWrap
             svm_params->weight = NULL;
 
             // check  classifer and its options
-            assert(obj->Has(String::New("svmType")));
-            svm_params->svm_type = obj->Get(String::New("svmType"))->IntegerValue();
+            assert(obj->Has(NanNew<String>("svmType")));
+            svm_params->svm_type = obj->Get(NanNew<String>("svmType"))->IntegerValue();
             assert(svm_params->svm_type == C_SVC ||
                    svm_params->svm_type == NU_SVC ||
                    svm_params->svm_type == ONE_CLASS ||
@@ -92,26 +94,26 @@ class NodeSvm : public node::ObjectWrap
             if (svm_params->svm_type == C_SVC ||
                 svm_params->svm_type == EPSILON_SVR ||
                 svm_params->svm_type == NU_SVR){
-                assert(obj->Has(String::New("c")));
-                svm_params->C = obj->Get(String::New("c"))->NumberValue();
+                assert(obj->Has(NanNew<String>("c")));
+                svm_params->C = obj->Get(NanNew<String>("c"))->NumberValue();
             }
             if (svm_params->svm_type == NU_SVC ||
                 svm_params->svm_type == NU_SVR ||
                 svm_params->svm_type == ONE_CLASS){
-                assert(obj->Has(String::New("nu")));
-                svm_params->nu = obj->Get(String::New("nu"))->NumberValue();
+                assert(obj->Has(NanNew<String>("nu")));
+                svm_params->nu = obj->Get(NanNew<String>("nu"))->NumberValue();
                 assert(svm_params->nu > 0 && 
                        svm_params->nu <= 1);
             }
             if (svm_params->svm_type == EPSILON_SVR){
-                assert(obj->Has(String::New("epsilon")));
-                svm_params->p = obj->Get(String::New("epsilon"))->NumberValue();
+                assert(obj->Has(NanNew<String>("epsilon")));
+                svm_params->p = obj->Get(NanNew<String>("epsilon"))->NumberValue();
                 assert(svm_params->p >= 0);
             }
 
             // check kernel and its options
-            assert(obj->Has(String::New("kernelType")));
-            svm_params->kernel_type = obj->Get(String::New("kernelType"))->IntegerValue();
+            assert(obj->Has(NanNew<String>("kernelType")));
+            svm_params->kernel_type = obj->Get(NanNew<String>("kernelType"))->IntegerValue();
             assert(svm_params->kernel_type == LINEAR ||
                    svm_params->kernel_type == POLY ||
                    svm_params->kernel_type == RBF ||
@@ -119,42 +121,42 @@ class NodeSvm : public node::ObjectWrap
                    svm_params->kernel_type == SIGMOID); 
 
             if (svm_params->kernel_type == POLY){
-                assert(obj->Has(String::New("degree")));
-                svm_params->degree = obj->Get(String::New("degree"))->IntegerValue();
+                assert(obj->Has(NanNew<String>("degree")));
+                svm_params->degree = obj->Get(NanNew<String>("degree"))->IntegerValue();
                 assert(svm_params->degree >= 0);
             }
             if (svm_params->kernel_type == POLY || 
                 svm_params->kernel_type == RBF ||
                 svm_params->kernel_type == SIGMOID){
-                assert(obj->Has(String::New("gamma")));
-                svm_params->gamma = obj->Get(String::New("gamma"))->NumberValue();
+                assert(obj->Has(NanNew<String>("gamma")));
+                svm_params->gamma = obj->Get(NanNew<String>("gamma"))->NumberValue();
                 assert(svm_params->gamma >= 0);
             }
             if (svm_params->kernel_type == POLY || 
                 svm_params->kernel_type == SIGMOID){
-                assert(obj->Has(String::New("r")));
-                svm_params->coef0 = obj->Get(String::New("r"))->NumberValue();
+                assert(obj->Has(NanNew<String>("r")));
+                svm_params->coef0 = obj->Get(NanNew<String>("r"))->NumberValue();
             }
 
             // check training options            
-            svm_params->cache_size = obj->Has(String::New("cacheSize")) ? 
-                obj->Get(String::New("cacheSize"))->NumberValue() : 
+            svm_params->cache_size = obj->Has(NanNew<String>("cacheSize")) ? 
+                obj->Get(NanNew<String>("cacheSize"))->NumberValue() : 
                 100;
             assert(svm_params->cache_size > 0);
             
-            svm_params->eps = obj->Has(String::New("eps")) ? 
-                obj->Get(String::New("eps"))->NumberValue() : 
+            svm_params->eps = obj->Has(NanNew<String>("eps")) ? 
+                obj->Get(NanNew<String>("eps"))->NumberValue() : 
                 1e-3;
             assert(svm_params->eps > 0);
 
             svm_params->shrinking =  // enabled by default
-                obj->Has(String::New("shrinking")) && 
-                !obj->Get(String::New("shrinking"))->BooleanValue() ? 0 : 1;
+                obj->Has(NanNew<String>("shrinking")) && 
+                !obj->Get(NanNew<String>("shrinking"))->BooleanValue() ? 0 : 1;
 
 
             svm_params->probability =  // disabled by default
-                obj->Has(String::New("probability")) && 
-                obj->Get(String::New("probability"))->BooleanValue() ? 1 : 0;
+                obj->Has(NanNew<String>("probability")) && 
+                obj->Get(NanNew<String>("probability"))->BooleanValue() ? 1 : 0;
             
             if (svm_params->svm_type == ONE_CLASS){
                 assert(svm_params->probability == 0); // one-class SVM probability output not supported (yet)
@@ -164,10 +166,10 @@ class NodeSvm : public node::ObjectWrap
         };
 
         void setModel(Local<Object> obj){
-            assert(obj->Has(String::New("params")));
-            assert(obj->Get(String::New("params"))->IsObject());
+            assert(obj->Has(NanNew<String>("params")));
+            assert(obj->Get(NanNew<String>("params"))->IsObject());
 
-            setParameters(obj->Get(String::New("params"))->ToObject());
+            setParameters(obj->Get(NanNew<String>("params"))->ToObject());
             assert(params!=NULL);
             struct svm_model *new_model = new svm_model();
 
@@ -179,17 +181,17 @@ class NodeSvm : public node::ObjectWrap
             new_model->label = NULL;
             new_model->nSV = NULL;
 
-            assert(obj->Has(String::New("l")));
-            assert(obj->Get(String::New("l"))->IsInt32());
-            new_model->l = obj->Get(String::New("l"))->IntegerValue();
+            assert(obj->Has(NanNew<String>("l")));
+            assert(obj->Get(NanNew<String>("l"))->IsInt32());
+            new_model->l = obj->Get(NanNew<String>("l"))->IntegerValue();
 
-            new_model->nr_class = obj->Get(String::New("nrClass"))->IntegerValue();
+            new_model->nr_class = obj->Get(NanNew<String>("nrClass"))->IntegerValue();
             unsigned int n = new_model->nr_class * (new_model->nr_class-1)/2;
 
             // rho
-            assert(obj->Has(String::New("rho")));
-            assert(obj->Get(String::New("rho"))->IsArray());
-            Local<Array> rho = Array::Cast(*obj->Get(String::New("rho"))->ToObject());
+            assert(obj->Has(NanNew<String>("rho")));
+            assert(obj->Get(NanNew<String>("rho"))->IsArray());
+            Local<Array> rho = Array::Cast(*obj->Get(NanNew<String>("rho"))->ToObject());
             assert(rho->Length()==n);
             new_model->rho = new double[n];
             for(unsigned int i=0;i<n;i++){
@@ -199,9 +201,9 @@ class NodeSvm : public node::ObjectWrap
             }
 
             // classes
-            if (obj->Has(String::New("labels"))){
-                assert(obj->Get(String::New("labels"))->IsArray());
-                Local<Array> labels = Array::Cast(*obj->Get(String::New("labels"))->ToObject());
+            if (obj->Has(NanNew<String>("labels"))){
+                assert(obj->Get(NanNew<String>("labels"))->IsArray());
+                Local<Array> labels = Array::Cast(*obj->Get(NanNew<String>("labels"))->ToObject());
                 //assert(labels->Length()==new_model->nr_class);
                 new_model->label = new int[new_model->nr_class];
                 for(int i=0;i<new_model->nr_class;i++){
@@ -210,9 +212,9 @@ class NodeSvm : public node::ObjectWrap
                     new_model->label[i] = elt->IntegerValue();
                 }
                 // nSV
-                assert(obj->Has(String::New("nbSupportVectors")));
-                assert(obj->Get(String::New("nbSupportVectors"))->IsArray());
-                Local<Array> nbSupportVectors = Array::Cast(*obj->Get(String::New("nbSupportVectors"))->ToObject());
+                assert(obj->Has(NanNew<String>("nbSupportVectors")));
+                assert(obj->Get(NanNew<String>("nbSupportVectors"))->IsArray());
+                Local<Array> nbSupportVectors = Array::Cast(*obj->Get(NanNew<String>("nbSupportVectors"))->ToObject());
                 assert((int)nbSupportVectors->Length() == new_model->nr_class);
                 new_model->nSV = new int[new_model->nr_class];
                 for (int i=0;i<new_model->nr_class;i++){
@@ -223,9 +225,9 @@ class NodeSvm : public node::ObjectWrap
             }
 
             // probA
-            if (obj->Has(String::New("probA"))){
-                assert(obj->Get(String::New("probA"))->IsArray());
-                Local<Array> probA = Array::Cast(*obj->Get(String::New("probA"))->ToObject());
+            if (obj->Has(NanNew<String>("probA"))){
+                assert(obj->Get(NanNew<String>("probA"))->IsArray());
+                Local<Array> probA = Array::Cast(*obj->Get(NanNew<String>("probA"))->ToObject());
                 assert(probA->Length()==n);
                 new_model->probA = new double[n];
                 for(unsigned int i=0;i<n;i++){
@@ -236,9 +238,9 @@ class NodeSvm : public node::ObjectWrap
             }
 
             // probB
-            if (obj->Has(String::New("probB"))){
-                assert(obj->Get(String::New("probB"))->IsArray());
-                Local<Array> probB = Array::Cast(*obj->Get(String::New("probB"))->ToObject());
+            if (obj->Has(NanNew<String>("probB"))){
+                assert(obj->Get(NanNew<String>("probB"))->IsArray());
+                Local<Array> probB = Array::Cast(*obj->Get(NanNew<String>("probB"))->ToObject());
                 assert(probB->Length()==n);
                 new_model->probB = new double[n];
                 for(unsigned int i=0;i<n;i++){
@@ -251,9 +253,9 @@ class NodeSvm : public node::ObjectWrap
 
 
             // SV
-            assert(obj->Has(String::New("supportVectors")));
-            assert(obj->Get(String::New("supportVectors"))->IsArray());
-            Local<Array> supportVectors = Array::Cast(*obj->Get(String::New("supportVectors"))->ToObject());
+            assert(obj->Has(NanNew<String>("supportVectors")));
+            assert(obj->Get(NanNew<String>("supportVectors"))->IsArray());
+            Local<Array> supportVectors = Array::Cast(*obj->Get(NanNew<String>("supportVectors"))->ToObject());
             assert((int)supportVectors->Length() == new_model->l);
             int m = new_model->nr_class - 1;
             int l = new_model->l;
@@ -363,12 +365,12 @@ class NodeSvm : public node::ObjectWrap
             obj->Set(NanNew<String>("l"), NanNew<Number>(model->l));
 
             // Create a new array for support vectors
-            Handle<Array> supportVectors = Array::New(model->l);
+            Handle<Array> supportVectors = NanNew<Array>(model->l);
             const double * const *sv_coef = model->sv_coef;
             const svm_node * const *SV = model->SV;
             const int nb_outputs = model->nr_class - 1;
             for (int i=0;i<model->l;i++){
-                Handle<Array> outputs = Array::New(nb_outputs);
+                Handle<Array> outputs = NanNew<Array>(nb_outputs);
                 for (int j=0; j < nb_outputs ; j++)
                     outputs->Set(j, NanNew<Number>(sv_coef[j][i]));
 
@@ -384,7 +386,7 @@ class NodeSvm : public node::ObjectWrap
                     p++;
                 }
 
-                Handle<Array> inputs = Array::New(nb_index);
+                Handle<Array> inputs = NanNew<Array>(nb_index);
                 int p_i = 0;
                 for (int k=0; k < max_index ; k++){
                     if (k+1 == model->SV[i][p_i].index){
@@ -395,7 +397,7 @@ class NodeSvm : public node::ObjectWrap
                         inputs->Set(k, NanNew<Number>(0));
                     }
                 }
-                Handle<Array> example = Array::New(2);
+                Handle<Array> example = NanNew<Array>(2);
                 example->Set(0, inputs);
                 example->Set(1, outputs);
                 supportVectors->Set(i, example);
@@ -403,14 +405,14 @@ class NodeSvm : public node::ObjectWrap
             obj->Set(NanNew<String>("supportVectors"), supportVectors);
 
             if (model->nSV) {
-                Handle<Array> nbSupportVectors = Array::New(model->nr_class);
+                Handle<Array> nbSupportVectors = NanNew<Array>(model->nr_class);
                 for(int i=0; i < model->nr_class ; i++) {
                     nbSupportVectors->Set(i, NanNew<Number>(model->nSV[i]));
                 }
                 obj->Set(NanNew<String>("nbSupportVectors"), nbSupportVectors);
             }
             if (model->label) {
-                Handle<Array> labels = Array::New(model->nr_class);
+                Handle<Array> labels = NanNew<Array>(model->nr_class);
                 for (int i=0 ; i < model->nr_class ; i++){
                     labels->Set(i, NanNew<Number>(model->label[i]));
                 }
@@ -419,7 +421,7 @@ class NodeSvm : public node::ObjectWrap
 
             if (model->probA) { // regression has probA only
                 int n = model->nr_class*(model->nr_class-1)/2;
-                Handle<Array> probA = Array::New(n);
+                Handle<Array> probA = NanNew<Array>(n);
                 for(int i=0 ; i < n ; i++){
                     probA->Set(i, NanNew<Number>(model->probA[i]));
                 }
@@ -429,7 +431,7 @@ class NodeSvm : public node::ObjectWrap
 
             if (model->probB) {
                 int n = model->nr_class*(model->nr_class-1)/2;
-                Handle<Array> probB = Array::New(n);
+                Handle<Array> probB = NanNew<Array>(n);
                 for(int i=0 ; i < n ; i++){
                     probB->Set(i, NanNew<Number>(model->probB[i]));
                 }
@@ -438,7 +440,7 @@ class NodeSvm : public node::ObjectWrap
 
             if (model->rho) {
                 int n = model->nr_class*(model->nr_class-1)/2;
-                Handle<Array> rho = Array::New(n);
+                Handle<Array> rho = NanNew<Array>(n);
                 for (int i=0 ; i < n ; i++){
                     rho->Set(i, NanNew<Number>(model->rho[i]));
                 }
@@ -478,8 +480,8 @@ class NodeSvm : public node::ObjectWrap
             }
             
 
-            // Handle<Array> weightLabels = Array::New(model->param.nr_weight);
-            // Handle<Array> weights = Array::New(model->param.nr_weight);
+            // Handle<Array> weightLabels = NanNew<Array>(model->param.nr_weight);
+            // Handle<Array> weights = NanNew<Array>(model->param.nr_weight);
             // for (int i=0 ; i < model->param.nr_weight ; i++){
             //     weightLabels->Set(i, NanNew<Number>(model->param.weight_label[i]));
             //     weights->Set(i, NanNew<Number>(model->param.weight[i]));

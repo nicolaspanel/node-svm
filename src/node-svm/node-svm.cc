@@ -4,6 +4,12 @@
 #include "prediction-worker.h"
 #include "probability-prediction-worker.h"
 
+using v8::FunctionTemplate;
+using v8::Handle;
+using v8::Object;
+using v8::String;
+using v8::Array;
+
 Persistent<Function> NodeSvm::constructor;
 
 NodeSvm::~NodeSvm(){
@@ -112,7 +118,7 @@ NAN_METHOD(NodeSvm::GetLabels) {
 
     // Create a new empty array.
     int nbClasses = obj->getClassNumber();
-    Handle<Array> labels = Array::New(nbClasses);
+    Handle<Array> labels = NanNew<Array>(nbClasses);
     for (int j=0; j < nbClasses; j++){
         labels->Set(j, Number::New(obj->getLabel(j)));
     }
@@ -224,7 +230,7 @@ NAN_METHOD(NodeSvm::PredictProbabilities) {
     obj->predictProbabilities(x, prob_estimates);
 
     // Create the result array
-    Handle<Array> probs = Array::New(nbClass);
+    Handle<Array> probs = NanNew<Array>(nbClass);
     for (int j=0; j < nbClass; j++){
         probs->Set(j, Number::New(prob_estimates[j]));
     }
@@ -253,56 +259,56 @@ NAN_METHOD(NodeSvm::PredictProbabilitiesAsync) {
 
 void NodeSvm::Init(Handle<Object> exports){
     // Prepare constructor template
-    Local<FunctionTemplate> tpl = FunctionTemplate::New(NodeSvm::New);
-    tpl->SetClassName(String::NewSymbol("NodeSvm"));
+    Local<FunctionTemplate> tpl = NanNew<FunctionTemplate>(NodeSvm::New);
+    tpl->SetClassName(NanNew<String>("NodeSvm"));
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
     // prototype
-    tpl->PrototypeTemplate()->Set(String::NewSymbol("setParameters"),
-    FunctionTemplate::New(NodeSvm::SetParameters)->GetFunction());
+    tpl->PrototypeTemplate()->Set(NanNew<String>("setParameters"),
+    NanNew<FunctionTemplate>(NodeSvm::SetParameters)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(String::NewSymbol("train"),
-    FunctionTemplate::New(NodeSvm::Train)->GetFunction());
+    tpl->PrototypeTemplate()->Set(NanNew<String>("train"),
+    NanNew<FunctionTemplate>(NodeSvm::Train)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(String::NewSymbol("trainAsync"),
-    FunctionTemplate::New(NodeSvm::TrainAsync)->GetFunction());
+    tpl->PrototypeTemplate()->Set(NanNew<String>("trainAsync"),
+    NanNew<FunctionTemplate>(NodeSvm::TrainAsync)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(String::NewSymbol("isTrained"),
-    FunctionTemplate::New(NodeSvm::IsTrained)->GetFunction());
+    tpl->PrototypeTemplate()->Set(NanNew<String>("isTrained"),
+    NanNew<FunctionTemplate>(NodeSvm::IsTrained)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(String::NewSymbol("getLabels"),
-    FunctionTemplate::New(NodeSvm::GetLabels)->GetFunction());
+    tpl->PrototypeTemplate()->Set(NanNew<String>("getLabels"),
+    NanNew<FunctionTemplate>(NodeSvm::GetLabels)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(String::NewSymbol("getSvmType"),
-    FunctionTemplate::New(NodeSvm::GetSvmType)->GetFunction());
+    tpl->PrototypeTemplate()->Set(NanNew<String>("getSvmType"),
+    NanNew<FunctionTemplate>(NodeSvm::GetSvmType)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(String::NewSymbol("getKernelType"),
-    FunctionTemplate::New(NodeSvm::GetKernelType)->GetFunction());
+    tpl->PrototypeTemplate()->Set(NanNew<String>("getKernelType"),
+    NanNew<FunctionTemplate>(NodeSvm::GetKernelType)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(String::NewSymbol("predict"),
-    FunctionTemplate::New(NodeSvm::Predict)->GetFunction());
+    tpl->PrototypeTemplate()->Set(NanNew<String>("predict"),
+    NanNew<FunctionTemplate>(NodeSvm::Predict)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(String::NewSymbol("predictAsync"),
-    FunctionTemplate::New(NodeSvm::PredictAsync)->GetFunction());
+    tpl->PrototypeTemplate()->Set(NanNew<String>("predictAsync"),
+    NanNew<FunctionTemplate>(NodeSvm::PredictAsync)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(String::NewSymbol("predictProbabilities"),
-    FunctionTemplate::New(NodeSvm::PredictProbabilities)->GetFunction());
+    tpl->PrototypeTemplate()->Set(NanNew<String>("predictProbabilities"),
+    NanNew<FunctionTemplate>(NodeSvm::PredictProbabilities)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(String::NewSymbol("predictProbabilitiesAsync"),
-    FunctionTemplate::New(NodeSvm::PredictProbabilitiesAsync)->GetFunction());
+    tpl->PrototypeTemplate()->Set(NanNew<String>("predictProbabilitiesAsync"),
+    NanNew<FunctionTemplate>(NodeSvm::PredictProbabilitiesAsync)->GetFunction());
 
-    // tpl->PrototypeTemplate()->Set(String::NewSymbol("saveToFile"),
-    // FunctionTemplate::New(NodeSvm::SaveToFile)->GetFunction());
+    // tpl->PrototypeTemplate()->Set(NanNew<String>("saveToFile"),
+    // NanNew<FunctionTemplate>(NodeSvm::SaveToFile)->GetFunction());
 
-    // tpl->PrototypeTemplate()->Set(String::NewSymbol("loadFromFile"),
-    // FunctionTemplate::New(NodeSvm::LoadFromFile)->GetFunction());
+    // tpl->PrototypeTemplate()->Set(NanNew<String>("loadFromFile"),
+    // NanNew<FunctionTemplate>(NodeSvm::LoadFromFile)->GetFunction());
     
-    tpl->PrototypeTemplate()->Set(String::NewSymbol("loadFromModel"),
-    FunctionTemplate::New(NodeSvm::SetModel)->GetFunction());
+    tpl->PrototypeTemplate()->Set(NanNew<String>("loadFromModel"),
+    NanNew<FunctionTemplate>(NodeSvm::SetModel)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(String::NewSymbol("getModel"),
-    FunctionTemplate::New(NodeSvm::GetModel)->GetFunction());
+    tpl->PrototypeTemplate()->Set(NanNew<String>("getModel"),
+    NanNew<FunctionTemplate>(NodeSvm::GetModel)->GetFunction());
 
     constructor = Persistent<Function>::New(tpl->GetFunction());
-    exports->Set(String::NewSymbol("NodeSvm"), constructor);
+    exports->Set(NanNew<String>("NodeSvm"), constructor);
 }

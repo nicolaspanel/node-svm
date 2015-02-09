@@ -4,7 +4,8 @@
 
 extern "C" {
   void InitAll(Handle<Object> exports) {
-    HandleScope scope;
+    //Isolate* isolate = Isolate::GetCurrent();
+    //HandleScope scope(isolate);
     NodeSvm::Init(exports);
   }
 }
