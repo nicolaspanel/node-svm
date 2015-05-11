@@ -1,6 +1,6 @@
 {
   "name": "node-svm",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "Support Vector Machine for nodejs",
   "main": "lib",
   "scripts": {
@@ -37,7 +37,7 @@
     "inquirer": "^0.8.0",
     "moment": "^2.8.4",
     "mout": "^0.11.0",
-    "nan": "~1.6.2",
+    "nan": "~1.8.0",
     "node-gyp": "~1.0.2",
     "nopt": "~3.0.0",
     "numeric": "^1.2.6",
