@@ -117,7 +117,7 @@ var clf = new svm.SVM({
     gamma: [0.03125, 0.125, 0.5, 2, 8],
     
     // training options
-    nFold: 4,               
+    kFold: 4,               
     normalize: true,        
     reduce: true,           
     retainedVariance: 0.99, 
