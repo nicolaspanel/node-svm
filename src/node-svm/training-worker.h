@@ -5,10 +5,10 @@
 
 using namespace v8;
 
-class TrainingWorker : public NanAsyncWorker {
+class TrainingWorker : public Nan::AsyncWorker {
  public:
-  TrainingWorker(NodeSvm *svm, Local<Array> dataset, NanCallback *callback)
-    : NanAsyncWorker(callback) {
+  TrainingWorker(NodeSvm *svm, Local<Array> dataset, Nan::Callback *callback)
+    : Nan::AsyncWorker(callback) {
       obj = svm;
       obj->setSvmProblem(dataset);
     }
@@ -26,7 +26,7 @@ class TrainingWorker : public NanAsyncWorker {
   // this function will be run inside the main event loop
   // so it is safe to use V8 again
   void HandleOKCallback () {
-    NanScope();
+    Nan::HandleScope scope;
 
 #ifdef _WIN32
     // On windows you get "error C2466: cannot allocate an array of constant size 0" and we use a pointer
