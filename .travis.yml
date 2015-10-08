@@ -8,3 +8,8 @@ node_js:
   - "4"
 script:
   - grunt travis
+addons:
+  apt:
+    packages:
+    - gcc-4.8
+    - g++-4.8
