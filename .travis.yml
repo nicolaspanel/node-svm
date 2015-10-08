@@ -1,4 +1,7 @@
 language: node_js
+sudo: false
+env:
+  CXX=g++-4.8
 node_js:
   - "0.10"
   - "0.11"
@@ -10,7 +13,9 @@ script:
   - grunt travis
 addons:
   apt:
+    sources:
+    - ubuntu-toolchain-r-test
     packages:
     - g++-4.8
-env:
-  CXX=g++-4.8
+before_install:
+  - node --version | grep -q 'v0.8' && npm install -g npm@2 || true
