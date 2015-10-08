@@ -3,7 +3,7 @@
 #include "node-svm/node-svm.h"
 
 extern "C" {
-  void InitAll(Handle<Object> exports) {
+  void InitAll(Local<Object> exports) {
     NodeSvm::Init(exports);
   }
 }

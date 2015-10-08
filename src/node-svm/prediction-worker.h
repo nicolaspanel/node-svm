@@ -5,10 +5,10 @@
 
 using namespace v8;
 
-class PredictionWorker : public NanAsyncWorker {
+class PredictionWorker : public Nan::AsyncWorker {
  public:
-  PredictionWorker(NodeSvm *svm, Local<Array> inputs, NanCallback *callback)
-    : NanAsyncWorker(callback) {
+  PredictionWorker(NodeSvm *svm, Local<Array> inputs, Nan::Callback *callback)
+    : Nan::AsyncWorker(callback) {
       obj = svm;
       x = new svm_node[inputs->Length() + 1];
       obj->getSvmNodes(inputs, x);
@@ -29,9 +29,9 @@ class PredictionWorker : public NanAsyncWorker {
   // this function will be run inside the main event loop
   // so it is safe to use V8 again
   void HandleOKCallback () {
-    NanScope();
+    Nan::HandleScope scope;
     Local<Value> argv[] = {
-      NanNew<Number>(prediction)
+        Nan::New<Number>(prediction)
     };
     callback->Call(1, argv);
   };

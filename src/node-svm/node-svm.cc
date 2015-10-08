@@ -5,25 +5,24 @@
 #include "probability-prediction-worker.h"
 
 using v8::FunctionTemplate;
-using v8::Handle;
 using v8::Object;
 using v8::String;
 using v8::Array;
 
-Persistent<Function> NodeSvm::constructor;
+Nan::Persistent<Function> NodeSvm::constructor;
 
 NodeSvm::~NodeSvm(){
 
 }
 
 NAN_METHOD(NodeSvm::New) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    if (args.IsConstructCall()) {
+    if (info.IsConstructCall()) {
         // Invoked as constructor: `new MyObject(...)`
         NodeSvm* obj = new NodeSvm();
-        obj->Wrap(args.This());
-        NanReturnValue(args.This());
+        obj->Wrap(info.This());
+        info.GetReturnValue().Set(info.This());
     }
     else {
         // Invoked as plain function `MyObject(...)`, turn into construct call.
@@ -34,162 +33,155 @@ NAN_METHOD(NodeSvm::New) {
 #else
     Local<Value> argv[argc];
 #endif
-        Local<Function> cons = NanNew<Function>(constructor);
-        NanReturnValue(cons->NewInstance(argc, argv));
+        Local<Function> cons = Nan::New<Function>(constructor);
+        info.GetReturnValue().Set(cons->NewInstance(argc, argv));
     }
 }
 
 NAN_METHOD(NodeSvm::SetParameters) {
-    NanScope();
-    NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+    Nan::HandleScope scope;
+    NodeSvm *obj = Nan::ObjectWrap::Unwrap<NodeSvm>(info.This());
 
-    assert(args[0]->IsObject());
-    Local<Object> params = args[0].As<Object>();
+    assert(info[0]->IsObject());
+    Local<Object> params = info[0].As<Object>();
     obj->setParameters(params);
-
-    NanReturnUndefined();
 }
 
 NAN_METHOD(NodeSvm::Train) {
-    NanScope();
-    NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+    Nan::HandleScope scope;
+    NodeSvm *obj = Nan::ObjectWrap::Unwrap<NodeSvm>(info.This());
 
     // check obj
     assert(obj->hasParameters());
     // chech params
-    assert(args[0]->IsObject());
+    assert(info[0]->IsObject());
 
-    Local<Array> dataset = args[0].As<Array>();
+    Local<Array> dataset = info[0].As<Array>();
     obj->setSvmProblem(dataset);
     obj->train();
-
-    NanReturnUndefined();
 }
 
 NAN_METHOD(NodeSvm::GetModel) {
-    NanScope();
-    NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+    Nan::HandleScope scope;
+    NodeSvm *obj = Nan::ObjectWrap::Unwrap<NodeSvm>(info.This());
 
     // check obj
     assert(obj->isTrained());
-    NanReturnValue(obj->getModel());
+    info.GetReturnValue().Set(obj->getModel());
 }
 
 NAN_METHOD(NodeSvm::TrainAsync) {
-    NanScope();
-    NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+    Nan::HandleScope scope;
+    NodeSvm *obj = Nan::ObjectWrap::Unwrap<NodeSvm>(info.This());
 
     // check obj
     assert(obj->hasParameters());
     // chech params
-    assert(args[0]->IsObject());
-    assert(args[1]->IsFunction());
+    assert(info[0]->IsObject());
+    assert(info[1]->IsFunction());
 
-    Local<Array> dataset = args[0].As<Array>();
-    NanCallback *callback = new NanCallback(args[1].As<Function>());
+    Local<Array> dataset = info[0].As<Array>();
+    Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
 
-    NanAsyncQueueWorker(new TrainingWorker(obj, dataset, callback));
-    NanReturnUndefined();
+    Nan::AsyncQueueWorker(new TrainingWorker(obj, dataset, callback));
 }
 
 NAN_METHOD(NodeSvm::GetKernelType) {
-    NanScope();
-    NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+    Nan::HandleScope scope;
+    NodeSvm *obj = Nan::ObjectWrap::Unwrap<NodeSvm>(info.This());
     // check obj
     assert(obj->hasParameters());
-    NanReturnValue(NanNew<Number>(obj->getKernelType()));
+    info.GetReturnValue().Set(Nan::New<Number>(obj->getKernelType()));
 }
 
 NAN_METHOD(NodeSvm::GetSvmType) {
-    NanScope();
-    NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+    Nan::HandleScope scope;
+    NodeSvm *obj = Nan::ObjectWrap::Unwrap<NodeSvm>(info.This());
     // check obj
     assert(obj->hasParameters());
-    NanReturnValue(NanNew<Number>(obj->getSvmType()));
+    info.GetReturnValue().Set(Nan::New<Number>(obj->getSvmType()));
 }
 
 NAN_METHOD(NodeSvm::IsTrained) {
-    NanScope();
-    NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+    Nan::HandleScope scope;
+    NodeSvm *obj = Nan::ObjectWrap::Unwrap<NodeSvm>(info.This());
     // check obj
-    NanReturnValue(NanNew<Boolean>(obj->isTrained()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(obj->isTrained()));
 }
 
 NAN_METHOD(NodeSvm::GetLabels) {
-    NanScope();
-    NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+    Nan::HandleScope scope;
+    NodeSvm *obj = Nan::ObjectWrap::Unwrap<NodeSvm>(info.This());
 
     // check obj
     assert(obj->isTrained());
 
     // Create a new empty array.
     int nbClasses = obj->getClassNumber();
-    Handle<Array> labels = NanNew<Array>(nbClasses);
+    Local<Array> labels = Nan::New<Array>(nbClasses);
     for (int j=0; j < nbClasses; j++){
-        labels->Set(j, NanNew<Number>(obj->getLabel(j)));
+        labels->Set(j, Nan::New<Number>(obj->getLabel(j)));
     }
-    NanReturnValue(labels);
+    info.GetReturnValue().Set(labels);
 }
 
 NAN_METHOD(NodeSvm::SetModel) {
-    NanScope();
-    NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
-    assert(args.Length() == 1);
-    assert(args[0]->IsObject());
+    Nan::HandleScope scope;
+    NodeSvm *obj = Nan::ObjectWrap::Unwrap<NodeSvm>(info.This());
+    assert(info.Length() == 1);
+    assert(info[0]->IsObject());
 
-    Local<Array> model = args[0].As<Array>();
+    Local<Array> model = info[0].As<Array>();
     obj->setModel(model);
-    NanReturnUndefined();
 }
 
 NAN_METHOD(NodeSvm::Predict) {
-    NanScope();
-    NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+    Nan::HandleScope scope;
+    NodeSvm *obj = Nan::ObjectWrap::Unwrap<NodeSvm>(info.This());
 
     // check obj
     assert(obj->isTrained());
     // chech params
-    assert(args[0]->IsObject());
+    assert(info[0]->IsObject());
 
-    Local<Array> inputs = args[0].As<Array>();
+    Local<Array> inputs = info[0].As<Array>();
     assert(inputs->IsArray());
     assert(inputs->Length() > 0);
     svm_node *x = new svm_node[inputs->Length() + 1];
     obj->getSvmNodes(inputs, x);
     double prediction = obj->predict(x);
     delete[] x;
-    NanReturnValue(NanNew<Number>(prediction));
+    info.GetReturnValue().Set(Nan::New<Number>(prediction));
 }
 
 NAN_METHOD(NodeSvm::PredictAsync) {
-    NanScope();
-    NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+    Nan::HandleScope scope;
+    NodeSvm *obj = Nan::ObjectWrap::Unwrap<NodeSvm>(info.This());
 
     // check obj
     assert(obj->isTrained());
     // chech params
-    assert(args[0]->IsObject());
-    Local<Array> inputs = args[0].As<Array>();
+    assert(info[0]->IsObject());
+    Local<Array> inputs = info[0].As<Array>();
     assert(inputs->IsArray());
     assert(inputs->Length() > 0);
-    assert(args[1]->IsFunction());
-    NanCallback *callback = new NanCallback(args[1].As<Function>());
+    assert(info[1]->IsFunction());
+    Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
 
-    NanAsyncQueueWorker(new PredictionWorker(obj, inputs, callback));
-    NanReturnUndefined();
+    Nan::AsyncQueueWorker(new PredictionWorker(obj, inputs, callback));
 }
 
 
 NAN_METHOD(NodeSvm::PredictProbabilities) {
-    NanScope();
-    NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+    Nan::HandleScope scope;
+    NodeSvm *obj = Nan::ObjectWrap::Unwrap<NodeSvm>(info.This());
 
     // check obj
     assert(obj->isTrained());
     // chech params
-    assert(args[0]->IsObject());
+    assert(info[0]->IsObject());
 
-    Local<Array> inputs = args[0].As<Array>();
+    Local<Array> inputs = info[0].As<Array>();
     assert(inputs->IsArray());
     assert(inputs->Length() > 0);
     svm_node *x = new svm_node[inputs->Length() + 1];
@@ -201,80 +193,79 @@ NAN_METHOD(NodeSvm::PredictProbabilities) {
     obj->predictProbabilities(x, prob_estimates);
 
     // Create the result array
-    Handle<Array> probs = NanNew<Array>(nbClass);
+    Local<Array> probs = Nan::New<Array>(nbClass);
     for (int j=0; j < nbClass; j++){
-        probs->Set(j, NanNew<Number>(prob_estimates[j]));
+        probs->Set(j, Nan::New<Number>(prob_estimates[j]));
     }
     delete[] prob_estimates;
     delete[] x;
-    NanReturnValue(probs);
+    info.GetReturnValue().Set(probs);
 }
 
 NAN_METHOD(NodeSvm::PredictProbabilitiesAsync) {
-    NanScope();
-    NodeSvm *obj = node::ObjectWrap::Unwrap<NodeSvm>(args.This());
+    Nan::HandleScope scope;
+    NodeSvm *obj = Nan::ObjectWrap::Unwrap<NodeSvm>(info.This());
 
     // check obj
     assert(obj->isTrained());
     // chech params
-    assert(args[0]->IsObject());
-    Local<Array> inputs = args[0].As<Array>();
+    assert(info[0]->IsObject());
+    Local<Array> inputs = info[0].As<Array>();
     assert(inputs->IsArray());
     assert(inputs->Length() > 0);
-    assert(args[1]->IsFunction());
-    NanCallback *callback = new NanCallback(args[1].As<Function>());
+    assert(info[1]->IsFunction());
+    Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
 
-    NanAsyncQueueWorker(new ProbabilityPredictionWorker(obj, inputs, callback));
-    NanReturnUndefined();
+    Nan::AsyncQueueWorker(new ProbabilityPredictionWorker(obj, inputs, callback));
 }
 
-void NodeSvm::Init(Handle<Object> exports){
+void NodeSvm::Init(Local<Object> exports){
     // Prepare constructor template
-    Local<FunctionTemplate> tpl = NanNew<FunctionTemplate>(NodeSvm::New);
-    tpl->SetClassName(NanNew<String>("NodeSvm"));
+    Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(NodeSvm::New);
+    tpl->SetClassName(Nan::New<String>("NodeSvm").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
     // prototype
-    tpl->PrototypeTemplate()->Set(NanNew<String>("setParameters"),
-    NanNew<FunctionTemplate>(NodeSvm::SetParameters)->GetFunction());
+    tpl->PrototypeTemplate()->Set(Nan::New<String>("setParameters").ToLocalChecked(),
+    Nan::New<FunctionTemplate>(NodeSvm::SetParameters)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(NanNew<String>("train"),
-    NanNew<FunctionTemplate>(NodeSvm::Train)->GetFunction());
+    tpl->PrototypeTemplate()->Set(Nan::New<String>("train").ToLocalChecked(),
+    Nan::New<FunctionTemplate>(NodeSvm::Train)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(NanNew<String>("trainAsync"),
-    NanNew<FunctionTemplate>(NodeSvm::TrainAsync)->GetFunction());
+    tpl->PrototypeTemplate()->Set(Nan::New<String>("trainAsync").ToLocalChecked(),
+    Nan::New<FunctionTemplate>(NodeSvm::TrainAsync)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(NanNew<String>("isTrained"),
-    NanNew<FunctionTemplate>(NodeSvm::IsTrained)->GetFunction());
+    tpl->PrototypeTemplate()->Set(Nan::New<String>("isTrained").ToLocalChecked(),
+    Nan::New<FunctionTemplate>(NodeSvm::IsTrained)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(NanNew<String>("getLabels"),
-    NanNew<FunctionTemplate>(NodeSvm::GetLabels)->GetFunction());
+    tpl->PrototypeTemplate()->Set(Nan::New<String>("getLabels").ToLocalChecked(),
+    Nan::New<FunctionTemplate>(NodeSvm::GetLabels)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(NanNew<String>("getSvmType"),
-    NanNew<FunctionTemplate>(NodeSvm::GetSvmType)->GetFunction());
+    tpl->PrototypeTemplate()->Set(Nan::New<String>("getSvmType").ToLocalChecked(),
+    Nan::New<FunctionTemplate>(NodeSvm::GetSvmType)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(NanNew<String>("getKernelType"),
-    NanNew<FunctionTemplate>(NodeSvm::GetKernelType)->GetFunction());
+    tpl->PrototypeTemplate()->Set(Nan::New<String>("getKernelType").ToLocalChecked(),
+    Nan::New<FunctionTemplate>(NodeSvm::GetKernelType)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(NanNew<String>("predict"),
-    NanNew<FunctionTemplate>(NodeSvm::Predict)->GetFunction());
+    tpl->PrototypeTemplate()->Set(Nan::New<String>("predict").ToLocalChecked(),
+    Nan::New<FunctionTemplate>(NodeSvm::Predict)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(NanNew<String>("predictAsync"),
-    NanNew<FunctionTemplate>(NodeSvm::PredictAsync)->GetFunction());
+    tpl->PrototypeTemplate()->Set(Nan::New<String>("predictAsync").ToLocalChecked(),
+    Nan::New<FunctionTemplate>(NodeSvm::PredictAsync)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(NanNew<String>("predictProbabilities"),
-    NanNew<FunctionTemplate>(NodeSvm::PredictProbabilities)->GetFunction());
+    tpl->PrototypeTemplate()->Set(Nan::New<String>("predictProbabilities").ToLocalChecked(),
+    Nan::New<FunctionTemplate>(NodeSvm::PredictProbabilities)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(NanNew<String>("predictProbabilitiesAsync"),
-    NanNew<FunctionTemplate>(NodeSvm::PredictProbabilitiesAsync)->GetFunction());
-    
-    tpl->PrototypeTemplate()->Set(NanNew<String>("loadFromModel"),
-    NanNew<FunctionTemplate>(NodeSvm::SetModel)->GetFunction());
+    tpl->PrototypeTemplate()->Set(Nan::New<String>("predictProbabilitiesAsync").ToLocalChecked(),
+    Nan::New<FunctionTemplate>(NodeSvm::PredictProbabilitiesAsync)->GetFunction());
 
-    tpl->PrototypeTemplate()->Set(NanNew<String>("getModel"),
-    NanNew<FunctionTemplate>(NodeSvm::GetModel)->GetFunction());
+    tpl->PrototypeTemplate()->Set(Nan::New<String>("loadFromModel").ToLocalChecked(),
+    Nan::New<FunctionTemplate>(NodeSvm::SetModel)->GetFunction());
+
+    tpl->PrototypeTemplate()->Set(Nan::New<String>("getModel").ToLocalChecked(),
+    Nan::New<FunctionTemplate>(NodeSvm::GetModel)->GetFunction());
 
     //constructor = Persistent<Function>::New(tpl->GetFunction());
-    exports->Set(NanNew<String>("NodeSvm"), tpl->GetFunction());
-    NanAssignPersistent(constructor, tpl->GetFunction());
+    exports->Set(Nan::New<String>("NodeSvm").ToLocalChecked(), tpl->GetFunction());
+    constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
 }

@@ -5,15 +5,15 @@
 
 using namespace v8;
 
-class ProbabilityPredictionWorker : public NanAsyncWorker {
+class ProbabilityPredictionWorker : public Nan::AsyncWorker {
  public:
-  ProbabilityPredictionWorker(NodeSvm *svm, Local<Array> inputs, NanCallback *callback)
-    : NanAsyncWorker(callback) {
+  ProbabilityPredictionWorker(NodeSvm *svm, Local<Array> inputs, Nan::Callback *callback)
+    : Nan::AsyncWorker(callback) {
       obj = svm;
 
       x = new svm_node[inputs->Length() + 1];
       obj->getSvmNodes(inputs, x);
-      
+
       nbClass = obj->getClassNumber();
       prob_estimates = new double[nbClass];
     }
@@ -34,14 +34,14 @@ class ProbabilityPredictionWorker : public NanAsyncWorker {
   // this function will be run inside the main event loop
   // so it is safe to use V8 again
   void HandleOKCallback () {
-    NanScope();
+    Nan::HandleScope scope;
     // Create the result array
-    Handle<Array> probs = NanNew<Array>(nbClass);
+    Local<Array> probs = Nan::New<Array>(nbClass);
     for (int j=0; j < nbClass; j++){
-      probs->Set(j, NanNew<Number>(prob_estimates[j]));
+      probs->Set(j, Nan::New<Number>(prob_estimates[j]));
     }
     Local<Value> argv[] = {
-      NanNew<Value>(probs)
+      probs
     };
     callback->Call(1, argv);
   };
