@@ -7,7 +7,7 @@
 #include <iostream>
 #include <node.h>
 #include <assert.h>
-#include "../../node_modules/nan/nan.h"
+#include <nan.h>
 #include "../libsvm/svm.h"
 
 
