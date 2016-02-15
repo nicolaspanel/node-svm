@@ -183,7 +183,7 @@ svm.read(trainFile)
 })
 .then(function(testset){
     return clf.evaluate(testset);
-});
+})
 .done(function(report){
     console.log(report);
 });
