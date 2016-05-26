@@ -227,43 +227,43 @@ void NodeSvm::Init(Local<Object> exports){
 
     // prototype
     tpl->PrototypeTemplate()->Set(Nan::New<String>("setParameters").ToLocalChecked(),
-    Nan::New<FunctionTemplate>(NodeSvm::SetParameters)->GetFunction());
+    Nan::New<FunctionTemplate>(NodeSvm::SetParameters));
 
     tpl->PrototypeTemplate()->Set(Nan::New<String>("train").ToLocalChecked(),
-    Nan::New<FunctionTemplate>(NodeSvm::Train)->GetFunction());
+    Nan::New<FunctionTemplate>(NodeSvm::Train));
 
     tpl->PrototypeTemplate()->Set(Nan::New<String>("trainAsync").ToLocalChecked(),
-    Nan::New<FunctionTemplate>(NodeSvm::TrainAsync)->GetFunction());
+    Nan::New<FunctionTemplate>(NodeSvm::TrainAsync));
 
     tpl->PrototypeTemplate()->Set(Nan::New<String>("isTrained").ToLocalChecked(),
-    Nan::New<FunctionTemplate>(NodeSvm::IsTrained)->GetFunction());
+    Nan::New<FunctionTemplate>(NodeSvm::IsTrained));
 
     tpl->PrototypeTemplate()->Set(Nan::New<String>("getLabels").ToLocalChecked(),
-    Nan::New<FunctionTemplate>(NodeSvm::GetLabels)->GetFunction());
+    Nan::New<FunctionTemplate>(NodeSvm::GetLabels));
 
     tpl->PrototypeTemplate()->Set(Nan::New<String>("getSvmType").ToLocalChecked(),
-    Nan::New<FunctionTemplate>(NodeSvm::GetSvmType)->GetFunction());
+    Nan::New<FunctionTemplate>(NodeSvm::GetSvmType));
 
     tpl->PrototypeTemplate()->Set(Nan::New<String>("getKernelType").ToLocalChecked(),
-    Nan::New<FunctionTemplate>(NodeSvm::GetKernelType)->GetFunction());
+    Nan::New<FunctionTemplate>(NodeSvm::GetKernelType));
 
     tpl->PrototypeTemplate()->Set(Nan::New<String>("predict").ToLocalChecked(),
-    Nan::New<FunctionTemplate>(NodeSvm::Predict)->GetFunction());
+    Nan::New<FunctionTemplate>(NodeSvm::Predict));
 
     tpl->PrototypeTemplate()->Set(Nan::New<String>("predictAsync").ToLocalChecked(),
-    Nan::New<FunctionTemplate>(NodeSvm::PredictAsync)->GetFunction());
+    Nan::New<FunctionTemplate>(NodeSvm::PredictAsync));
 
     tpl->PrototypeTemplate()->Set(Nan::New<String>("predictProbabilities").ToLocalChecked(),
-    Nan::New<FunctionTemplate>(NodeSvm::PredictProbabilities)->GetFunction());
+    Nan::New<FunctionTemplate>(NodeSvm::PredictProbabilities));
 
     tpl->PrototypeTemplate()->Set(Nan::New<String>("predictProbabilitiesAsync").ToLocalChecked(),
-    Nan::New<FunctionTemplate>(NodeSvm::PredictProbabilitiesAsync)->GetFunction());
+    Nan::New<FunctionTemplate>(NodeSvm::PredictProbabilitiesAsync));
 
     tpl->PrototypeTemplate()->Set(Nan::New<String>("loadFromModel").ToLocalChecked(),
-    Nan::New<FunctionTemplate>(NodeSvm::SetModel)->GetFunction());
+    Nan::New<FunctionTemplate>(NodeSvm::SetModel));
 
     tpl->PrototypeTemplate()->Set(Nan::New<String>("getModel").ToLocalChecked(),
-    Nan::New<FunctionTemplate>(NodeSvm::GetModel)->GetFunction());
+    Nan::New<FunctionTemplate>(NodeSvm::GetModel));
 
     //constructor = Persistent<Function>::New(tpl->GetFunction());
     exports->Set(Nan::New<String>("NodeSvm").ToLocalChecked(), tpl->GetFunction());
