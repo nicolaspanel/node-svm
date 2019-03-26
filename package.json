@@ -1,5 +1,5 @@
 {
-  "name": "node-svm",
+  "name": "node-svm-wc",
   "version": "2.1.10",
   "description": "Support Vector Machine for nodejs",
   "main": "lib",
